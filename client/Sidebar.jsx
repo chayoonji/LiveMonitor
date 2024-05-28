@@ -21,6 +21,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     navigate("/login");
   };
 
+  const handleRegisterClick = (e) => {
+    e.preventDefault();
+    navigate("/register");
+  };
+
   return (
     <aside
       id="sidebar"
@@ -61,6 +66,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="sidebar-list-item">
           <Link to="/login" onClick={handleReportsClick}>
             <BsFillGearFill className="icon" /> Login
+          </Link>
+        </li>
+        <li className="sidebar-list-item">
+          <Link to="/register" onClick={handleRegisterClick}>
+            <BsFillGearFill className="icon" /> 회원가입
           </Link>
         </li>
         <li className="sidebar-list-item">
