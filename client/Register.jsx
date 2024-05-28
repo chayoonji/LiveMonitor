@@ -1,9 +1,9 @@
-// Login.jsx
+// Register.jsx
 
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const Login = () => {
+const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -11,20 +11,20 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3001/login', {
+      const response = await axios.post('http://localhost:3001/register', {
         email,
         password,
       });
-      alert('Logged in successfully');
+      alert('User registered successfully');
     } catch (error) {
-      alert('Error logging in');
+      alert('Error registering user');
     }
   };
 
   return (
-    <div className="login-wrapper">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit} id="login-form">
+    <div className="register-wrapper">
+      <h2>Register</h2>
+      <form onSubmit={handleSubmit} id="register-form">
         <input
           type="text"
           name="email"
@@ -40,11 +40,11 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <div className="button-container">
-          <input type="submit" value="Login" />
+          <input type="submit" value="Register" />
         </div>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

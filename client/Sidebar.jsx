@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   BsCart3,
@@ -11,24 +11,24 @@ import {
   BsListCheck,
   BsMenuButtonWideFill,
   BsFillGearFill,
-} from 'react-icons/bs';
+} from "react-icons/bs";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
 
   const handleReportsClick = (e) => {
     e.preventDefault();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
     <aside
       id="sidebar"
-      className={openSidebarToggle ? 'sidebar-responsive' : ''}
+      className={openSidebarToggle ? "sidebar-responsive" : ""}
     >
       <div className="sidebar-title">
         <div className="sidebar-brand">
-          <Link to="/" style={{ textDecoration: 'none', color: '#9e9ea4' }}>
+          <Link to="/" style={{ textDecoration: "none", color: "#9e9ea4" }}>
             <BsCart3 className="icon_header" /> 강김홍차
           </Link>
         </div>
@@ -59,6 +59,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </Link>
         </li>
         <li className="sidebar-list-item">
+          <Link to="/login" onClick={handleReportsClick}>
+            <BsFillGearFill className="icon" /> Login
+          </Link>
+        </li>
+        <li className="sidebar-list-item">
           <a href="https://github.com/chayoonji/reactDashB">
             <BsListCheck className="icon" /> Github
           </a>
@@ -66,16 +71,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="sidebar-list-item">
           <Link to="/reports">
             <BsMenuButtonWideFill className="icon" /> Reports
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
-          <Link to="/settings">
-            <BsFillGearFill className="icon" /> Setting
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
-          <Link to="/login" onClick={handleReportsClick}>
-            <BsFillGearFill className="icon" /> Login
           </Link>
         </li>
       </ul>
