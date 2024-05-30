@@ -1,69 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import {
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
   BsPeopleFill,
   BsFillBellFill,
-} from 'react-icons/bs';
+} from "react-icons/bs";
 import {
   BarChart,
   Bar,
-  Cell,
+  CartesianGrid,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
   LineChart,
   Line,
-} from 'recharts';
+} from "recharts";
 
 function Home() {
-  const data = [
-    {
-      name: 'Page A',
-      uv: 4000,
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: 'Page B',
-      uv: 3000,
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: 'Page C',
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: 'Page D',
-      uv: 2780,
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: 'Page E',
-      uv: 1890,
-      pv: 4800,
-      amt: 2181,
-    },
-    {
-      name: 'Page F',
-      uv: 2390,
-      pv: 3800,
-      amt: 2500,
-    },
-    {
-      name: 'Page G',
-      uv: 3490,
-      pv: 4300,
-      amt: 2100,
-    },
-  ];
+  const [data, setData] = useState([]);
+
+  // 데이터 로드 및 변환
+  useEffect(() => {
+    fetch("http://localhost:3001/api/data")
+      .then((response) => response.json())
+      .then((data) => {
+        // MongoDB 데이터를 Recharts 데이터 형식으로 변환
+        const transformedData = data.map((item, index) => ({
+          웹: parseInt(item["웹"]), // '웹' 값을 사용
+          서버: parseInt(item["서버"]), // '서버' 값을 사용
+        }));
+
+        setData(transformedData);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   return (
     <main className="main-container">
@@ -72,71 +44,45 @@ function Home() {
       </div>
 
       <div className="main-cards">
-        <div className="card">
-          <div className="card-inner">
-            <h3>가이드</h3>
-            <BsFillArchiveFill className="card_icon" />
-          </div>
-          
-        </div>
-        <div className="card">
-          <div className="card-inner">
-            <h3>모니터링중인 서버</h3>
-            <BsFillGrid3X3GapFill className="card_icon" />
-          </div>
-          <h1>2</h1>
-         
-        </div>
-        <div className="card">
-          <div className="card-inner">
-            <h3>이용자 수</h3>
-            <BsPeopleFill className="card_icon" />
-          </div>
-          <h1>33</h1>
-        </div>
-        <div className="card">
-          <div className="card-inner">
-            <h3>취약점 알림</h3>
-            <BsFillBellFill className="card_icon" />
-          </div>
-          <h1>42</h1>
-        </div>
+        {/* 카드 컴포넌트 */}
+        <Card title="가이드" icon={<BsFillArchiveFill />} />
+        <Card
+          title="모니터링중인 서버"
+          icon={<BsFillGrid3X3GapFill />}
+          value="2"
+        />
+        <Card title="이용자 수" icon={<BsPeopleFill />} value="33" />
+        <Card title="취약점 알림" icon={<BsFillBellFill />} value="42" />
       </div>
 
       <div className="charts">
-        <ResponsiveContainer width="100%" height="100%">
+        {/* 막대 차트 */}
+        <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            width={500}
-            height={300}
-            data={data}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
+            data={data.map((item, index) => ({
+              ...item,
+              name: `주통기반 취약점 현황`,
+            }))}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="pv" fill="#8884d8" />
-            <Bar dataKey="uv" fill="#82ca9d" />
+            <Bar dataKey="웹" fill="#8884d8" />
+            <Bar dataKey="서버" fill="#82ca9d" />
           </BarChart>
         </ResponsiveContainer>
 
-        <ResponsiveContainer width="100%" height="100%">
+        {/* 선형 차트 */}
+        <ResponsiveContainer width="100%" height={300}>
           <LineChart
-            width={500}
-            height={300}
-            data={data}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
+            data={data.map((item, index) => ({
+              ...item,
+              name: `실시간 모니터링 현황`,
+            }))}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
@@ -145,15 +91,28 @@ function Home() {
             <Legend />
             <Line
               type="monotone"
-              dataKey="pv"
+              dataKey="웹"
               stroke="#8884d8"
               activeDot={{ r: 8 }}
             />
-            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="서버" stroke="#82ca9d" />
           </LineChart>
         </ResponsiveContainer>
       </div>
     </main>
+  );
+}
+
+// 카드 컴포넌트 정의
+function Card({ title, icon, value }) {
+  return (
+    <div className="card">
+      <div className="card-inner">
+        <h3>{title}</h3>
+        {icon}
+      </div>
+      {value && <h1>{value}</h1>}
+    </div>
   );
 }
 

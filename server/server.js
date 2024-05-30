@@ -38,7 +38,7 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // MongoDB 연결
-const url = '';
+const url = '몽고DB 주소';
 let db;
 
 new MongoClient(url)
@@ -48,6 +48,7 @@ new MongoClient(url)
     db = client.db('Login');
     // 서버 시작
     app.listen(PORT, () => {
+      // 모든 IP 주소에서 접근 가능하도록 설정
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
@@ -66,6 +67,7 @@ passport.use(
     },
     async (req, email, password, done) => {
       try {
+        const { name, companyEmail } = req.body; // 이름과 회사 이메일 가져오기
         // 비밀번호 해싱
         const hashedPassword = await bcrypt.hash(password, 10);
         // 사용자 정보 저장
@@ -122,8 +124,6 @@ app.post('/login', passport.authenticate('local-login'), (req, res) => {
   res.send('Logged in');
 });
 
-// 사용자 이메일을 기준으로 사용자 정보를 찾는 과정 → 신원확인 과정
-
 // 사용자 직렬화
 passport.serializeUser((user, done) => {
   done(null, user.email); // 사용자의 이메일을 세션에 저장
@@ -137,5 +137,15 @@ passport.deserializeUser(async (email, done) => {
     done(null, user); // 세션에서 사용자를 가져옴
   } catch (err) {
     done(err);
+  }
+});
+
+// 차트 데이터를 가져오는 엔드포인트
+app.get('/api/data', async (req, res) => {
+  try {
+    const data = await db.collection('ChartData').find().toArray();
+    res.json(data);
+  } catch (err) {
+    res.status(500).send(err);
   }
 });
