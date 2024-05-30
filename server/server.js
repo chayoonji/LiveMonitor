@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(
   session({
-    secret: "seyeong707*",
+    secret: '', // 세션 암호화에 사용될 시크릿 키
     resave: false,
     saveUninitialized: false,
   })
