@@ -30,7 +30,7 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 const url =
-  "mongodb+srv://admin:1234@cluster0.7anrpml.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+  "";
 let db;
 
 new MongoClient(url)
@@ -135,8 +135,8 @@ app.get("/api/data", async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: "Gmail", // Gmail을 사용하려면 해당 계정의 아이디와 비밀번호를 입력해야 합니다.
   auth: {
-    user: "cofl3890@gmail.com", // 발신자 이메일 주소
-    pass: "seyeong707", // 발신자 이메일 비밀번호
+    user: "", // 발신자 이메일 주소
+    pass: "", // 발신자 이메일 비밀번호
   },
 });
 
@@ -161,7 +161,7 @@ app.post("/verify-company-email", async (req, res) => {
 
     // 이메일 전송 옵션 설정
     const mailOptions = {
-      from: "cofl3890@gmail.com", // 발신자 이메일 주소
+      from: "", // 발신자 이메일 주소
       to: companyEmail, // 수신자 이메일 주소
       subject: "Verification Code for Company Email", // 이메일 제목
       text: `Your verification code is: ${verificationCode}`, // 이메일 내용
