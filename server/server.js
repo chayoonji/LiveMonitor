@@ -1,12 +1,12 @@
 // 필요한 모듈 가져오기
-const express = require("express");
-const path = require("path");
-const session = require("express-session");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcryptjs");
-const { MongoClient } = require("mongodb");
-const cors = require("cors");
+const express = require('express');
+const path = require('path');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcryptjs');
+const { MongoClient } = require('mongodb');
+const cors = require('cors');
 
 // Express 애플리케이션 생성
 const app = express();
@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 // 세션 설정
 app.use(
   session({
-    secret: "", // 세션 암호화에 사용될 시크릿 키
+    secret: '', // 세션 암호화에 사용될 시크릿 키
     resave: false,
     saveUninitialized: false,
   })
@@ -35,18 +35,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // 정적 파일 제공을 위한 미들웨어 설정
-app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // MongoDB 연결
-const url =
-  "몽고DB 주소";
+const url = '';
 let db;
 
 new MongoClient(url)
   .connect()
   .then((client) => {
-    console.log("DB연결성공");
-    db = client.db("Login");
+    console.log('DB연결성공');
+    db = client.db('Login');
     // 서버 시작
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
@@ -58,11 +57,11 @@ new MongoClient(url)
 
 // 회원가입 설정
 passport.use(
-  "local-signup",
+  'local-signup',
   new LocalStrategy(
     {
-      usernameField: "email", // 이메일을 사용자명으로 설정
-      passwordField: "password", // 패스워드를 패스워드로 설정
+      usernameField: 'email', // 이메일을 사용자명으로 설정
+      passwordField: 'password', // 패스워드를 패스워드로 설정
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
@@ -71,7 +70,7 @@ passport.use(
         const hashedPassword = await bcrypt.hash(password, 10);
         // 사용자 정보 저장
         await db
-          .collection("Member")
+          .collection('Member')
           .insertOne({ email, password: hashedPassword });
         return done(null, { email });
       } catch (err) {
@@ -83,26 +82,26 @@ passport.use(
 
 // 로그인 설정
 passport.use(
-  "local-login",
+  'local-login',
   new LocalStrategy(
     {
-      usernameField: "email",
-      passwordField: "password",
+      usernameField: 'email',
+      passwordField: 'password',
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
       try {
         // 이메일로 사용자 찾기
-        const user = await db.collection("Member").findOne({ email });
+        const user = await db.collection('Member').findOne({ email });
 
         if (!user) {
-          return done(null, false, { message: "Incorrect email." });
+          return done(null, false, { message: 'Incorrect email.' });
         }
 
         // 비밀번호 비교
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-          return done(null, false, { message: "Incorrect password." });
+          return done(null, false, { message: 'Incorrect password.' });
         }
 
         return done(null, user);
@@ -114,13 +113,13 @@ passport.use(
 );
 
 // 회원가입 라우트
-app.post("/register", passport.authenticate("local-signup"), (req, res) => {
-  res.status(201).send("User registered");
+app.post('/register', passport.authenticate('local-signup'), (req, res) => {
+  res.status(201).send('User registered');
 });
 
 // 로그인 라우트
-app.post("/login", passport.authenticate("local-login"), (req, res) => {
-  res.send("Logged in");
+app.post('/login', passport.authenticate('local-login'), (req, res) => {
+  res.send('Logged in');
 });
 
 // 사용자 이메일을 기준으로 사용자 정보를 찾는 과정 → 신원확인 과정
@@ -134,7 +133,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (email, done) => {
   try {
     // 이메일로 사용자 찾기
-    const user = await db.collection("Member").findOne({ email });
+    const user = await db.collection('Member').findOne({ email });
     done(null, user); // 세션에서 사용자를 가져옴
   } catch (err) {
     done(err);
