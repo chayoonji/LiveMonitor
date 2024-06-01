@@ -1,94 +1,158 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React from 'react';
+import {
+  BsFillArchiveFill,
+  BsFillGrid3X3GapFill,
+  BsPeopleFill,
+  BsFillBellFill,
+} from 'react-icons/bs';
+import {
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from 'recharts';
 
-const Register = () => {
-  // 상태 변수 정의: email, password, name, companyEmail, verificationCode
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState(""); // 이름 상태 변수
-  const [companyEmail, setCompanyEmail] = useState(""); // 회사 이메일 상태 변수
-  const [verificationCode, setVerificationCode] = useState(""); // 인증번호 상태 변수
-
-  // 폼 제출 핸들러
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // 폼 기본 동작 방지
-
-    try {
-      // 서버로 사용자 정보를 전송하여 등록 요청
-      const response = await axios.post("http://localhost:3001/register", {
-        name, // 이름 추가
-        email,
-        companyEmail, // 회사 이메일 추가
-        password,
-        verificationCode, // 인증번호 추가
-      });
-      alert("User registered successfully"); // 성공 알림
-    } catch (error) {
-      alert("Error registering user"); // 실패 알림
-    }
-  };
-
-  // 인증번호 전송 핸들러
-  const handleVerificationCodeSend = async () => {
-    try {
-      // 서버로 회사 이메일을 전송하여 인증 코드 요청
-      const response = await axios.post("http://localhost:3001/verify-company-email", {
-        companyEmail,
-      });
-      alert("Verification code sent successfully"); // 성공 알림
-    } catch (error) {
-      alert("Error sending verification code"); // 실패 알림
-    }
-  };
+function Home() {
+  const data = [
+    {
+      name: 'Page A',
+      uv: 4000,
+      pv: 2400,
+      amt: 2400,
+    },
+    {
+      name: 'Page B',
+      uv: 3000,
+      pv: 1398,
+      amt: 2210,
+    },
+    {
+      name: 'Page C',
+      uv: 2000,
+      pv: 9800,
+      amt: 2290,
+    },
+    {
+      name: 'Page D',
+      uv: 2780,
+      pv: 3908,
+      amt: 2000,
+    },
+    {
+      name: 'Page E',
+      uv: 1890,
+      pv: 4800,
+      amt: 2181,
+    },
+    {
+      name: 'Page F',
+      uv: 2390,
+      pv: 3800,
+      amt: 2500,
+    },
+    {
+      name: 'Page G',
+      uv: 3490,
+      pv: 4300,
+      amt: 2100,
+    },
+  ];
 
   return (
-    <div className="login-wrapper">
-      <h2>Register</h2>
-      {/* 회원가입 폼 */}
-      <form onSubmit={handleSubmit} id="login-form">
-        {/* 이름 입력 필드 */}
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)} // 입력 값 변경 핸들러
-        />
-        {/* 이메일 입력 필드 */}
-        <input
-          type="text"
-          name="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} // 입력 값 변경 핸들러
-        />
-        {/* 회사 이메일 입력 필드 */}
-        <div className="company-email-wrapper">
-          <input
-            type="text"
-            name="companyEmail"
-            placeholder="Company Email"
-            value={companyEmail}
-            onChange={(e) => setCompanyEmail(e.target.value)} // 입력 값 변경 핸들러
-          />
-          {/* 인증 버튼 */}
-          <button type="button" onClick={handleVerificationCodeSend}>Send Verification Code</button>
-        </div>
-        {/* 인증번호 입력란 */}
-        <input
-          type="text"
-          name="verificationCode"
-          placeholder="Verification Code"
-          value={verificationCode}
-          onChange={(e) => setVerificationCode(e.target.value)} // 입력 값 변경 핸들러
-        />
-        {/* 확인 버튼 */}
-        <div className="button-container">
-          <input type="submit" value="Register" />
-        </div>
-      </form>
-    </div>
-  );
-};
+    <main className="main-container">
+      <div className="main-title">
+        <h3>서버 모니터링</h3>
+      </div>
 
-export default Register;
+      <div className="main-cards">
+        <div className="card">
+          <div className="card-inner">
+            <h3>가이드</h3>
+            <BsFillArchiveFill className="card_icon" />
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-inner">
+            <h3>모니터링중인 서버</h3>
+            <BsFillGrid3X3GapFill className="card_icon" />
+          </div>
+          <h1>2</h1>
+        </div>
+        <div className="card">
+          <div className="card-inner">
+            <h3>이용자 수</h3>
+            <BsPeopleFill className="card_icon" />
+          </div>
+          <h1>33</h1>
+        </div>
+        <div className="card">
+          <div className="card-inner">
+            <h3>취약점 알림</h3>
+            <BsFillBellFill className="card_icon" />
+          </div>
+          <h1>42</h1>
+        </div>
+      </div>
+
+      <div className="charts">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            width={500}
+            height={300}
+            data={data}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="pv" fill="#8884d8" />
+            <Bar dataKey="uv" fill="#82ca9d" />
+          </BarChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            width={500}
+            height={300}
+            data={data}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="pv"
+              stroke="#8884d8"
+              activeDot={{ r: 8 }}
+            />
+            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </main>
+  );
+}
+
+export default Home;
