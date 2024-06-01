@@ -1,5 +1,8 @@
+// dotenv 라이브러리를 사용하여 환경 변수 로드
+require("dotenv").config();
+
+// Express 애플리케이션 및 필요한 모듈 가져오기
 const express = require("express");
-const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -7,37 +10,33 @@ const bcrypt = require("bcryptjs");
 const { MongoClient } = require("mongodb");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
-const crypto = require("crypto");
 
+// Express 애플리케이션 생성
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001; // 포트 설정
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// 미들웨어 설정
+app.use(cors()); // CORS 허용
+app.use(express.json()); // JSON 파싱
+app.use(express.urlencoded({ extended: false })); // URL 인코딩 사용
 
+// 세션 설정
 app.use(
   session({
-    secret: '', // 세션 암호화에 사용될 시크릿 키
+    secret: process.env.SESSION_SECRET, // 세션 암호화에 사용될 시크릿 키
     resave: false,
     saveUninitialized: false,
   })
 );
 
-app.use(passport.initialize());
-app.use(passport.session());
+// MongoDB 연결
+const url = process.env.DB_URL; // .env 파일에서 DB_URL 가져옴
+let db; // 데이터베이스 클라이언트
 
-app.use(express.static(path.join(__dirname, "../client/dist")));
-
-const url =
-  "";
-let db;
-
-new MongoClient(url)
-  .connect()
+MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((client) => {
     console.log("DB connected");
-    db = client.db("Login");
+    db = client.db("Login"); // 데이터베이스 선택
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
@@ -46,6 +45,7 @@ new MongoClient(url)
     console.log(err);
   });
 
+// Passport 설정
 passport.use(
   "local-signup",
   new LocalStrategy(
@@ -101,14 +101,17 @@ passport.use(
   )
 );
 
+// 회원가입 라우트
 app.post("/register", passport.authenticate("local-signup"), (req, res) => {
   res.status(201).send("User registered");
 });
 
+// 로그인 라우트
 app.post("/login", passport.authenticate("local-login"), (req, res) => {
   res.send("Logged in");
 });
 
+// Passport 직렬화 및 역직렬화
 passport.serializeUser((user, done) => {
   done(null, user.email);
 });
@@ -122,10 +125,22 @@ passport.deserializeUser(async (email, done) => {
   }
 });
 
+// 차트 데이터 가져오는 API 엔드포인트
 app.get("/api/data", async (req, res) => {
   try {
     const data = await db.collection("ChartData").find().toArray();
-    res.json(data);
+    const transformedData = data.map((item, index) => {
+      const { _id, ...rest } = item;
+      const dataEntries = Object.entries(rest).map(([key, value]) => ({
+        name: key,
+        value: Number(value),
+      }));
+      return {
+        id: index + 1,
+        data: dataEntries,
+      };
+    });
+    res.json(transformedData);
   } catch (err) {
     res.status(500).send(err);
   }
@@ -133,10 +148,10 @@ app.get("/api/data", async (req, res) => {
 
 // 이메일 전송을 위한 transporter 생성
 const transporter = nodemailer.createTransport({
-  service: "Gmail", // Gmail을 사용하려면 해당 계정의 아이디와 비밀번호를 입력해야 합니다.
+  service: "Gmail",
   auth: {
-    user: "", // 발신자 이메일 주소
-    pass: "", // 발신자 이메일 비밀번호
+    user: process.env.NODE_MAILER_ID, // 발신자 이메일 주소
+    pass: process.env.NODE_MAILER_PASSWORD, // 발신자 이메일 비밀번호
   },
 });
 
@@ -161,7 +176,7 @@ app.post("/verify-company-email", async (req, res) => {
 
     // 이메일 전송 옵션 설정
     const mailOptions = {
-      from: "", // 발신자 이메일 주소
+      from: "cofl3890@gmail.com", // 발신자 이메일 주소
       to: companyEmail, // 수신자 이메일 주소
       subject: "Verification Code for Company Email", // 이메일 제목
       text: `Your verification code is: ${verificationCode}`, // 이메일 내용
@@ -186,6 +201,10 @@ app.post("/verify-code", async (req, res) => {
       .collection("TempData")
       .findOne({ email: companyEmail, verificationCode });
     if (tempData) {
+      // 인증 코드가 일치하면 TempData에서 해당 데이터 삭제
+      await db
+        .collection("TempData")
+        .deleteOne({ email: companyEmail, verificationCode });
       res.json({ success: true });
     } else {
       res.json({ success: false });
