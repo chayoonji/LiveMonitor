@@ -118,32 +118,20 @@ function Home() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-
-        <div style={{ textAlign: "center" }}>
-          <h4>실시간 모니터링 취약점 ({currentDate})</h4>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-              width={500}
-              height={300}
-              data={data2}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="value" stroke="#82ca9d" />
-            </LineChart>
-          </ResponsiveContainer>
+        {/* 인증번호 입력란 */}
+        <input
+          type="text"
+          name="verificationCode"
+          placeholder="Verification Code"
+          value={verificationCode}
+          onChange={(e) => setVerificationCode(e.target.value)} // 입력 값 변경 핸들러
+        />
+        {/* 확인 버튼 */}
+        <div className="button-container">
+          <input type="submit" value="Register" />
         </div>
-      </div>
-    </main>
+      </form>
+    </div>
   );
 }
 
