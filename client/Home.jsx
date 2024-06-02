@@ -1,69 +1,62 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
   BsPeopleFill,
   BsFillBellFill,
-} from 'react-icons/bs';
+} from "react-icons/bs";
 import {
   BarChart,
   Bar,
-  Cell,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
-  LineChart,
-  Line,
-} from 'recharts';
+} from "recharts";
 
 function Home() {
-  const data = [
-    {
-      name: 'Page A',
-      uv: 4000,
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: 'Page B',
-      uv: 3000,
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: 'Page C',
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: 'Page D',
-      uv: 2780,
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: 'Page E',
-      uv: 1890,
-      pv: 4800,
-      amt: 2181,
-    },
-    {
-      name: 'Page F',
-      uv: 2390,
-      pv: 3800,
-      amt: 2500,
-    },
-    {
-      name: 'Page G',
-      uv: 3490,
-      pv: 4300,
-      amt: 2100,
-    },
-  ];
+  const [data1, setData1] = useState([]);
+  const [data2, setData2] = useState([]);
+  const [currentDate, setCurrentDate] = useState(
+    new Date().toLocaleDateString()
+  );
+
+  useEffect(() => {
+    // 데이터를 가져오고 업데이트하는 함수
+    const fetchDataAndUpdate = async () => {
+      try {
+        const response = await axios.get("http://localhost:3001/api/data");
+        const chartData = response.data;
+        if (chartData.length >= 2) {
+          setData1(chartData[0].data);
+          setData2(chartData[1].data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    // 컴포넌트가 마운트될 때 데이터를 가져오고,
+    // 매일 00:00:00에 데이터를 다시 가져오도록 설정
+    fetchDataAndUpdate();
+    const interval = setInterval(fetchDataAndUpdate, 1000 * 60 * 60 * 24); // 24시간(1일)
+
+    // 언마운트될 때 interval 정리(clean-up)
+    return () => clearInterval(interval);
+  }, []);
+
+  // 매 분마다 현재 날짜를 업데이트
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDate(new Date().toLocaleDateString());
+    }, 1000 * 60); // 1분(60초)
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <main className="main-container">
@@ -77,7 +70,6 @@ function Home() {
             <h3>가이드</h3>
             <BsFillArchiveFill className="card_icon" />
           </div>
-          
         </div>
         <div className="card">
           <div className="card-inner">
@@ -85,7 +77,6 @@ function Home() {
             <BsFillGrid3X3GapFill className="card_icon" />
           </div>
           <h1>2</h1>
-         
         </div>
         <div className="card">
           <div className="card-inner">
@@ -104,54 +95,53 @@ function Home() {
       </div>
 
       <div className="charts">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            width={500}
-            height={300}
-            data={data}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="pv" fill="#8884d8" />
-            <Bar dataKey="uv" fill="#82ca9d" />
-          </BarChart>
-        </ResponsiveContainer>
+        <div style={{ textAlign: "center" }}>
+          <h4>주통기반 취약점</h4>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              width={500}
+              height={300}
+              data={data1}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            width={500}
-            height={300}
-            data={data}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="pv"
-              stroke="#8884d8"
-              activeDot={{ r: 8 }}
-            />
-            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-          </LineChart>
-        </ResponsiveContainer>
+        <div style={{ textAlign: "center", marginTop: "30px" }}>
+          <h4>기타 데이터</h4>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart
+              width={500}
+              height={300}
+              data={data2}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="value" stroke="#82ca9d" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </main>
   );
