@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 function guide() {
-  return (
-    <div>guide</div>
-  )
+  return <div>guide</div>;
 }
 
-export default guide
+export default guide;

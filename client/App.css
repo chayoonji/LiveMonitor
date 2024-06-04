@@ -30,11 +30,11 @@ body {
 
 .grid-container {
   display: grid;
-  grid-template-columns: 260px 1fr 1fr 1fr;
+  grid-template-columns: 260px 1fr;
   grid-template-rows: 0.2fr 3fr;
   grid-template-areas:
-    'sidebar header header header'
-    'sidebar main main main';
+    'header header'
+    'sidebar main';
   height: 100vh;
 }
 
@@ -45,13 +45,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30px 0 30px;
+  padding: 0 30px;
   box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
 }
 
 .menu-icon {
-  display: none;
+  display: inline;
+  cursor: pointer;
 }
+
 /* End Header  */
 
 /* Sidebar  */
@@ -60,8 +62,15 @@ body {
   height: 100%;
   background-color: #263043;
   overflow-y: auto;
-  transition: all 0.5s;
-  -webkit-transition: all 0.5s;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-open {
+  transform: translateX(0);
+}
+
+.sidebar-close {
+  transform: translateX(-100%);
 }
 
 .sidebar-title {
@@ -88,7 +97,7 @@ body {
 }
 
 .sidebar-list-item {
-  padding: 20px 20px 20px 20px;
+  padding: 20px;
   font-size: 18px;
 }
 
@@ -97,19 +106,23 @@ body {
   cursor: pointer;
 }
 
-.sidebar-list-item > a {
+.sidebar-list-item > a,
+.sidebar-list-item > button {
   text-decoration: none;
   color: #9e9ea4;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-list-item > button {
+  cursor: pointer;
 }
 
 .sidebar-responsive {
   display: inline !important;
   position: absolute;
-  /*
-    we want the z-index of the sidebar higher so that
-    the charts are not showing over the sidebar 
-    on small screens
-  */
   z-index: 12 !important;
 }
 
@@ -119,7 +132,7 @@ body {
 .main-container {
   grid-area: main;
   overflow-y: auto;
-  padding: 20px 20px;
+  padding: 20px;
   color: rgba(255, 255, 255, 0.95);
 }
 
@@ -220,7 +233,7 @@ body {
 /* Extra Small <= 576px */
 
 @media screen and (max-width: 576px) {
-  .hedaer-left {
+  .header-left {
     display: none;
   }
 }

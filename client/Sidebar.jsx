@@ -22,10 +22,22 @@ function Sidebar({ openSidebarToggle, isAuthenticated, handleLogout }) {
     navigate('/login');
   };
 
+  const handleReportsClick = (e) => {
+    e.preventDefault();
+    navigate('/login');
+  };
+
+  const handleRegisterClick = (e) => {
+    e.preventDefault();
+    navigate('/register');
+  };
+
   return (
     <aside
       id="sidebar"
-      className={openSidebarToggle ? 'sidebar-responsive' : ''}
+      className={
+        openSidebarToggle ? 'sidebar sidebar-open' : 'sidebar sidebar-close'
+      }
     >
       <div className="sidebar-title">
         <div className="sidebar-brand">
@@ -36,20 +48,7 @@ function Sidebar({ openSidebarToggle, isAuthenticated, handleLogout }) {
       </div>
 
       <ul className="sidebar-list">
-        {!isAuthenticated ? (
-          <>
-            <li className="sidebar-list-item">
-              <Link to="/login">
-                <BsFillGearFill className="icon" /> Login
-              </Link>
-            </li>
-            <li className="sidebar-list-item">
-              <Link to="/register">
-                <BsFillGearFill className="icon" /> 회원가입
-              </Link>
-            </li>
-          </>
-        ) : (
+        {isAuthenticated ? (
           <>
             <li className="sidebar-list-item">
               <Link to="/guide">
@@ -62,19 +61,9 @@ function Sidebar({ openSidebarToggle, isAuthenticated, handleLogout }) {
               </Link>
             </li>
             <li className="sidebar-list-item">
-              <Link to="/team">
-                <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
-              </Link>
-            </li>
-            <li className="sidebar-list-item">
               <Link to="/members">
                 <BsPeopleFill className="icon" /> 회원 관리
               </Link>
-            </li>
-            <li className="sidebar-list-item">
-              <a href="https://github.com/chayoonji/reactDashB">
-                <BsListCheck className="icon" /> Github
-              </a>
             </li>
             <li className="sidebar-list-item">
               <Link to="/reports">
@@ -82,12 +71,35 @@ function Sidebar({ openSidebarToggle, isAuthenticated, handleLogout }) {
               </Link>
             </li>
             <li className="sidebar-list-item">
-              <Link to="/logout" onClick={handleLogoutClick}>
+              <Link to="/login" onClick={handleLogoutClick}>
                 <BsFillDoorOpenFill className="icon" /> Logout
               </Link>
             </li>
           </>
+        ) : (
+          <>
+            <li className="sidebar-list-item">
+              <Link to="/login" onClick={handleReportsClick}>
+                <BsFillGearFill className="icon" /> Login
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/register" onClick={handleRegisterClick}>
+                <BsFillGearFill className="icon" /> 회원가입
+              </Link>
+            </li>
+          </>
         )}
+        <li className="sidebar-list-item">
+          <Link to="/team">
+            <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
+          </Link>
+        </li>
+        <li className="sidebar-list-item">
+          <a href="https://github.com/chayoonji/reactDashB">
+            <BsListCheck className="icon" /> Github
+          </a>
+        </li>
       </ul>
     </aside>
   );
