@@ -79,8 +79,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </a>
         </li>
         <li className="sidebar-list-item">
-          <Link to="/reports">
-            <BsMenuButtonWideFill className="icon" /> Reports
+          <Link to="/reports1">
+            <BsMenuButtonWideFill className="icon" /> CPU Reports
+          </Link>
+        </li>
+        
+        <li className="sidebar-list-item">
+          <Link to="/reports2">
+            <BsMenuButtonWideFill className="icon" /> Memory Reports
           </Link>
         </li>
       </ul>

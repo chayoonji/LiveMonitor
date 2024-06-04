@@ -7,6 +7,8 @@ import Home from './Home';
 import Guide from './guide';
 import Login from './login'; // 수정된 부분
 import Register from './Register'; // 수정된 부분
+import Reports1 from './reports1'; // 수정된 부분
+import Reports2 from './reports2';
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = React.useState(false);
@@ -24,6 +26,8 @@ function App() {
           <Route path="/guide" element={<Guide />} />
           <Route path="/login" element={<Login />} /> {/* 수정된 부분 */}
           <Route path="/register" element={<Register />} /> {/* 수정된 부분 */}
+          <Route path="/reports1" element={<Reports1 />} /> {/* 수정된 부분 */}
+          <Route path="/reports2" element={<Reports2 />} /> {/* 수정된 부분 */}
           <Route path="/" element={<Home />} />
         </Routes>
       </div>

@@ -10,6 +10,7 @@ const bcrypt = require("bcryptjs");
 const { MongoClient } = require("mongodb");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
+const jsonData = require("./data4.json"); // data.json 파일 가져오기
 
 // Express 애플리케이션 생성
 const app = express();
@@ -34,9 +35,11 @@ const url = process.env.DB_URL; // .env 파일에서 DB_URL 가져옴
 let db; // 데이터베이스 클라이언트
 
 MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then((client) => {
+  .then(async (client) => {
+    // 콜백 함수를 async로 변경
     console.log("DB connected");
     db = client.db("Login"); // 데이터베이스 선택
+
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
@@ -125,7 +128,7 @@ passport.deserializeUser(async (email, done) => {
   }
 });
 
-// 차트 데이터 가져오는 API 엔드포인트
+// 차트 데이터 (주통기반취약점) 가져오는 API 엔드포인트
 app.get("/api/data", async (req, res) => {
   try {
     const data = await db.collection("ChartData").find().toArray();
@@ -141,6 +144,58 @@ app.get("/api/data", async (req, res) => {
       };
     });
     res.json(transformedData);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// MongoDB CpuData(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
+app.get("/api/cpu-data", async (req, res) => {
+  try {
+    const cpuData = await db
+      .collection("CpuData")
+      .find({ hour: { $gte: 1, $lte: 24 } })
+      .toArray();
+    res.json(cpuData);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// MongoDB CpuTime(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
+app.get("/api/cpu-time", async (req, res) => {
+  try {
+    const cpuData = await db
+      .collection("CpuTime")
+      .find({ hour: { $gte: 1, $lte: 24 } })
+      .toArray();
+    res.json(cpuData);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// MongoDB V-Memory (가상메모리) 내용 가져오는 API 엔드포인트
+app.get("/api/v-memory", async (req, res) => {
+  try {
+    const cpuData = await db
+      .collection("V-Memory")
+      .find({ hour: { $gte: 1, $lte: 24 } })
+      .toArray();
+    res.json(cpuData);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+// MongoDB S-Memory (스왑메모리) 내용 가져오는 API 엔드포인트
+app.get("/api/S-memory", async (req, res) => {
+  try {
+    const cpuData = await db
+      .collection("S-Memory")
+      .find({ hour: { $gte: 1, $lte: 24 } })
+      .toArray();
+    res.json(cpuData);
   } catch (err) {
     res.status(500).send(err);
   }
