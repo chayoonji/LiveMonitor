@@ -7,7 +7,6 @@ import Home from './Home';
 import Team from './team';
 import Guide from './guide';
 import LoginComponent from './LoginComponent'; // 새 로그인 컴포넌트
-import Register from './Register';
 import Login from './login'; // 수정된 부분
 import Register from './Register'; // 수정된 부분
 import Reports1 from './reports1'; // 수정된 부분
