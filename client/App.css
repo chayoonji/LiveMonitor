@@ -3,7 +3,56 @@ body {
   padding: 0;
   background-color: #1d2634;
   color: #9e9ea4;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Guide Page Styles */
+.guide-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.guide-header h1 {
+  color: #ffffff;
+  font-size: 36px;
+}
+
+.guide-content {
+  background-color: #263043;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.guide-content p {
+  color: #9e9ea4;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.guide-content ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.guide-content ul li {
+  background-color: #1d2634;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 18px;
+}
+
+.guide-content ul li strong {
+  color: #ffffff;
+}
+
+.guide-content a {
+  color: #6a24fe;
+  text-decoration: none;
+}
+
+.guide-content a:hover {
+  text-decoration: underline;
 }
 
 .icon {
@@ -33,8 +82,8 @@ body {
   grid-template-columns: 260px 1fr 1fr 1fr;
   grid-template-rows: 0.2fr 3fr;
   grid-template-areas:
-    'sidebar header header header'
-    'sidebar main main main';
+    "sidebar header header header"
+    "sidebar main main main";
   height: 100vh;
 }
 
@@ -105,11 +154,6 @@ body {
 .sidebar-responsive {
   display: inline !important;
   position: absolute;
-  /*
-    we want the z-index of the sidebar higher so that
-    the charts are not showing over the sidebar 
-    on small screens
-  */
   z-index: 12 !important;
 }
 
@@ -186,8 +230,8 @@ body {
     grid-template-columns: 1fr;
     grid-template-rows: 0.2fr 3fr;
     grid-template-areas:
-      'header'
-      'main';
+      "header"
+      "main";
   }
 
   #sidebar {
@@ -202,6 +246,7 @@ body {
     display: inline;
   }
 }
+
 /* Small <= 768px */
 
 @media screen and (max-width: 768px) {
@@ -225,55 +270,80 @@ body {
   }
 }
 
-/* login */
+/* 로그인 */
 
 .login-wrapper {
   width: 400px;
-  height: 350px;
+  height: auto;
   padding: 40px;
   box-sizing: border-box;
+  margin-left: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-wrapper > h2 {
-  font-size: 24px;
+  font-size: 28px; /* 글자 크기 키움 */
   color: #6a24fe;
-  margin-bottom: 20px;
-}
-
-#login-form > input {
-  width: 100%;
-  height: 48px;
-  padding: 0 10px;
-  box-sizing: border-box;
-  margin-bottom: 16px;
-  border-radius: 6px;
-  background-color: #f8f8f8;
-}
-
-#login-form > input::placeholder {
-  color: #d2d2d2;
+  margin-bottom: 30px; /* 여백 확대 */
 }
 
 #login-form {
+  width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: flex-start; /* Name 입력란 기준 정렬 */
+}
+
+#login-form > input,
+.verification-container input {
+  width: calc(100% - 30px); /* 너비 조정 */
+  height: 56px; /* 입력란 크기 키움 */
+  padding: 0 15px; /* 패딩 확대 */
+  box-sizing: border-box;
+  margin-bottom: 20px; /* 여백 확대 */
+  border-radius: 6px;
+  background-color: #f8f8f8;
+  font-size: 18px; /* 글자 크기 키움 */
+}
+
+#login-form > input::placeholder,
+.verification-container input::placeholder {
+  color: #d2d2d2;
+}
+
+.verification-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.verification-container input {
+  flex: 1;
+  margin-right: 10px;
 }
 
 .button-container {
+  width: 100%;
   display: flex;
   justify-content: space-between;
 }
 
-.button-container > input[type='submit'] {
+.button-container > input[type="submit"] {
   width: 48%;
+  height: 50px; /* 버튼 높이 확대 */
   color: #000000;
-  font-size: 16px;
+  font-size: 18px; /* 글자 크기 키움 */
   background-color: #ffffff;
   margin-top: 15px;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.button-container > input[type='submit'][value='SignUp'] {
+.button-container > input[type="submit"][value="SignUp"] {
   background-color: #828282;
 }

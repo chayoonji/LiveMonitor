@@ -10,7 +10,7 @@ const bcrypt = require("bcryptjs");
 const { MongoClient } = require("mongodb");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
-const jsonData = require("./data4.json"); // data.json 파일 가져오기
+const jsonData = require("./data3.json"); // data.json 파일 가져오기
 
 // Express 애플리케이션 생성
 const app = express();

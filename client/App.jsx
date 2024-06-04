@@ -4,6 +4,7 @@ import './App.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Home from './Home';
+import Team from './team';
 import Guide from './guide';
 import Login from './login'; // 수정된 부분
 import Register from './Register'; // 수정된 부분
@@ -28,6 +29,7 @@ function App() {
           <Route path="/register" element={<Register />} /> {/* 수정된 부분 */}
           <Route path="/reports1" element={<Reports1 />} /> {/* 수정된 부분 */}
           <Route path="/reports2" element={<Reports2 />} /> {/* 수정된 부분 */}
+          <Route path="/team" element={<Team />} /> {/* 수정된 부분 */}
           <Route path="/" element={<Home />} />
         </Routes>
       </div>
