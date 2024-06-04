@@ -5,8 +5,15 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import Home from './Home';
 import Guide from './guide';
+<<<<<<< HEAD
 import LoginComponent from './LoginComponent'; // 새 로그인 컴포넌트
 import Register from './Register';
+=======
+import Login from './login'; // 수정된 부분
+import Register from './Register'; // 수정된 부분
+import Reports1 from './reports1'; // 수정된 부분
+import Reports2 from './reports2';
+>>>>>>> 1b3b121a64287ddaead785b5e842800d6cb89ebc
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -45,11 +52,18 @@ function App() {
         />
         <Routes>
           <Route path="/guide" element={<Guide />} />
+<<<<<<< HEAD
           <Route
             path="/login"
             element={<LoginComponent setIsAuthenticated={handleLogin} />}
           />
           <Route path="/register" element={<Register />} />
+=======
+          <Route path="/login" element={<Login />} /> {/* 수정된 부분 */}
+          <Route path="/register" element={<Register />} /> {/* 수정된 부분 */}
+          <Route path="/reports1" element={<Reports1 />} /> {/* 수정된 부분 */}
+          <Route path="/reports2" element={<Reports2 />} /> {/* 수정된 부분 */}
+>>>>>>> 1b3b121a64287ddaead785b5e842800d6cb89ebc
           <Route path="/" element={<Home />} />
         </Routes>
       </div>
