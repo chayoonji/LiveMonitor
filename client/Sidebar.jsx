@@ -1,6 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   BsCart3,
@@ -11,35 +10,86 @@ import {
   BsListCheck,
   BsMenuButtonWideFill,
   BsFillGearFill,
-} from "react-icons/bs";
+  BsFillDoorOpenFill,
+} from 'react-icons/bs';
 
-function Sidebar({ openSidebarToggle, OpenSidebar }) {
+function Sidebar({ openSidebarToggle, isAuthenticated, handleLogout }) {
   const navigate = useNavigate();
 
-  const handleReportsClick = (e) => {
+  const handleLogoutClick = (e) => {
     e.preventDefault();
-    navigate("/login");
-  };
-
-  const handleRegisterClick = (e) => {
-    e.preventDefault();
-    navigate("/register");
+    handleLogout();
+    navigate('/login');
   };
 
   return (
     <aside
       id="sidebar"
-      className={openSidebarToggle ? "sidebar-responsive" : ""}
+      className={openSidebarToggle ? 'sidebar-responsive' : ''}
     >
       <div className="sidebar-title">
         <div className="sidebar-brand">
-          <Link to="/" style={{ textDecoration: "none", color: "#9e9ea4" }}>
+          <Link to="/" style={{ textDecoration: 'none', color: '#9e9ea4' }}>
             <BsCart3 className="icon_header" /> 강김홍차
           </Link>
         </div>
       </div>
 
       <ul className="sidebar-list">
+<<<<<<< HEAD
+        {!isAuthenticated ? (
+          <>
+            <li className="sidebar-list-item">
+              <Link to="/login">
+                <BsFillGearFill className="icon" /> Login
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/register">
+                <BsFillGearFill className="icon" /> 회원가입
+              </Link>
+            </li>
+          </>
+        ) : (
+          <>
+            <li className="sidebar-list-item">
+              <Link to="/guide">
+                <BsGrid1X2Fill className="icon" /> 가이드
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/program">
+                <BsFillArchiveFill className="icon" /> 프로그램
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/team">
+                <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/members">
+                <BsPeopleFill className="icon" /> 회원 관리
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <a href="https://github.com/chayoonji/reactDashB">
+                <BsListCheck className="icon" /> Github
+              </a>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/reports">
+                <BsMenuButtonWideFill className="icon" /> Reports
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/logout" onClick={handleLogoutClick}>
+                <BsFillDoorOpenFill className="icon" /> Logout
+              </Link>
+            </li>
+          </>
+        )}
+=======
         <li className="sidebar-list-item">
           <Link to="/guide">
             <BsGrid1X2Fill className="icon" /> 가이드
@@ -89,6 +139,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <BsMenuButtonWideFill className="icon" /> Memory Reports
           </Link>
         </li>
+>>>>>>> 1b3b121a64287ddaead785b5e842800d6cb89ebc
       </ul>
     </aside>
   );
