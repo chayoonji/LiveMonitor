@@ -1,64 +1,59 @@
-// dotenv 라이브러리를 사용하여 환경 변수 로드
-require("dotenv").config();
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcryptjs');
+const { MongoClient } = require('mongodb');
+const cors = require('cors');
+const nodemailer = require('nodemailer');
 
-// Express 애플리케이션 및 필요한 모듈 가져오기
-const express = require("express");
-const session = require("express-session");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcryptjs");
-const { MongoClient } = require("mongodb");
-const cors = require("cors");
-const nodemailer = require("nodemailer");
-
-// Express 애플리케이션 생성
 const app = express();
-const PORT = process.env.PORT || 3001; // 포트 설정
+const PORT = process.env.PORT || 3001;
 
-// 미들웨어 설정
-app.use(cors()); // CORS 허용
-app.use(express.json()); // JSON 파싱
-app.use(express.urlencoded({ extended: false })); // URL 인코딩 사용
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-// 세션 설정
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // 세션 암호화에 사용될 시크릿 키
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })
 );
 
-// MongoDB 연결
-const url = process.env.DB_URL; // .env 파일에서 DB_URL 가져옴
-let db; // 데이터베이스 클라이언트
+const url = process.env.DB_URL;
+let db;
 
-MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+MongoClient.connect(url, {
+  tls: true,
+  tlsInsecure: true, // 추가: TLS 검사를 비활성화합니다.
+})
   .then((client) => {
-    console.log("DB connected");
-    db = client.db("Login"); // 데이터베이스 선택
+    console.log('DB connected');
+    db = client.db('Login'); // 데이터베이스 선택
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.error('DB connection error:', err);
   });
 
-// Passport 설정
 passport.use(
-  "local-signup",
+  'local-signup',
   new LocalStrategy(
     {
-      usernameField: "email",
-      passwordField: "password",
+      usernameField: 'email',
+      passwordField: 'password',
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
       try {
         const { name, companyEmail } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        await db.collection("Member").insertOne({
+        await db.collection('Member').insertOne({
           name,
           email,
           companyEmail,
@@ -73,62 +68,65 @@ passport.use(
 );
 
 passport.use(
-  "local-login",
+  'local-login',
   new LocalStrategy(
     {
-      usernameField: "email",
-      passwordField: "password",
+      usernameField: 'email',
+      passwordField: 'password',
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
       try {
-        const user = await db.collection("Member").findOne({ email });
+        console.log('Finding user by email:', email);
+        const user = await db.collection('Member').findOne({ email });
 
         if (!user) {
-          return done(null, false, { message: "Incorrect email." });
+          console.log('User not found');
+          return done(null, false, { message: 'Incorrect email.' });
         }
+
+        console.log('User found:', user);
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-          return done(null, false, { message: "Incorrect password." });
+          console.log('Password does not match');
+          return done(null, false, { message: 'Incorrect password.' });
         }
 
+        console.log('Password matches');
         return done(null, user);
       } catch (err) {
+        console.error('Error during login process:', err);
         return done(err);
       }
     }
   )
 );
 
-// 회원가입 라우트
-app.post("/register", passport.authenticate("local-signup"), (req, res) => {
-  res.status(201).send("User registered");
+app.post('/register', passport.authenticate('local-signup'), (req, res) => {
+  res.status(201).send('User registered');
 });
 
-// 로그인 라우트
-app.post("/login", passport.authenticate("local-login"), (req, res) => {
-  res.send("Logged in");
+app.post('/login', passport.authenticate('local-login'), (req, res) => {
+  res.send('Logged in');
 });
 
-// Passport 직렬화 및 역직렬화
 passport.serializeUser((user, done) => {
   done(null, user.email);
 });
 
 passport.deserializeUser(async (email, done) => {
   try {
-    const user = await db.collection("Member").findOne({ email });
+    const user = await db.collection('Member').findOne({ email });
     done(null, user);
   } catch (err) {
     done(err);
   }
 });
 
-// 차트 데이터 가져오는 API 엔드포인트
-app.get("/api/data", async (req, res) => {
+app.get('/api/data', async (req, res) => {
   try {
-    const data = await db.collection("ChartData").find().toArray();
+    const data = await db.collection('ChartData').find().toArray();
     const transformedData = data.map((item, index) => {
       const { _id, ...rest } = item;
       const dataEntries = Object.entries(rest).map(([key, value]) => ({
@@ -146,71 +144,77 @@ app.get("/api/data", async (req, res) => {
   }
 });
 
-// 이메일 전송을 위한 transporter 생성
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  service: 'Gmail',
   auth: {
-    user: process.env.NODE_MAILER_ID, // 발신자 이메일 주소
-    pass: process.env.NODE_MAILER_PASSWORD, // 발신자 이메일 비밀번호
+    user: process.env.NODE_MAILER_ID,
+    pass: process.env.NODE_MAILER_PASSWORD,
   },
 });
 
-// 인증번호 생성 함수
 function generateRandomNumber() {
-  return Math.floor(100000 + Math.random() * 900000); // 6자리의 랜덤 숫자 생성
+  return Math.floor(100000 + Math.random() * 900000);
 }
 
-// 회사 이메일 인증 요청 핸들러
-app.post("/verify-company-email", async (req, res) => {
+app.post('/verify-company-email', async (req, res) => {
   const { companyEmail } = req.body;
 
   try {
-    // 랜덤한 6자리 숫자 생성
     const verificationCode = generateRandomNumber();
 
-    // MongoDB에 회사 이메일과 인증번호 저장
-    await db.collection("TempData").insertOne({
+    await db.collection('TempData').insertOne({
       email: companyEmail,
       verificationCode: verificationCode.toString(),
     });
 
-    // 이메일 전송 옵션 설정
     const mailOptions = {
-      from: "cofl3890@gmail.com", // 발신자 이메일 주소
-      to: companyEmail, // 수신자 이메일 주소
-      subject: "Verification Code for Company Email", // 이메일 제목
-      text: `Your verification code is: ${verificationCode}`, // 이메일 내용
+      from: 'cofl3890@gmail.com',
+      to: companyEmail,
+      subject: 'Verification Code for Company Email',
+      text: `Your verification code is: ${verificationCode}`,
     };
 
-    // 이메일 전송
     await transporter.sendMail(mailOptions);
 
-    res.status(200).send("Verification code sent successfully");
+    res.status(200).send('Verification code sent successfully');
   } catch (error) {
-    console.error("Error sending verification code:", error);
-    res.status(500).send("Error sending verification code");
+    console.error('Error sending verification code:', error);
+    res.status(500).send('Error sending verification code');
   }
 });
 
-// 인증 코드 검증 핸들러
-app.post("/verify-code", async (req, res) => {
+app.post('/verify-code', async (req, res) => {
   const { companyEmail, verificationCode } = req.body;
 
   try {
     const tempData = await db
-      .collection("TempData")
+      .collection('TempData')
       .findOne({ email: companyEmail, verificationCode });
     if (tempData) {
-      // 인증 코드가 일치하면 TempData에서 해당 데이터 삭제
       await db
-        .collection("TempData")
+        .collection('TempData')
         .deleteOne({ email: companyEmail, verificationCode });
       res.json({ success: true });
     } else {
       res.json({ success: false });
     }
   } catch (error) {
-    console.error("Error verifying code:", error);
-    res.status(500).send("Error verifying code");
+    console.error('Error verifying code:', error);
+    res.status(500).send('Error verifying code');
   }
+});
+
+// 로그인 상태 확인 API
+app.get('/auth/status', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({ isAuthenticated: true, user: req.user });
+  } else {
+    res.json({ isAuthenticated: false });
+  }
+});
+
+// Logout endpoint
+app.post('/logout', (req, res) => {
+  req.logout();
+  res.send('Logged out');
 });
