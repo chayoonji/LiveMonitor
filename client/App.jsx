@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from 'react-router-dom';
+import axios from 'axios';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Home from './Home';
+import Team from './team';
 import Guide from './Guide';
-import Login from './Login';
+import LoginComponent from './LoginComponent'; // 수정된 부분
 import Register from './Register';
-import axios from 'axios';
+import Reports1 from './reports1';
+import Reports2 from './reports2';
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(true);
@@ -76,32 +74,21 @@ function App() {
         <Sidebar
           openSidebarToggle={openSidebarToggle}
           isAuthenticated={isAuthenticated}
-          user={user}
           handleLogout={handleLogout}
         />
-        <div className="main-container">
-          <Routes>
-            <Route
-              path="/login"
-              element={<Login setIsAuthenticated={handleLogin} />}
-            />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/guide"
-              element={isAuthenticated ? <Guide /> : <Navigate to="/login" />}
-            />
-            <Route
-              path="/"
-              element={
-                isAuthenticated ? (
-                  <Home user={user} />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/guide" element={<Guide />} />
+          <Route
+            path="/login"
+            element={<LoginComponent setIsAuthenticated={setIsAuthenticated} />}
+          />{' '}
+          {/* 수정된 부분 */}
+          <Route path="/register" element={<Register />} />
+          <Route path="/reports1" element={<Reports1 />} />
+          <Route path="/reports2" element={<Reports2 />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/" element={<Home />} />
+        </Routes>
       </div>
     </Router>
   );
