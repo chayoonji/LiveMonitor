@@ -58,11 +58,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
           </Link>
         </li>
-        <li className="sidebar-list-item">
-          <Link to="/members">
-            <BsPeopleFill className="icon" /> 회원 관리
-          </Link>
-        </li>
+       
         <li className="sidebar-list-item">
           <Link to="/login" onClick={handleReportsClick}>
             <BsFillGearFill className="icon" /> Login
@@ -73,11 +69,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <BsFillGearFill className="icon" /> 회원가입
           </Link>
         </li>
-        <li className="sidebar-list-item">
-          <a href="https://github.com/chayoonji/reactDashB">
-            <BsListCheck className="icon" /> Github
-          </a>
-        </li>
+       
         <li className="sidebar-list-item">
           <Link to="/reports1">
             <BsMenuButtonWideFill className="icon" /> CPU Reports
