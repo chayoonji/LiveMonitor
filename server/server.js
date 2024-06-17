@@ -11,6 +11,7 @@ const { MongoClient } = require("mongodb");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 const jsonData = require("./data3.json"); // data.json 파일 가져오기
+const { Client } = require("ssh2"); // ssh2 모듈 가져오기
 
 // Express 애플리케이션 생성
 const app = express();
@@ -103,6 +104,97 @@ passport.use(
     }
   )
 );
+
+// SSH 연결 및 명령어 실행
+app.get("/ssh-test", (req, res) => {
+  const conn = new Client();
+  const sudoPassword = process.env.LINUX_PASSWORD;
+
+  conn.on('ready', () => {
+    console.log("SSH connection established");
+
+    // 실행할 스크립트들
+    const scripts = [
+      "/home/kang/다운로드/test.sh",
+      "/home/kang/다운로드/test2.sh",
+      "/home/kang/다운로드/monitering2.py"
+    ];
+
+    // 각 스크립트를 차례대로 실행
+    executeScripts(conn, sudoPassword, scripts, 0, (err) => {
+      if (err) {
+        console.error("Error executing scripts:", err);
+        res.status(500).send(`Error executing scripts: ${err}`);
+        conn.end();
+      } else {
+        res.send("All scripts executed successfully");
+        conn.end();
+      }
+    });
+  }).connect({
+    host: process.env.VM_HOST,
+    port: 22,
+    username: process.env.VM_USERNAME,
+    privateKey: require("fs").readFileSync(process.env.VM_PRIVATE_KEY_PATH),
+  });
+
+  conn.on('error', (err) => {
+    console.error("SSH connection error:", err);
+    res.status(500).send(`SSH connection error: ${err}`);
+  });
+
+  conn.on('end', () => {
+    console.log('SSH connection ended');
+  });
+
+  conn.on('close', (hadError) => {
+    if (hadError) {
+      console.error('SSH connection closed due to an error');
+    } else {
+      console.log('SSH connection closed');
+    }
+  });
+});
+
+// 스크립트 실행 함수
+function executeScripts(conn, sudoPassword, scripts, index, callback) {
+  if (index >= scripts.length) {
+    // 모든 스크립트가 실행된 경우 콜백 호출
+    callback(null);
+    return;
+  }
+
+  const scriptPath = scripts[index];
+  const command = `echo '${sudoPassword}' | sudo -S bash ${scriptPath}`;
+
+  conn.exec(command, { pty: true }, (err, stream) => {
+    if (err) {
+      console.error(`Error executing ${scriptPath}:`, err);
+      callback(err);
+      return;
+    }
+
+    let scriptOutput = "";
+
+    stream
+      .on('close', (code, signal) => {
+        console.log(`Script ${scriptPath} executed :: code: ${code}, signal: ${signal}`);
+
+        // 다음 스크립트 실행
+        executeScripts(conn, sudoPassword, scripts, index + 1, callback);
+      })
+      .on('data', (data) => {
+        console.log(`STDOUT (${scriptPath}): ` + data);
+        scriptOutput += data.toString();
+      })
+      .stderr.on('data', (data) => {
+        console.error(`STDERR (${scriptPath}): ` + data);
+        callback(data); // 에러 발생 시 콜백 호출
+      });
+  });
+}
+
+
 
 // 회원가입 라우트
 app.post("/register", passport.authenticate("local-signup"), (req, res) => {
