@@ -1,5 +1,8 @@
+// client/Sidebar.jsx
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './Context/AuthContext';
 
 import {
   BsCart3,
@@ -10,15 +13,25 @@ import {
   BsListCheck,
   BsMenuButtonWideFill,
   BsFillGearFill,
-  BsFillDoorOpenFill,
+  BsBoxArrowRight,
 } from 'react-icons/bs';
 
-function Sidebar({ openSidebarToggle, isAuthenticated, handleLogout }) {
+function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
 
-  const handleLogoutClick = (e) => {
+  const handleReportsClick = (e) => {
     e.preventDefault();
-    handleLogout();
+    navigate('/login');
+  };
+
+  const handleRegisterClick = (e) => {
+    e.preventDefault();
+    navigate('/register');
+  };
+
+  const handleLogoutClick = () => {
+    logout();
     navigate('/login');
   };
 
@@ -48,14 +61,57 @@ function Sidebar({ openSidebarToggle, isAuthenticated, handleLogout }) {
       </div>
 
       <ul className="sidebar-list">
+<<<<<<< HEAD
         {isAuthenticated ? (
+=======
+        <li className="sidebar-list-item">
+          <Link to="/guide">
+            <BsGrid1X2Fill className="icon" /> 가이드
+          </Link>
+        </li>
+
+        <li className="sidebar-list-item">
+          <Link to="/program">
+            <BsFillArchiveFill className="icon" /> 프로그램
+          </Link>
+        </li>
+        <li className="sidebar-list-item">
+          <Link to="/team">
+            <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
+          </Link>
+        </li>
+
+        {!isAuthenticated && (
           <>
             <li className="sidebar-list-item">
-              <Link to="/guide">
-                <BsGrid1X2Fill className="icon" /> 가이드
+              <Link to="/login" onClick={handleReportsClick}>
+                <BsFillGearFill className="icon" /> Login
               </Link>
             </li>
             <li className="sidebar-list-item">
+              <Link to="/register" onClick={handleRegisterClick}>
+                <BsFillGearFill className="icon" /> 회원가입
+              </Link>
+            </li>
+          </>
+        )}
+
+        {isAuthenticated && (
+>>>>>>> main
+          <>
+            <li className="sidebar-list-item">
+              <Link to="/reports1">
+                <BsMenuButtonWideFill className="icon" /> CPU Reports
+              </Link>
+            </li>
+
+            <li className="sidebar-list-item">
+              <Link to="/reports2">
+                <BsMenuButtonWideFill className="icon" /> Memory Reports
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+<<<<<<< HEAD
               <Link to="/program">
                 <BsFillArchiveFill className="icon" /> 프로그램
               </Link>
@@ -74,6 +130,19 @@ function Sidebar({ openSidebarToggle, isAuthenticated, handleLogout }) {
               <Link to="/login" onClick={handleLogoutClick}>
                 <BsFillDoorOpenFill className="icon" /> Logout
               </Link>
+=======
+              <button
+                onClick={handleLogoutClick}
+                style={{
+                  border: 'none',
+                  background: 'none',
+                  padding: 0,
+                  margin: 0,
+                }}
+              >
+                <BsBoxArrowRight className="icon" /> Logout
+              </button>
+>>>>>>> main
             </li>
           </>
         ) : (

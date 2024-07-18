@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+=======
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+>>>>>>> main
 import {
   BarChart,
   Bar,
@@ -9,13 +14,21 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+<<<<<<< HEAD
 } from 'recharts';
+=======
+} from "recharts";
+>>>>>>> main
 import {
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
   BsPeopleFill,
   BsFillBellFill,
+<<<<<<< HEAD
 } from 'react-icons/bs';
+=======
+} from "react-icons/bs";
+>>>>>>> main
 
 function JuTongGiBanChuiYakJum() {
   const [data1, setData1] = useState([]);
@@ -30,7 +43,11 @@ function JuTongGiBanChuiYakJum() {
         if (chartData.length >= 1) {
           const formattedData1 = chartData[0].data.map((item) => ({
             name: item.name,
+<<<<<<< HEAD
             '주통기반 취약점': item.value,
+=======
+            "주통기반 취약점": item.value,
+>>>>>>> main
           }));
 
           setData1(formattedData1);
@@ -46,10 +63,17 @@ function JuTongGiBanChuiYakJum() {
   return (
     <div
       className="chart"
+<<<<<<< HEAD
       style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}
     >
       <div>
         <div style={{ textAlign: 'center' }}>
+=======
+      style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+    >
+      <div>
+        <div style={{ textAlign: "center" }}>
+>>>>>>> main
           <h4>주통기반 취약점</h4>
           <ResponsiveContainer width={800} height={300}>
             <BarChart
