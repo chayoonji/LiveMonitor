@@ -49,7 +49,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {/* 프로그램은 진단 버튼 누르면 쉘스크립트 동작하는 페이지 */}
 
         <li className="sidebar-list-item">
-          <Link to="/program">
+          <Link to="/routine">
             <BsFillArchiveFill className="icon" /> 프로그램
           </Link>
         </li>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Header from './Header';
@@ -7,17 +7,34 @@ import Home from './Home';
 import Team from './team';
 import Guide from './guide';
 import Login from './login';
+import Routine from './routine';
+import Board from './board';
 import Register from './Register';
 import Reports1 from './reports1';
 import Reports2 from './reports2';
-import PDF from './pdf';
 
 function App() {
-  const [openSidebarToggle, setOpenSidebarToggle] = React.useState(false);
+  const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
   const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
+
+  const handleLogin = (user) => {
+    setLoggedInUser(user);
+  };
+
+  const handleLogout = () => {
+    setLoggedInUser(null);
+  };
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setLoggedInUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   return (
     <Router>
@@ -27,15 +44,17 @@ function App() {
           openSidebarToggle={openSidebarToggle}
           OpenSidebar={OpenSidebar}
         />
+
         <Routes>
           <Route path="/guide" element={<Guide />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/routine" element={<Routine />} />
+          <Route path="/board" element={<Board loggedInUser={loggedInUser} />} />
           <Route path="/register" element={<Register />} />
           <Route path="/reports1" element={<Reports1 />} />
           <Route path="/reports2" element={<Reports2 />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/pdf" element={<PDF />} />
-          <Route path="/" element={<Guide />} /> {/* 수정된 부분 */}
+          <Route path="/" element={<Home />} />
         </Routes>
       </div>
     </Router>

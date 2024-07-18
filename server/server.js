@@ -15,7 +15,7 @@ const { Client } = require("ssh2"); // ssh2 모듈 가져오기
 
 // Express 애플리케이션 생성
 const app = express();
-const PORT = process.env.PORT || 3001; // 포트 설정
+const PORT = process.env.PORT || 3002; // 포트 설정
 
 // 미들웨어 설정
 app.use(cors()); // CORS 허용
@@ -30,6 +30,10 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+// Passport 초기화 및 세션 설정
+app.use(passport.initialize());
+app.use(passport.session());
 
 // MongoDB 연결
 const url = process.env.DB_URL; // .env 파일에서 DB_URL 가져옴
@@ -68,7 +72,7 @@ passport.use(
           companyEmail,
           password: hashedPassword,
         });
-        return done(null, { email });
+        return done(null, { email, name });
       } catch (err) {
         return done(err);
       }
@@ -104,6 +108,24 @@ passport.use(
     }
   )
 );
+
+// Passport 직렬화 및 역직렬화
+passport.serializeUser((user, done) => {
+  done(null, { email: user.email, name: user.name }); // 세션에 사용자의 이메일과 이름을 저장
+});
+
+passport.deserializeUser(async (userData, done) => {
+  try {
+    const user = await db.collection("Member").findOne({ email: userData.email });
+    if (user) {
+      done(null, { email: user.email, name: user.name }); // 세션에서 사용자 정보를 복원
+    } else {
+      done(null, false);
+    }
+  } catch (err) {
+    done(err);
+  }
+});
 
 // SSH 연결 및 명령어 실행
 app.get("/ssh-test", (req, res) => {
@@ -194,30 +216,52 @@ function executeScripts(conn, sudoPassword, scripts, index, callback) {
   });
 }
 
-
-
-// 회원가입 라우트
-app.post("/register", passport.authenticate("local-signup"), (req, res) => {
-  res.status(201).send("User registered");
-});
-
 // 로그인 라우트
 app.post("/login", passport.authenticate("local-login"), (req, res) => {
-  res.send("Logged in");
+  res.send({ name: req.user.name });
 });
 
-// Passport 직렬화 및 역직렬화
-passport.serializeUser((user, done) => {
-  done(null, user.email);
+// 로그아웃 라우트
+app.post("/logout", (req, res) => {
+  req.logout();
+  res.send("Logged out");
 });
 
-passport.deserializeUser(async (email, done) => {
+// 게시물 생성 엔드포인트
+app.post("/posts", async (req, res) => {
+  const { title, content, author } = req.body;
+
   try {
-    const user = await db.collection("Member").findOne({ email });
-    done(null, user);
-  } catch (err) {
-    done(err);
+    if (!title || !content) {
+      throw new Error("Title and content are required");
+    }
+
+    await db.collection("Posts").insertOne({
+      title,
+      content,
+      author: author || "Unknown",
+      createdAt: new Date(),
+    });
+    res.status(201).send("Post created successfully");
+  } catch (error) {
+    console.error("Error creating post:", error);
+    res.status(500).send("Error creating post");
   }
+});
+
+// 게시물 목록 가져오기 엔드포인트
+app.get("/posts", async (req, res) => {
+  try {
+    const posts = await db.collection("Posts").find().toArray();
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).send("Error fetching posts");
+  }
+});
+
+app.listen(3002, () => {
+  console.log("Server is running on port 3002");
 });
 
 // 차트 데이터 (주통기반취약점) 가져오는 API 엔드포인트
