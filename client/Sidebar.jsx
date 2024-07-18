@@ -1,6 +1,8 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+// client/Sidebar.jsx
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './Context/AuthContext';
 
 import {
   BsCart3,
@@ -11,29 +13,36 @@ import {
   BsListCheck,
   BsMenuButtonWideFill,
   BsFillGearFill,
-} from "react-icons/bs";
+  BsBoxArrowRight,
+} from 'react-icons/bs';
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
 
   const handleReportsClick = (e) => {
     e.preventDefault();
-    navigate("/login");
+    navigate('/login');
   };
 
   const handleRegisterClick = (e) => {
     e.preventDefault();
-    navigate("/register");
+    navigate('/register');
+  };
+
+  const handleLogoutClick = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
     <aside
       id="sidebar"
-      className={openSidebarToggle ? "sidebar-responsive" : ""}
+      className={openSidebarToggle ? 'sidebar-responsive' : ''}
     >
       <div className="sidebar-title">
         <div className="sidebar-brand">
-          <Link to="/" style={{ textDecoration: "none", color: "#9e9ea4" }}>
+          <Link to="/" style={{ textDecoration: 'none', color: '#9e9ea4' }}>
             <BsCart3 className="icon_header" /> 강김홍차
           </Link>
         </div>
@@ -46,8 +55,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </Link>
         </li>
 
-        {/* 프로그램은 진단 버튼 누르면 쉘스크립트 동작하는 페이지 */}
-
         <li className="sidebar-list-item">
           <Link to="/routine">
             <BsFillArchiveFill className="icon" /> 프로그램
@@ -58,29 +65,50 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
           </Link>
         </li>
-       
-        <li className="sidebar-list-item">
-          <Link to="/login" onClick={handleReportsClick}>
-            <BsFillGearFill className="icon" /> Login
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
-          <Link to="/register" onClick={handleRegisterClick}>
-            <BsFillGearFill className="icon" /> 회원가입
-          </Link>
-        </li>
-       
-        <li className="sidebar-list-item">
-          <Link to="/reports1">
-            <BsMenuButtonWideFill className="icon" /> CPU Reports
-          </Link>
-        </li>
-        
-        <li className="sidebar-list-item">
-          <Link to="/reports2">
-            <BsMenuButtonWideFill className="icon" /> Memory Reports
-          </Link>
-        </li>
+
+        {!isAuthenticated && (
+          <>
+            <li className="sidebar-list-item">
+              <Link to="/login" onClick={handleReportsClick}>
+                <BsFillGearFill className="icon" /> Login
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/register" onClick={handleRegisterClick}>
+                <BsFillGearFill className="icon" /> 회원가입
+              </Link>
+            </li>
+          </>
+        )}
+
+        {isAuthenticated && (
+          <>
+            <li className="sidebar-list-item">
+              <Link to="/reports1">
+                <BsMenuButtonWideFill className="icon" /> CPU Reports
+              </Link>
+            </li>
+
+            <li className="sidebar-list-item">
+              <Link to="/reports2">
+                <BsMenuButtonWideFill className="icon" /> Memory Reports
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <button
+                onClick={handleLogoutClick}
+                style={{
+                  border: 'none',
+                  background: 'none',
+                  padding: 0,
+                  margin: 0,
+                }}
+              >
+                <BsBoxArrowRight className="icon" /> Logout
+              </button>
+            </li>
+          </>
+        )}
       </ul>
     </aside>
   );
