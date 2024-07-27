@@ -1,27 +1,14 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import './Board.css'; // 외부 CSS 파일을 포함합니다.
+import React, { useState } from 'react';
+import axios from 'axios';
+import './Board.css';
 
-const Board = ({ loggedInUser }) => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+const Board = () => {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [author, setAuthor] = useState(''); // 작성자 입력 상태 추가
+  const [password, setPassword] = useState('');
   const [isFormVisible, setIsFormVisible] = useState(false);
-  const [posts, setPosts] = useState([]);
-  const [selectedPost, setSelectedPost] = useState(null); // 선택된 게시물 상태
-
-  // 게시물 목록 가져오기
-  const fetchPosts = async () => {
-    try {
-      const response = await axios.get("http://localhost:3001/posts");
-      setPosts(response.data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  const [loggedInUser, setLoggedInUser] = useState(null); // 로그인 상태 관리
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,70 +17,66 @@ const Board = ({ loggedInUser }) => {
       const response = await axios.post("http://localhost:3001/posts", {
         title,
         content,
-        author: loggedInUser ? loggedInUser.name : "Unknown",
+        password: password || null, // 비밀번호가 없으면 null
+        author: loggedInUser ? loggedInUser.name : author, // 로그인된 사용자 이름을 우선으로 하고, 없으면 입력된 작성자 이름 사용
       });
       console.log("Post created:", response.data);
       alert("Post created successfully");
       setTitle("");
       setContent("");
+      setPassword("");
+      setAuthor(""); // 작성자 초기화
       setIsFormVisible(false);
-      fetchPosts(); // 게시물 생성 후 새 목록 가져오기
+      // fetchPosts(); // 게시물 생성 후 새 목록 가져오기
     } catch (error) {
-      console.error("Error creating post:", error);
-      alert("Error creating post");
+      console.error("Error creating post:", error.message);
+      alert("Error creating post: " + error.message); // 사용자에게 오류 메시지 표시
     }
   };
 
-  const handlePostClick = (post) => {
-    setSelectedPost(post);
-  };
-
   return (
-    <div className="board-container">
-      <div className="board-wrapper">
-        <h2>Board</h2>
-        <button onClick={() => setIsFormVisible(true)}>Create Post</button>
-        {isFormVisible && (
-          <form onSubmit={handleSubmit}>
+    <div>
+      {isFormVisible ? (
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Title:</label>
             <input
               type="text"
-              placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
+          </div>
+          <div>
+            <label>Content:</label>
             <textarea
-              placeholder="Content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
-            />
-            <button type="submit">Submit</button>
-          </form>
-        )}
-        <div className="posts-list">
-          <h3>Posts</h3>
-          {posts.length === 0 ? (
-            <p>No posts available</p>
-          ) : (
-            <ul>
-              {posts.map((post) => (
-                <li key={post._id} onClick={() => handlePostClick(post)}>
-                  <h4>Title: {post.title}</h4>
-                  <small>By: {post.author}</small>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        {selectedPost && (
-          <div className="post-detail">
-            <h4>Title: {selectedPost.title}</h4>
-            <p>Content: {selectedPost.content}</p>
-            <small>Author: {selectedPost.author}</small>
+            ></textarea>
           </div>
-        )}
-      </div>
+          <div>
+            <label>Author:</label>
+            <input
+              type="text"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label>Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
+        <button onClick={() => setIsFormVisible(true)}>Add Post</button>
+      )}
     </div>
   );
 };

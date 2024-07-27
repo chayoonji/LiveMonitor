@@ -18,7 +18,9 @@ import {
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const authContext = useAuth();
+  const isAuthenticated = (authContext && authContext.isAuthenticated) ? authContext.isAuthenticated : false;
+  const logout = (authContext && authContext.logout) ? authContext.logout : () => {};
 
   const handleReportsClick = (e) => {
     e.preventDefault();

@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
@@ -13,6 +14,7 @@ import Board from './board';
 import Register from './Register';
 import Reports1 from './reports1';
 import Reports2 from './reports2';
+import Home from './Home'; // 경로 수정
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -38,27 +40,29 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <div className="grid-container">
-        <Header OpenSidebar={OpenSidebar} />
-        <Sidebar
-          openSidebarToggle={openSidebarToggle}
-          OpenSidebar={OpenSidebar}
-        />
+    <AuthProvider>
+      <Router>
+        <div className="grid-container">
+          <Header OpenSidebar={OpenSidebar} />
+          <Sidebar
+            openSidebarToggle={openSidebarToggle}
+            OpenSidebar={OpenSidebar}
+          />
 
-        <Routes>
-          <Route path="/guide" element={<Guide />} />
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/routine" element={<Routine />} />
-          <Route path="/board" element={<Board loggedInUser={loggedInUser} />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/reports1" element={<Reports1 />} />
-          <Route path="/reports2" element={<Reports2 />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </div>
-    </Router>
+          <Routes>
+            <Route path="/guide" element={<Guide />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/routine" element={<Routine />} />
+            <Route path="/board" element={<Board loggedInUser={loggedInUser} />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/reports1" element={<PrivateRoute element={<Reports1 />} />} />
+            <Route path="/reports2" element={<PrivateRoute element={<Reports2 />} />} />
+            <Route path="/team" element={<PrivateRoute element={<Team />} />} />
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 
