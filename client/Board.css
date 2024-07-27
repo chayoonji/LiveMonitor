@@ -2,150 +2,149 @@
 
 /* 전체 페이지 스타일 */
 body {
-    margin: 0;
-    padding: 0;
-    background-color: #1d2634; /* 배경색 설정 */
-    font-family: Arial, sans-serif; /* 기본 폰트 설정 */
-  }
-  
-  /* 게시판 컨테이너 스타일 */
-  .board-container {
-    display: flex;
-    justify-content: center; /* 가로 중앙 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
-    min-height: 100vh; /* 화면 전체 높이 */
-    padding: 20px; /* 패딩 설정 */
-  }
-  
-  /* 게시판 래퍼 스타일 */
-  .board-wrapper {
-    width: 800px; /* 가로 너비 설정 */
-    max-width: 1000px; /* 최대 너비 설정 */
-    background-color: #ffffff; /* 배경색 설정 */
-    border-radius: 8px; /* 모서리 둥글게 설정 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 설정 */
-    padding: 20px; /* 패딩 설정 */
-  }
-  
-  /* 제목 스타일 */
-  .board-wrapper h2 {
-    font-size: 28px; /* 제목 크기 설정 */
-    margin-bottom: 20px; /* 하단 여백 설정 */
-    text-align: center; /* 제목 가운데 정렬 */
-  }
-  
-  /* 버튼 스타일 */
-  .board-wrapper button {
-    display: block; /* 블록 레벨 요소로 설정 */
-    margin: 0 auto 20px; /* 버튼 가운데 정렬 및 하단 여백 설정 */
-    padding: 10px 20px; /* 패딩 설정 */
-    font-size: 16px; /* 글자 크기 설정 */
-    color: #ffffff; /* 글자 색상 설정 */
-    background-color: #007bff; /* 배경색 설정 */
-    border: none; /* 테두리 제거 */
-    border-radius: 5px; /* 모서리 둥글게 설정 */
-    cursor: pointer; /* 커서 포인터로 설정 */
-    transition: background-color 0.3s ease; /* 전환 효과 설정 */
-  }
-  
-  .board-wrapper button:hover {
-    background-color: #0056b3; /* 호버 시 배경색 변경 */
-  }
-  
-  /* 폼 스타일 */
-  .board-wrapper form {
-    display: flex;
-    flex-direction: column; /* 세로 방향 레이아웃 설정 */
-    margin-bottom: 20px; /* 하단 여백 설정 */
-  }
-  
-  .board-wrapper input,
-  .board-wrapper textarea {
-    width: 100%; /* 너비 100% 설정 */
-    padding: 10px; /* 패딩 설정 */
-    margin-bottom: 10px; /* 하단 여백 설정 */
-    border: 1px solid #ccc; /* 테두리 설정 */
-    border-radius: 5px; /* 모서리 둥글게 설정 */
-  }
-  
-  .board-wrapper textarea {
-    height: 100px; /* 높이 설정 */
-    resize: vertical; /* 세로 방향 크기 조절 가능 */
-  }
-  
-  .board-wrapper button[type="submit"] {
-    width: 100%; /* 너비 100% 설정 */
-    padding: 12px; /* 패딩 설정 */
-    background-color: #28a745; /* 배경색 설정 */
-  }
-  
-  .board-wrapper button[type="submit"]:hover {
-    background-color: #218838; /* 호버 시 배경색 변경 */
-  }
-  
-  /* 게시물 목록 스타일 */
-  .posts-list {
-    margin-top: 20px; /* 상단 여백 설정 */
-  }
-  
-  .posts-list h3 {
-    font-size: 24px; /* 제목 크기 설정 */
-    margin-bottom: 10px; /* 하단 여백 설정 */
-  }
-  
-  .posts-list ul {
-    list-style: none; /* 기본 리스트 스타일 제거 */
-    padding: 0; /* 패딩 제거 */
-  }
-  
-  .posts-list li {
-    padding: 15px; /* 패딩 설정 */
-    margin-bottom: 10px; /* 하단 여백 설정 */
-    background-color: #f8f9fa; /* 배경색 설정 */
-    border: 1px solid #ddd; /* 테두리 설정 */
-    border-radius: 5px; /* 모서리 둥글게 설정 */
-    cursor: pointer; /* 커서 포인터로 설정 */
-    transition: background-color 0.3s ease; /* 전환 효과 설정 */
-  }
-  
-  .posts-list li:hover {
-    background-color: #e2e6ea; /* 호버 시 배경색 변경 */
-  }
-  
-  .posts-list h4 {
-    font-size: 18px; /* 제목 크기 설정 */
-    margin: 0; /* 여백 제거 */
-  }
-  
-  .posts-list small {
-    display: block; /* 블록 레벨 요소로 설정 */
-    color: #6c757d; /* 글자 색상 설정 */
-  }
-  
-  /* 게시물 상세 보기 스타일 */
-  .post-detail {
-    margin-top: 20px; /* 상단 여백 설정 */
-    padding: 15px; /* 패딩 설정 */
-    background-color: darkblue; /* 배경색 설정 */
-    border: 1px solid #ddd; /* 테두리 설정 */
-    border-radius: 5px; /* 모서리 둥글게 설정 */
-  }
-  
-  .post-detail h4,
-  .post-detail p {
-    margin: 0 0 10px; /* 여백 설정 */
-  }
-  
-  .post-detail h4 {
-    font-size: 20px; /* 제목 크기 설정 */
-  }
-  
-  .post-detail p {
-    font-size: 16px; /* 내용 글자 크기 설정 */
-  }
-  
-  .post-detail small {
-    display: block; /* 블록 레벨 요소로 설정 */
-    color: #6c757d; /* 글자 색상 설정 */
-  }
-  
+  margin: 0;
+  padding: 0;
+  background-color: #1d2634; /* 배경색 설정 */
+  font-family: Arial, sans-serif; /* 기본 폰트 설정 */
+}
+
+/* 게시판 컨테이너 스타일 */
+.board-container {
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  min-height: 100vh; /* 화면 전체 높이 */
+  padding: 20px; /* 패딩 설정 */
+}
+
+/* 게시판 래퍼 스타일 */
+.board-wrapper {
+  width: 800px; /* 가로 너비 설정 */
+  max-width: 1000px; /* 최대 너비 설정 */
+  background-color: #ffffff; /* 배경색 설정 */
+  border-radius: 8px; /* 모서리 둥글게 설정 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 설정 */
+  padding: 20px; /* 패딩 설정 */
+}
+
+/* 제목 스타일 */
+.board-wrapper h2 {
+  font-size: 28px; /* 제목 크기 설정 */
+  margin-bottom: 20px; /* 하단 여백 설정 */
+  text-align: center; /* 제목 가운데 정렬 */
+}
+
+/* 버튼 스타일 */
+.board-wrapper button {
+  display: block; /* 블록 레벨 요소로 설정 */
+  margin: 0 auto 20px; /* 버튼 가운데 정렬 및 하단 여백 설정 */
+  padding: 10px 20px; /* 패딩 설정 */
+  font-size: 16px; /* 글자 크기 설정 */
+  color: #ffffff; /* 글자 색상 설정 */
+  background-color: #007bff; /* 배경색 설정 */
+  border: none; /* 테두리 제거 */
+  border-radius: 5px; /* 모서리 둥글게 설정 */
+  cursor: pointer; /* 커서 포인터로 설정 */
+  transition: background-color 0.3s ease; /* 전환 효과 설정 */
+}
+
+.board-wrapper button:hover {
+  background-color: #0056b3; /* 호버 시 배경색 변경 */
+}
+
+/* 폼 스타일 */
+.board-wrapper form {
+  display: flex;
+  flex-direction: column; /* 세로 방향 레이아웃 설정 */
+  margin-bottom: 20px; /* 하단 여백 설정 */
+}
+
+.board-wrapper input,
+.board-wrapper textarea {
+  width: 100%; /* 너비 100% 설정 */
+  padding: 10px; /* 패딩 설정 */
+  margin-bottom: 10px; /* 하단 여백 설정 */
+  border: 1px solid #ccc; /* 테두리 설정 */
+  border-radius: 5px; /* 모서리 둥글게 설정 */
+}
+
+.board-wrapper textarea {
+  height: 100px; /* 높이 설정 */
+  resize: vertical; /* 세로 방향 크기 조절 가능 */
+}
+
+.board-wrapper button[type="submit"] {
+  width: 100%; /* 너비 100% 설정 */
+  padding: 12px; /* 패딩 설정 */
+  background-color: #28a745; /* 배경색 설정 */
+}
+
+.board-wrapper button[type="submit"]:hover {
+  background-color: #218838; /* 호버 시 배경색 변경 */
+}
+
+/* 게시물 목록 스타일 */
+.posts-list {
+  margin-top: 20px; /* 상단 여백 설정 */
+}
+
+.posts-list h3 {
+  font-size: 24px; /* 제목 크기 설정 */
+  margin-bottom: 10px; /* 하단 여백 설정 */
+}
+
+.posts-list ul {
+  list-style: none; /* 기본 리스트 스타일 제거 */
+  padding: 0; /* 패딩 제거 */
+}
+
+.posts-list li {
+  padding: 15px; /* 패딩 설정 */
+  margin-bottom: 10px; /* 하단 여백 설정 */
+  background-color: #f8f9fa; /* 배경색 설정 */
+  border: 1px solid #ddd; /* 테두리 설정 */
+  border-radius: 5px; /* 모서리 둥글게 설정 */
+  cursor: pointer; /* 커서 포인터로 설정 */
+  transition: background-color 0.3s ease; /* 전환 효과 설정 */
+}
+
+.posts-list li:hover {
+  background-color: #e2e6ea; /* 호버 시 배경색 변경 */
+}
+
+.posts-list h4 {
+  font-size: 18px; /* 제목 크기 설정 */
+  margin: 0; /* 여백 제거 */
+}
+
+.posts-list small {
+  display: block; /* 블록 레벨 요소로 설정 */
+  color: #6c757d; /* 글자 색상 설정 */
+}
+
+/* 게시물 상세 보기 스타일 */
+.post-detail {
+  margin-top: 20px; /* 상단 여백 설정 */
+  padding: 15px; /* 패딩 설정 */
+  background-color: darkblue; /* 배경색 설정 */
+  border: 1px solid #ddd; /* 테두리 설정 */
+  border-radius: 5px; /* 모서리 둥글게 설정 */
+}
+
+.post-detail h4,
+.post-detail p {
+  margin: 0 0 10px; /* 여백 설정 */
+}
+
+.post-detail h4 {
+  font-size: 20px; /* 제목 크기 설정 */
+}
+
+.post-detail p {
+  font-size: 16px; /* 내용 글자 크기 설정 */
+}
+
+.post-detail small {
+  display: block; /* 블록 레벨 요소로 설정 */
+  color: #6c757d; /* 글자 색상 설정 */
+}

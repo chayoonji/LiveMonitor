@@ -1,11 +1,14 @@
+// client/LoginComponent.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './Context/AuthContext';
 
-const LoginComponent = ({ setIsAuthenticated }) => {
+const LoginComponent = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,8 +18,8 @@ const LoginComponent = ({ setIsAuthenticated }) => {
         email,
         password,
       });
-      setIsAuthenticated(true);
-      navigate('/'); // 로그인 후 홈 또는 대시보드로 리다이렉트
+      login();
+      navigate('/guide'); // 로그인 후 guide 페이지로 리다이렉트
     } catch (error) {
       alert('Error logging in');
     }
