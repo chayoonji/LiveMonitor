@@ -1,4 +1,3 @@
-// client/Sidebar.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -92,6 +91,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <li className="sidebar-list-item">
               <Link to="/reports2">
                 <BsMenuButtonWideFill className="icon" /> Memory Reports
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
+              <Link to="/Board">
+                <BsPeopleFill className="icon" /> 게시판
               </Link>
             </li>
             <li className="sidebar-list-item">
