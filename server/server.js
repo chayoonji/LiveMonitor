@@ -1,17 +1,16 @@
 // dotenv 라이브러리를 사용하여 환경 변수 로드
-require("dotenv").config();
+require('dotenv').config();
 
 // Express 애플리케이션 및 필요한 모듈 가져오기
-const express = require("express");
-const session = require("express-session");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcryptjs");
-const { MongoClient } = require("mongodb");
-const cors = require("cors");
-const nodemailer = require("nodemailer");
-const jsonData = require("./data3.json"); // data.json 파일 가져오기
-const { Client } = require("ssh2"); // ssh2 모듈 가져오기
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcryptjs');
+const { MongoClient } = require('mongodb');
+const cors = require('cors');
+const nodemailer = require('nodemailer');
+const { Client } = require('ssh2'); // ssh2 모듈 가져오기
 
 // Express 애플리케이션 생성
 const app = express();
@@ -31,15 +30,18 @@ app.use(
   })
 );
 
+// Passport 초기화
+app.use(passport.initialize());
+app.use(passport.session());
+
 // MongoDB 연결
 const url = process.env.DB_URL; // .env 파일에서 DB_URL 가져옴
 let db; // 데이터베이스 클라이언트
 
 MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(async (client) => {
-    // 콜백 함수를 async로 변경
-    console.log("DB connected");
-    db = client.db("Login"); // 데이터베이스 선택
+    console.log('DB connected');
+    db = client.db('Login'); // 데이터베이스 선택
 
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
@@ -51,18 +53,18 @@ MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // Passport 설정
 passport.use(
-  "local-signup",
+  'local-signup',
   new LocalStrategy(
     {
-      usernameField: "email",
-      passwordField: "password",
+      usernameField: 'email',
+      passwordField: 'password',
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
       try {
         const { name, companyEmail } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        await db.collection("Member").insertOne({
+        await db.collection('Member').insertOne({
           name,
           email,
           companyEmail,
@@ -77,24 +79,24 @@ passport.use(
 );
 
 passport.use(
-  "local-login",
+  'local-login',
   new LocalStrategy(
     {
-      usernameField: "email",
-      passwordField: "password",
+      usernameField: 'email',
+      passwordField: 'password',
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
       try {
-        const user = await db.collection("Member").findOne({ email });
+        const user = await db.collection('Member').findOne({ email });
 
         if (!user) {
-          return done(null, false, { message: "Incorrect email." });
+          return done(null, false, { message: 'Incorrect email.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-          return done(null, false, { message: "Incorrect password." });
+          return done(null, false, { message: 'Incorrect password.' });
         }
 
         return done(null, user);
@@ -106,40 +108,42 @@ passport.use(
 );
 
 // SSH 연결 및 명령어 실행
-app.get("/ssh-test", (req, res) => {
+app.get('/ssh-test', (req, res) => {
   const conn = new Client();
   const sudoPassword = process.env.LINUX_PASSWORD;
 
-  conn.on('ready', () => {
-    console.log("SSH connection established");
+  conn
+    .on('ready', () => {
+      console.log('SSH connection established');
 
-    // 실행할 스크립트들
-    const scripts = [
-      "/home/kang/다운로드/test.sh",
-      "/home/kang/다운로드/test2.sh",
-      "/home/kang/다운로드/monitering2.py"
-    ];
+      // 실행할 스크립트들
+      const scripts = [
+        '/home/kang/다운로드/test.sh',
+        '/home/kang/다운로드/test2.sh',
+        '/home/kang/다운로드/monitering2.py',
+      ];
 
-    // 각 스크립트를 차례대로 실행
-    executeScripts(conn, sudoPassword, scripts, 0, (err) => {
-      if (err) {
-        console.error("Error executing scripts:", err);
-        res.status(500).send(`Error executing scripts: ${err}`);
-        conn.end();
-      } else {
-        res.send("All scripts executed successfully");
-        conn.end();
-      }
+      // 각 스크립트를 차례대로 실행
+      executeScripts(conn, sudoPassword, scripts, 0, (err) => {
+        if (err) {
+          console.error('Error executing scripts:', err);
+          res.status(500).send(`Error executing scripts: ${err}`);
+          conn.end();
+        } else {
+          res.send('All scripts executed successfully');
+          conn.end();
+        }
+      });
+    })
+    .connect({
+      host: process.env.VM_HOST,
+      port: 22,
+      username: process.env.VM_USERNAME,
+      privateKey: require('fs').readFileSync(process.env.VM_PRIVATE_KEY_PATH),
     });
-  }).connect({
-    host: process.env.VM_HOST,
-    port: 22,
-    username: process.env.VM_USERNAME,
-    privateKey: require("fs").readFileSync(process.env.VM_PRIVATE_KEY_PATH),
-  });
 
   conn.on('error', (err) => {
-    console.error("SSH connection error:", err);
+    console.error('SSH connection error:', err);
     res.status(500).send(`SSH connection error: ${err}`);
   });
 
@@ -174,11 +178,13 @@ function executeScripts(conn, sudoPassword, scripts, index, callback) {
       return;
     }
 
-    let scriptOutput = "";
+    let scriptOutput = '';
 
     stream
       .on('close', (code, signal) => {
-        console.log(`Script ${scriptPath} executed :: code: ${code}, signal: ${signal}`);
+        console.log(
+          `Script ${scriptPath} executed :: code: ${code}, signal: ${signal}`
+        );
 
         // 다음 스크립트 실행
         executeScripts(conn, sudoPassword, scripts, index + 1, callback);
@@ -194,16 +200,19 @@ function executeScripts(conn, sudoPassword, scripts, index, callback) {
   });
 }
 
-
-
 // 회원가입 라우트
-app.post("/register", passport.authenticate("local-signup"), (req, res) => {
-  res.status(201).send("User registered");
+app.post('/register', passport.authenticate('local-signup'), (req, res) => {
+  res.status(201).send('User registered');
 });
 
 // 로그인 라우트
-app.post("/login", passport.authenticate("local-login"), (req, res) => {
-  res.send("Logged in");
+app.post('/login', passport.authenticate('local-login'), (req, res) => {
+  // 로그인 성공 시 쿠키 설정
+  res.cookie('isAuthenticated', 'true', {
+    httpOnly: true, // 클라이언트에서 쿠키를 읽지 못하도록 설정
+    maxAge: 86400000, // 쿠키 만료 시간: 1일 (밀리초 단위)
+  });
+  res.send('Logged in');
 });
 
 // Passport 직렬화 및 역직렬화
@@ -213,7 +222,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (email, done) => {
   try {
-    const user = await db.collection("Member").findOne({ email });
+    const user = await db.collection('Member').findOne({ email });
     done(null, user);
   } catch (err) {
     done(err);
@@ -221,9 +230,9 @@ passport.deserializeUser(async (email, done) => {
 });
 
 // 차트 데이터 (주통기반취약점) 가져오는 API 엔드포인트
-app.get("/api/data", async (req, res) => {
+app.get('/api/data', async (req, res) => {
   try {
-    const data = await db.collection("ChartData").find().toArray();
+    const data = await db.collection('ChartData').find().toArray();
     const transformedData = data.map((item, index) => {
       const { _id, ...rest } = item;
       const dataEntries = Object.entries(rest).map(([key, value]) => ({
@@ -242,10 +251,10 @@ app.get("/api/data", async (req, res) => {
 });
 
 // MongoDB CpuData(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
-app.get("/api/cpu-data", async (req, res) => {
+app.get('/api/cpu-data', async (req, res) => {
   try {
     const cpuData = await db
-      .collection("CpuData")
+      .collection('CpuData')
       .find({ hour: { $gte: 1, $lte: 24 } })
       .toArray();
     res.json(cpuData);
@@ -255,10 +264,10 @@ app.get("/api/cpu-data", async (req, res) => {
 });
 
 // MongoDB CpuTime(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
-app.get("/api/cpu-time", async (req, res) => {
+app.get('/api/cpu-time', async (req, res) => {
   try {
     const cpuData = await db
-      .collection("CpuTime")
+      .collection('CpuTime')
       .find({ hour: { $gte: 1, $lte: 24 } })
       .toArray();
     res.json(cpuData);
@@ -268,10 +277,10 @@ app.get("/api/cpu-time", async (req, res) => {
 });
 
 // MongoDB V-Memory (가상메모리) 내용 가져오는 API 엔드포인트
-app.get("/api/v-memory", async (req, res) => {
+app.get('/api/v-memory', async (req, res) => {
   try {
     const cpuData = await db
-      .collection("V-Memory")
+      .collection('V-Memory')
       .find({ hour: { $gte: 1, $lte: 24 } })
       .toArray();
     res.json(cpuData);
@@ -281,10 +290,10 @@ app.get("/api/v-memory", async (req, res) => {
 });
 
 // MongoDB S-Memory (스왑메모리) 내용 가져오는 API 엔드포인트
-app.get("/api/S-memory", async (req, res) => {
+app.get('/api/S-memory', async (req, res) => {
   try {
     const cpuData = await db
-      .collection("S-Memory")
+      .collection('S-Memory')
       .find({ hour: { $gte: 1, $lte: 24 } })
       .toArray();
     res.json(cpuData);
@@ -295,7 +304,7 @@ app.get("/api/S-memory", async (req, res) => {
 
 // 이메일 전송을 위한 transporter 생성
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  service: 'Gmail',
   auth: {
     user: process.env.NODE_MAILER_ID, // 발신자 이메일 주소
     pass: process.env.NODE_MAILER_PASSWORD, // 발신자 이메일 비밀번호
@@ -308,7 +317,7 @@ function generateRandomNumber() {
 }
 
 // 회사 이메일 인증 요청 핸들러
-app.post("/verify-company-email", async (req, res) => {
+app.post('/verify-company-email', async (req, res) => {
   const { companyEmail } = req.body;
 
   try {
@@ -316,48 +325,48 @@ app.post("/verify-company-email", async (req, res) => {
     const verificationCode = generateRandomNumber();
 
     // MongoDB에 회사 이메일과 인증번호 저장
-    await db.collection("TempData").insertOne({
+    await db.collection('TempData').insertOne({
       email: companyEmail,
       verificationCode: verificationCode.toString(),
     });
 
     // 이메일 전송 옵션 설정
     const mailOptions = {
-      from: "cofl3890@gmail.com", // 발신자 이메일 주소
+      from: 'cofl3890@gmail.com', // 발신자 이메일 주소
       to: companyEmail, // 수신자 이메일 주소
-      subject: "Verification Code for Company Email", // 이메일 제목
+      subject: 'Verification Code for Company Email', // 이메일 제목
       text: `Your verification code is: ${verificationCode}`, // 이메일 내용
     };
 
     // 이메일 전송
     await transporter.sendMail(mailOptions);
 
-    res.status(200).send("Verification code sent successfully");
+    res.status(200).send('Verification code sent successfully');
   } catch (error) {
-    console.error("Error sending verification code:", error);
-    res.status(500).send("Error sending verification code");
+    console.error('Error sending verification code:', error);
+    res.status(500).send('Error sending verification code');
   }
 });
 
 // 인증 코드 검증 핸들러
-app.post("/verify-code", async (req, res) => {
+app.post('/verify-code', async (req, res) => {
   const { companyEmail, verificationCode } = req.body;
 
   try {
     const tempData = await db
-      .collection("TempData")
+      .collection('TempData')
       .findOne({ email: companyEmail, verificationCode });
     if (tempData) {
       // 인증 코드가 일치하면 TempData에서 해당 데이터 삭제
       await db
-        .collection("TempData")
+        .collection('TempData')
         .deleteOne({ email: companyEmail, verificationCode });
       res.json({ success: true });
     } else {
       res.json({ success: false });
     }
   } catch (error) {
-    console.error("Error verifying code:", error);
-    res.status(500).send("Error verifying code");
+    console.error('Error verifying code:', error);
+    res.status(500).send('Error verifying code');
   }
 });
