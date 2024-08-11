@@ -1,7 +1,4 @@
-// dotenv 라이브러리를 사용하여 환경 변수 로드
 require('dotenv').config();
-
-// Express 애플리케이션 및 필요한 모듈 가져오기
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
@@ -10,45 +7,42 @@ const bcrypt = require('bcryptjs');
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-const { Client } = require('ssh2'); // ssh2 모듈 가져오기
+const { Client } = require('ssh2');
+const fs = require('fs');
 
 // Express 애플리케이션 생성
 const app = express();
-const PORT = process.env.PORT || 3001; // 포트 설정
+const PORT = process.env.PORT || 3001;
 
 // 미들웨어 설정
-app.use(cors()); // CORS 허용
-app.use(express.json()); // JSON 파싱
-app.use(express.urlencoded({ extended: false })); // URL 인코딩 사용
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-// 세션 설정
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // 세션 암호화에 사용될 시크릿 키
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })
 );
 
-// Passport 초기화
-app.use(passport.initialize());
-app.use(passport.session());
-
 // MongoDB 연결
-const url = process.env.DB_URL; // .env 파일에서 DB_URL 가져옴
-let db; // 데이터베이스 클라이언트
+const url = process.env.DB_URL;
+let db;
 
 MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(async (client) => {
+  .then((client) => {
     console.log('DB connected');
     db = client.db('Login'); // 데이터베이스 선택
 
+    // 서버 시작
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.error('DB connection error:', err);
   });
 
 // Passport 설정
@@ -88,24 +82,54 @@ passport.use(
     },
     async (req, email, password, done) => {
       try {
+        console.log('Finding user by email:', email);
         const user = await db.collection('Member').findOne({ email });
 
         if (!user) {
+          console.log('User not found');
           return done(null, false, { message: 'Incorrect email.' });
         }
 
+        console.log('User found:', user);
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+          console.log('Password does not match');
           return done(null, false, { message: 'Incorrect password.' });
         }
 
+        console.log('Password matches');
         return done(null, user);
       } catch (err) {
+        console.error('Error during login process:', err);
         return done(err);
       }
     }
   )
 );
+
+passport.serializeUser((user, done) => {
+  done(null, user.email);
+});
+
+passport.deserializeUser(async (email, done) => {
+  try {
+    const user = await db.collection('Member').findOne({ email });
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
+
+// 회원가입 라우트
+app.post('/register', passport.authenticate('local-signup'), (req, res) => {
+  res.status(201).send('User registered');
+});
+
+// 로그인 라우트
+app.post('/login', passport.authenticate('local-login'), (req, res) => {
+  res.send('Logged in');
+});
 
 // SSH 연결 및 명령어 실행
 app.get('/ssh-test', (req, res) => {
@@ -139,7 +163,7 @@ app.get('/ssh-test', (req, res) => {
       host: process.env.VM_HOST,
       port: 22,
       username: process.env.VM_USERNAME,
-      privateKey: require('fs').readFileSync(process.env.VM_PRIVATE_KEY_PATH),
+      privateKey: fs.readFileSync(process.env.VM_PRIVATE_KEY_PATH),
     });
 
   conn.on('error', (err) => {
@@ -200,36 +224,7 @@ function executeScripts(conn, sudoPassword, scripts, index, callback) {
   });
 }
 
-// 회원가입 라우트
-app.post('/register', passport.authenticate('local-signup'), (req, res) => {
-  res.status(201).send('User registered');
-});
-
-// 로그인 라우트
-app.post('/login', passport.authenticate('local-login'), (req, res) => {
-  // 로그인 성공 시 쿠키 설정
-  res.cookie('isAuthenticated', 'true', {
-    httpOnly: true, // 클라이언트에서 쿠키를 읽지 못하도록 설정
-    maxAge: 86400000, // 쿠키 만료 시간: 1일 (밀리초 단위)
-  });
-  res.send('Logged in');
-});
-
-// Passport 직렬화 및 역직렬화
-passport.serializeUser((user, done) => {
-  done(null, user.email);
-});
-
-passport.deserializeUser(async (email, done) => {
-  try {
-    const user = await db.collection('Member').findOne({ email });
-    done(null, user);
-  } catch (err) {
-    done(err);
-  }
-});
-
-// 차트 데이터 (주통기반취약점) 가져오는 API 엔드포인트
+// 차트 데이터 가져오는 API 엔드포인트
 app.get('/api/data', async (req, res) => {
   try {
     const data = await db.collection('ChartData').find().toArray();
@@ -306,39 +301,33 @@ app.get('/api/S-memory', async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: process.env.NODE_MAILER_ID, // 발신자 이메일 주소
-    pass: process.env.NODE_MAILER_PASSWORD, // 발신자 이메일 비밀번호
+    user: process.env.NODE_MAILER_ID,
+    pass: process.env.NODE_MAILER_PASSWORD,
   },
 });
 
-// 인증번호 생성 함수
 function generateRandomNumber() {
-  return Math.floor(100000 + Math.random() * 900000); // 6자리의 랜덤 숫자 생성
+  return Math.floor(100000 + Math.random() * 900000);
 }
 
-// 회사 이메일 인증 요청 핸들러
 app.post('/verify-company-email', async (req, res) => {
   const { companyEmail } = req.body;
 
   try {
-    // 랜덤한 6자리 숫자 생성
     const verificationCode = generateRandomNumber();
 
-    // MongoDB에 회사 이메일과 인증번호 저장
     await db.collection('TempData').insertOne({
       email: companyEmail,
       verificationCode: verificationCode.toString(),
     });
 
-    // 이메일 전송 옵션 설정
     const mailOptions = {
-      from: 'cofl3890@gmail.com', // 발신자 이메일 주소
-      to: companyEmail, // 수신자 이메일 주소
-      subject: 'Verification Code for Company Email', // 이메일 제목
-      text: `Your verification code is: ${verificationCode}`, // 이메일 내용
+      from: 'cofl3890@gmail.com',
+      to: companyEmail,
+      subject: 'Verification Code for Company Email',
+      text: `Your verification code is: ${verificationCode}`,
     };
 
-    // 이메일 전송
     await transporter.sendMail(mailOptions);
 
     res.status(200).send('Verification code sent successfully');
@@ -348,7 +337,6 @@ app.post('/verify-company-email', async (req, res) => {
   }
 });
 
-// 인증 코드 검증 핸들러
 app.post('/verify-code', async (req, res) => {
   const { companyEmail, verificationCode } = req.body;
 
@@ -357,7 +345,6 @@ app.post('/verify-code', async (req, res) => {
       .collection('TempData')
       .findOne({ email: companyEmail, verificationCode });
     if (tempData) {
-      // 인증 코드가 일치하면 TempData에서 해당 데이터 삭제
       await db
         .collection('TempData')
         .deleteOne({ email: companyEmail, verificationCode });
@@ -368,5 +355,111 @@ app.post('/verify-code', async (req, res) => {
   } catch (error) {
     console.error('Error verifying code:', error);
     res.status(500).send('Error verifying code');
+  }
+});
+
+// 로그인 상태 확인 API
+app.get('/auth/status', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({ isAuthenticated: true, user: req.user });
+  } else {
+    res.json({ isAuthenticated: false });
+  }
+});
+
+// Logout endpoint
+app.post('/logout', (req, res) => {
+  req.logout();
+  res.send('Logged out');
+});
+
+// 게시물 목록 가져오기
+app.get('/posts', async (req, res) => {
+  try {
+    const posts = await db.collection('Posts').find().toArray();
+    res.json(posts);
+  } catch (err) {
+    console.error('Error fetching posts:', err); // 오류 로그
+    res.status(500).send('Error fetching posts: ' + err.message); // 오류 메시지 응답
+  }
+});
+
+// 게시물 생성하기
+// Assuming this is in your Express app
+app.post('/posts', async (req, res) => {
+  try {
+    const { title, content, author, password } = req.body;
+
+    // 데이터 유효성 검사
+    if (!title || !content || !author) {
+      return res
+        .status(400)
+        .json({ error: 'Title, content, and author are required' });
+    }
+
+    // 데이터 삽입
+    const post = {
+      title,
+      content,
+      author,
+      password: password || null, // 비밀번호가 없으면 null
+    };
+
+    const result = await db.collection('Posts').insertOne(post);
+    res.status(201).json(result);
+  } catch (err) {
+    console.error('Error creating post:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 게시물 업데이트
+app.put('/posts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content, password, author } = req.body;
+
+    // 데이터 유효성 검사
+    if (!title || !content || !author) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    // 데이터 업데이트
+    const result = await db
+      .collection('Posts')
+      .updateOne(
+        { _id: new MongoClient.ObjectId(id) },
+        { $set: { title, content, password, author } }
+      );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error('Error updating post:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 게시물 삭제
+app.delete('/posts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 데이터 삭제
+    const result = await db
+      .collection('Posts')
+      .deleteOne({ _id: new MongoClient.ObjectId(id) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error('Error deleting post:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
