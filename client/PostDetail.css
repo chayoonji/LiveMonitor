@@ -9,29 +9,9 @@
 
 .post-detail-container h1 {
   color: #6a24fe;
-  margin-bottom: 20px;
 }
 
 .post-detail-container p {
-  color: #9e9ea4;
-  margin-bottom: 20px;
-}
-
-.post-detail-container small {
-  display: block;
-  margin-bottom: 20px;
-}
-
-.back-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  border: none;
-  border-radius: 5px;
-  color: #ffffff;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.back-button:hover {
-  background-color: #0056b3;
+  font-size: 18px;
+  line-height: 1.6;
 }

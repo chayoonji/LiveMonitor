@@ -17,7 +17,8 @@ import Register from './Register';
 import Reports1 from './reports1';
 import Reports2 from './reports2';
 import PDF from './pdf';
-import Board from './Board'; // Board 컴포넌트를 import 합니다
+import Board from './Boardpost'; // Board 컴포넌트를 import 합니다
+import PostDetail from './PostDetail'; 
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = React.useState(false);
@@ -59,11 +60,19 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route
-              path="/Board"
+        <Route
+              path="/board"
               element={
                 <PrivateRoute>
                   <Board />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/post/:id"
+              element={
+                <PrivateRoute>
+                  <PostDetail />
                 </PrivateRoute>
               }
             />

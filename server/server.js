@@ -4,11 +4,12 @@ const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
-const { MongoClient } = require('mongodb');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { Client } = require('ssh2');
 const fs = require('fs');
+const path = require('path');
+const { MongoClient, ObjectId } = require('mongodb'); // MongoClient 가져오기
 
 // Express 애플리케이션 생성
 const app = express();
@@ -128,7 +129,7 @@ app.post('/register', passport.authenticate('local-signup'), (req, res) => {
 
 // 로그인 라우트
 app.post('/login', passport.authenticate('local-login'), (req, res) => {
-  res.send('Logged in');
+  res.json({ user: req.user });
 });
 
 // SSH 연결 및 명령어 실행
@@ -358,108 +359,164 @@ app.post('/verify-code', async (req, res) => {
   }
 });
 
-// 로그인 상태 확인 API
-app.get('/auth/status', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json({ isAuthenticated: true, user: req.user });
-  } else {
-    res.json({ isAuthenticated: false });
-  }
-});
-
-// Logout endpoint
-app.post('/logout', (req, res) => {
-  req.logout();
-  res.send('Logged out');
-});
-
-// 게시물 목록 가져오기
+// 게시물 목록을 가져오는 API 엔드포인트
 app.get('/posts', async (req, res) => {
   try {
     const posts = await db.collection('Posts').find().toArray();
     res.json(posts);
   } catch (err) {
-    console.error('Error fetching posts:', err); // 오류 로그
-    res.status(500).send('Error fetching posts: ' + err.message); // 오류 메시지 응답
+    console.error('Error fetching posts:', err);
+    res.status(500).send('Error fetching posts');
   }
 });
 
-// 게시물 생성하기
-// Assuming this is in your Express app
+// 게시물 생성 엔드포인트
 app.post('/posts', async (req, res) => {
   try {
-    const { title, content, author, password } = req.body;
-
-    // 데이터 유효성 검사
-    if (!title || !content || !author) {
-      return res
-        .status(400)
-        .json({ error: 'Title, content, and author are required' });
-    }
-
-    // 데이터 삽입
-    const post = {
+    const { title, content, password, author } = req.body;
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+    await db.collection('Posts').insertOne({
       title,
       content,
+      password: hashedPassword,
       author,
-      password: password || null, // 비밀번호가 없으면 null
-    };
-
-    const result = await db.collection('Posts').insertOne(post);
-    res.status(201).json(result);
+      createdAt: new Date(),
+    });
+    res.status(201).send('Post created');
   } catch (err) {
     console.error('Error creating post:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).send('Error creating post');
   }
 });
 
-// 게시물 업데이트
+// 특정 게시물 가져오는 엔드포인트
+app.get('/posts/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).send('Invalid post ID format');
+    }
+    const post = await db.collection('Posts').findOne({ _id: new ObjectId(id) });
+    if (post) {
+      res.json(post);
+    } else {
+      res.status(404).send('Post not found');
+    }
+  } catch (err) {
+    console.error('Error fetching post:', err);
+    res.status(500).send('Error fetching post');
+  }
+});
+
+
+// 게시물 수정 엔드포인트
 app.put('/posts/:id', async (req, res) => {
   try {
-    const { id } = req.params;
     const { title, content, password, author } = req.body;
-
-    // 데이터 유효성 검사
-    if (!title || !content || !author) {
-      return res.status(400).json({ error: 'All fields are required' });
+    const updateFields = { title, content, author };
+    if (password) {
+      updateFields.password = await bcrypt.hash(password, 10);
     }
-
-    // 데이터 업데이트
-    const result = await db
-      .collection('Posts')
-      .updateOne(
-        { _id: new MongoClient.ObjectId(id) },
-        { $set: { title, content, password, author } }
-      );
-
+    const result = await db.collection('Posts').updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: updateFields }
+    );
     if (result.matchedCount === 0) {
-      return res.status(404).json({ error: 'Post not found' });
+      res.status(404).send('Post not found');
+    } else {
+      res.send('Post updated');
     }
-
-    res.status(200).json(result);
   } catch (err) {
     console.error('Error updating post:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).send('Error updating post');
   }
 });
 
-// 게시물 삭제
+// 게시물 삭제 엔드포인트
 app.delete('/posts/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-
-    // 데이터 삭제
-    const result = await db
-      .collection('Posts')
-      .deleteOne({ _id: new MongoClient.ObjectId(id) });
-
+    const result = await db.collection('Posts').deleteOne({ _id: new ObjectId(req.params.id) });
     if (result.deletedCount === 0) {
-      return res.status(404).json({ error: 'Post not found' });
+      res.status(404).send('Post not found');
+    } else {
+      res.send('Post deleted');
     }
-
-    res.status(200).json(result);
   } catch (err) {
     console.error('Error deleting post:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).send('Error deleting post');
+  }
+});
+
+// 비밀번호 확인 엔드포인트
+app.post('/posts/check-password', async (req, res) => {
+  try {
+    const { postId, password } = req.body;
+    if (!ObjectId.isValid(postId)) {
+      return res.status(400).json({ valid: false, message: 'Invalid post ID format' });
+    }
+    const post = await db.collection('Posts').findOne({ _id: new ObjectId(postId) });
+    if (post) {
+      if (post.password) {
+        const isMatch = await bcrypt.compare(password, post.password);
+        if (isMatch) {
+          res.json({ valid: true });
+        } else {
+          res.json({ valid: false });
+        }
+      } else {
+        res.status(400).json({ valid: false, message: 'This post does not require a password.' });
+      }
+    } else {
+      res.status(404).json({ valid: false, message: 'Post not found' });
+    }
+  } catch (err) {
+    console.error('Error checking password:', err);
+    res.status(500).json({ valid: false, message: 'Internal server error while checking password' });
+  }
+});
+
+
+// 게시물 비밀번호 확인 후 게시물 가져오는 엔드포인트
+app.post('/posts/:id', async (req, res) => {
+  const { password } = req.body;
+  try {
+    // 게시물 조회
+    const post = await db.collection('Posts').findOne({ _id: new ObjectId(req.params.id) });
+
+    if (!post) {
+      return res.status(404).send('Post not found');
+    }
+
+    // 비밀번호가 설정된 게시물인지 확인
+    if (post.password) {
+      const isMatch = await bcrypt.compare(password, post.password);
+      if (!isMatch) {
+        return res.status(403).json({ valid: false, message: 'Incorrect password.' });
+      }
+    }
+
+    // 비밀번호가 맞거나 비밀번호가 없는 게시물의 경우 게시물 반환
+    const { title, content, author } = post;
+    res.json({ title, content, author });
+  } catch (err) {
+    console.error('Error fetching post:', err);
+    res.status(500).send('Error fetching post');
+  }
+});
+
+
+// JSON 파일을 읽고 MongoDB에 저장하는 엔드포인트
+app.get('/upload-json', async (req, res) => {
+  const filePath = path.join(__dirname, 'data', 'postdb.json'); // JSON 파일 경로를 여기에 입력하세요
+
+  try {
+    const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const collection = db.collection('TextData');
+
+    await collection.insertMany(jsonData);
+    res.send('JSON data has been successfully uploaded to MongoDB');
+  } catch (error) {
+    console.error('Error uploading data to MongoDB:', error);
+    res.status(500).send('Error uploading data to MongoDB');
   }
 });
