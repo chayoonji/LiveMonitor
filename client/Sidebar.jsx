@@ -17,7 +17,9 @@ import {
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const authContext = useAuth();
+  const isAuthenticated = (authContext && authContext.isAuthenticated) ? authContext.isAuthenticated : false;
+  const logout = (authContext && authContext.logout) ? authContext.logout : () => {};
 
   const handleReportsClick = (e) => {
     e.preventDefault();
@@ -55,7 +57,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         </li>
 
         <li className="sidebar-list-item">
-          <Link to="/program">
+          <Link to="/routine">
             <BsFillArchiveFill className="icon" /> 프로그램
           </Link>
         </li>
