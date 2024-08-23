@@ -1,17 +1,12 @@
-// src/components/PrivateRoute.jsx
+// PrivateRoute.jsx
 import React from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 
-const PrivateRoute = ({ element: Component, ...rest }) => {
-  const { isAuthenticated } = useAuth();
-
-  return (
-    <Route
-      {...rest}
-      element={isAuthenticated ? Component : <Navigate to="/login" />}
-    />
-  );
+const PrivateRoute = ({ element }) => {
+  const { isAuthenticated } = useAuth(); // 인증 상태를 확인하는 로직
+  
+  return isAuthenticated ? element : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

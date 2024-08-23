@@ -1,8 +1,8 @@
 import React from 'react';
 import {
   BrowserRouter as Router,
-  Route,
   Routes,
+  Route,
   Navigate,
 } from 'react-router-dom';
 import './App.css';
@@ -16,9 +16,8 @@ import LoginComponent from './LoginComponent';
 import Register from './Register';
 import Reports1 from './reports1';
 import Reports2 from './reports2';
-import PDF from './pdf';
 import Board from './Boardpost'; // Board 컴포넌트를 import 합니다
-import PostDetail from './PostDetail'; 
+import PostDetail from './PostDetail';
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = React.useState(false);
@@ -40,41 +39,23 @@ function App() {
             <Route path="/guide" element={<Guide />} />
             <Route path="/login" element={<LoginComponent />} />
             <Route path="/team" element={<Team />} />
-            <Route path="/pdf" element={<PDF />} />
-            <Route path="/" element={<Navigate to="/guide" />} />{' '}
+            <Route path="/" element={<Navigate to="/guide" />} /> {/* 기본 경로를 /guide로 리다이렉트 */}
             <Route path="/register" element={<Register />} />
-            {/* 기본 경로를 /guide로 리다이렉트 */}
             <Route
               path="/reports1"
-              element={
-                <PrivateRoute>
-                  <Reports1 />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute element={<Reports1 />} />}
             />
             <Route
               path="/reports2"
-              element={
-                <PrivateRoute>
-                  <Reports2 />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute element={<Reports2 />} />}
             />
-        <Route
+            <Route
               path="/board"
-              element={
-                <PrivateRoute>
-                  <Board />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute element={<Board />} />}
             />
             <Route
               path="/post/:id"
-              element={
-                <PrivateRoute>
-                  <PostDetail />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute element={<PostDetail />} />}
             />
           </Routes>
         </div>
