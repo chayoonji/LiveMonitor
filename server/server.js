@@ -412,15 +412,14 @@ app.get('/posts/:id', async (req, res) => {
 // 게시물 수정 엔드포인트
 app.put('/posts/:id', async (req, res) => {
   try {
-    const { title, content, password, author } = req.body;
-    const updateFields = { title, content, author };
-    if (password) {
-      updateFields.password = await bcrypt.hash(password, 10);
-    }
+    const { title, content } = req.body;
+    const updateFields = { title, content };
+
     const result = await db.collection('Posts').updateOne(
       { _id: new ObjectId(req.params.id) },
       { $set: updateFields }
     );
+    
     if (result.matchedCount === 0) {
       res.status(404).send('Post not found');
     } else {
@@ -447,14 +446,17 @@ app.delete('/posts/:id', async (req, res) => {
   }
 });
 
-// 비밀번호 확인 엔드포인트
+
+// 게시물 비밀번호 확인 엔드포인트
 app.post('/posts/check-password', async (req, res) => {
   try {
     const { postId, password } = req.body;
     if (!ObjectId.isValid(postId)) {
       return res.status(400).json({ valid: false, message: 'Invalid post ID format' });
     }
+    
     const post = await db.collection('Posts').findOne({ _id: new ObjectId(postId) });
+    
     if (post) {
       if (post.password) {
         const isMatch = await bcrypt.compare(password, post.password);
