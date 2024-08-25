@@ -13,8 +13,8 @@ const PostDetail = () => {
   const [content, setContent] = useState('');
   const [showEditForm, setShowEditForm] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
-  const [file, setFile] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(null);
+  const [files, setFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -23,7 +23,7 @@ const PostDetail = () => {
         setPost(response.data);
         setTitle(response.data.title);
         setContent(response.data.content);
-        setUploadedFile(response.data.file);
+        setUploadedFiles(response.data.files || []);
       } catch (error) {
         setError('게시물을 불러오는 중 오류가 발생했습니다.');
         console.error('Error fetching post:', error.message);
@@ -37,9 +37,7 @@ const PostDetail = () => {
 
   const handleUpdatePost = async () => {
     const formData = new FormData();
-    if (file) {
-      formData.append('file', file);
-    }
+    files.forEach(file => formData.append('files', file));
 
     try {
       const response = await axios.put(`http://localhost:3001/posts/${id}`, formData, {
@@ -48,14 +46,29 @@ const PostDetail = () => {
         },
       });
 
-      setUploadedFile(response.data.file);
+      setUploadedFiles(response.data.files);
 
       alert('게시물이 성공적으로 수정되었습니다.');
-      setShowEditForm(false); // 수정 폼 닫기
+      setShowEditForm(false);
     } catch (error) {
       console.error('Error updating post:', error.message);
       alert('게시물 수정 중 오류가 발생했습니다: ' + error.message);
     }
+  };
+
+  const handleAddFile = () => {
+    setFiles([...files, null]); // Add a placeholder for a new file input
+  };
+
+  const handleFileChange = (e, index) => {
+    const newFiles = [...files];
+    newFiles[index] = e.target.files[0];
+    setFiles(newFiles);
+  };
+
+  const handleRemoveFile = (index) => {
+    const newFiles = files.filter((_, i) => i !== index);
+    setFiles(newFiles);
   };
 
   const handleDeletePost = async () => {
@@ -82,7 +95,7 @@ const PostDetail = () => {
   };
 
   const handleDiagnosisClick = () => {
-    navigate(`/diagnosis/${id}`);
+    navigate(`/diagnosis`);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -95,12 +108,16 @@ const PostDetail = () => {
       <small>by {post.author}</small>
       <p>{content}</p>
 
-      {uploadedFile && (
+      {uploadedFiles.length > 0 && (
         <div>
-          <h3>첨부 파일:</h3>
-          <a href={`http://localhost:3001/uploads/${uploadedFile}`} download>
-            {uploadedFile}
-          </a>
+          <h3 style={{ color: 'red' }}>첨부 파일:</h3>
+          {uploadedFiles.map((file, index) => (
+            <div key={index}>
+              <a href={`http://localhost:3001/uploads/${file}`} download style={{ color: 'red' }}>
+                {file}
+              </a>
+            </div>
+          ))}
         </div>
       )}
 
@@ -108,10 +125,16 @@ const PostDetail = () => {
 
       {showEditForm ? (
         <div>
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-          />
+          {files.map((_, index) => (
+            <div key={index} style={{ marginBottom: '10px' }}>
+              <input
+                type="file"
+                onChange={(e) => handleFileChange(e, index)}
+              />
+              <button onClick={() => handleRemoveFile(index)}>삭제</button>
+            </div>
+          ))}
+          <button onClick={handleAddFile}>추가</button>
           <button onClick={handleUpdatePost}>수정</button>
           <button onClick={() => setShowEditForm(false)}>취소</button>
         </div>

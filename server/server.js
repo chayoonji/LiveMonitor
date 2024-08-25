@@ -226,17 +226,11 @@ function executeScripts(conn, sudoPassword, scripts, index, callback) {
   });
 }
 
+// 주통 총합 가져오는 API 엔드포인트
 app.get('/api/data', async (req, res) => {
   try {
-    // ChartData와 TextData 두 컬렉션에서 데이터 가져오기
-    const chartDataPromise = db.collection('ChartData').find().toArray();
-    const textDataPromise = db.collection('TextData').find().toArray();
-    
-    // 두 Promise를 동시에 실행하고, 완료될 때까지 기다리기
-    const [chartData, textData] = await Promise.all([chartDataPromise, textDataPromise]);
-    
-    // ChartData 변환
-    const transformedChartData = chartData.map((item, index) => {
+    const data = await db.collection('ChartData').find().toArray();
+    const transformedData = data.map((item, index) => {
       const { _id, ...rest } = item;
       const dataEntries = Object.entries(rest).map(([key, value]) => ({
         name: key,
@@ -247,25 +241,75 @@ app.get('/api/data', async (req, res) => {
         data: dataEntries,
       };
     });
-    
-    // TextData 변환
-    const transformedTextData = textData.map((item, index) => {
-      const { _id, ...rest } = item;
-      return {
-        id: index + 1,
-        ...rest,
-      };
-    });
-    
-    // 두 데이터 합쳐서 반환
-    res.json({
-      chartData: transformedChartData,
-      textData: transformedTextData,
-    });
+    res.json(transformedData);
   } catch (err) {
     res.status(500).send(err);
   }
 });
+
+// 게시물 목록을 검색 및 필터링하여 가져오는 API 엔드포인트
+app.get('/api/search-text-data', async (req, res) => {
+  const { query, page = 1, limit = 10 } = req.query;
+  const skip = (page - 1) * limit;
+
+  try {
+    const filter = query ? {
+      $or: [
+        { 분류: { $regex: query, $options: 'i' } },
+        { 결과상세: { $regex: query, $options: 'i' } },
+        { 결과: { $regex: query, $options: 'i' } }
+      ]
+    } : {};
+
+    const [total, data] = await Promise.all([
+      db.collection('TextData').countDocuments(filter),
+      db.collection('TextData').find(filter).skip(skip).limit(Number(limit)).toArray()
+    ]);
+
+    res.json({
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      data
+    });
+  } catch (err) {
+    console.error('Error searching text data:', err);
+    res.status(500).send('Error searching text data');
+  }
+});
+
+// 취약한 결과를 확인하는 API 엔드포인트
+app.get('/api/diagnosis-results', async (req, res) => {
+  try {
+    const results = await db.collection('DiagnosisResults').find().toArray();
+    
+    // 결과의 취약성 여부를 판단하고 빨간색으로 표시할 정보를 추가합니다.
+    const processedResults = results.map(result => {
+      const isVulnerable = result.score < 50; // 예를 들어, score가 50 미만이면 취약하다고 가정
+      return {
+        ...result,
+        isVulnerable,
+      };
+    });
+    
+    res.json(processedResults);
+  } catch (err) {
+    console.error('Error fetching diagnosis results:', err);
+    res.status(500).send('Error fetching diagnosis results');
+  }
+});
+
+// 해결 방안을 안내하는 페이지의 정보를 가져오는 API 엔드포인트
+app.get('/api/solutions', async (req, res) => {
+  try {
+    const solutions = await db.collection('Solutions').find().toArray();
+    res.json(solutions);
+  } catch (err) {
+    console.error('Error fetching solutions:', err);
+    res.status(500).send('Error fetching solutions');
+  }
+});
+
 
 
 // MongoDB CpuData(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
@@ -446,13 +490,13 @@ app.get('/posts/:id', async (req, res) => {
 });
 
 // 게시물 수정 (파일만 업데이트)
-app.put('/posts/:id', upload.single('file'), async (req, res) => {
+app.put('/posts/:id', upload.array('files'), async (req, res) => {
   try {
     const { id } = req.params;
-    const file = req.file ? req.file.filename : null;
-    
+    const files = req.files ? req.files.map(file => file.filename) : [];
+
     // 파일이 첨부된 경우에만 업데이트
-    const updateData = file ? { file } : {};
+    const updateData = files.length > 0 ? { files } : {};
 
     const result = await db.collection('Posts').updateOne(
       { _id: new ObjectId(id) },
@@ -463,13 +507,11 @@ app.put('/posts/:id', upload.single('file'), async (req, res) => {
       return res.status(404).send('Post not found');
     }
 
-    res.json({ file }); // 클라이언트가 파일 이름을 받을 수 있도록 응답
+    res.json({ files }); // 클라이언트가 파일 이름을 받을 수 있도록 응답
   } catch (err) {
     res.status(500).send(err);
   }
 });
-
-
 
 // 게시물 삭제 엔드포인트
 app.delete('/posts/:id', async (req, res) => {
