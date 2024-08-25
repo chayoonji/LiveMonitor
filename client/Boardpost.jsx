@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Board.css';
 
@@ -15,6 +15,7 @@ const Board = () => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -27,7 +28,7 @@ const Board = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [location.state?.refresh]); // Dependency to trigger updates
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,6 +46,8 @@ const Board = () => {
       setPassword('');
       setAuthor('');
       setIsWriting(false);
+
+      // Refresh the posts list
       const updatedPosts = await axios.get('http://localhost:3001/posts');
       setPosts(updatedPosts.data);
     } catch (error) {

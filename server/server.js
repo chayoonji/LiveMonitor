@@ -10,6 +10,7 @@ const { Client } = require('ssh2');
 const fs = require('fs');
 const path = require('path');
 const { MongoClient, ObjectId } = require('mongodb'); // MongoClient 가져오기
+const multer = require('multer');
 
 // Express 애플리케이션 생성
 const app = express();
@@ -225,11 +226,17 @@ function executeScripts(conn, sudoPassword, scripts, index, callback) {
   });
 }
 
-// 차트 데이터 가져오는 API 엔드포인트
 app.get('/api/data', async (req, res) => {
   try {
-    const data = await db.collection('ChartData').find().toArray();
-    const transformedData = data.map((item, index) => {
+    // ChartData와 TextData 두 컬렉션에서 데이터 가져오기
+    const chartDataPromise = db.collection('ChartData').find().toArray();
+    const textDataPromise = db.collection('TextData').find().toArray();
+    
+    // 두 Promise를 동시에 실행하고, 완료될 때까지 기다리기
+    const [chartData, textData] = await Promise.all([chartDataPromise, textDataPromise]);
+    
+    // ChartData 변환
+    const transformedChartData = chartData.map((item, index) => {
       const { _id, ...rest } = item;
       const dataEntries = Object.entries(rest).map(([key, value]) => ({
         name: key,
@@ -240,11 +247,26 @@ app.get('/api/data', async (req, res) => {
         data: dataEntries,
       };
     });
-    res.json(transformedData);
+    
+    // TextData 변환
+    const transformedTextData = textData.map((item, index) => {
+      const { _id, ...rest } = item;
+      return {
+        id: index + 1,
+        ...rest,
+      };
+    });
+    
+    // 두 데이터 합쳐서 반환
+    res.json({
+      chartData: transformedChartData,
+      textData: transformedTextData,
+    });
   } catch (err) {
     res.status(500).send(err);
   }
 });
+
 
 // MongoDB CpuData(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
 app.get('/api/cpu-data', async (req, res) => {
@@ -359,6 +381,21 @@ app.post('/verify-code', async (req, res) => {
   }
 });
 
+// 파일 업로드 설정
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage });
+
+// 정적 파일 제공 설정
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 // 게시물 목록을 가져오는 API 엔드포인트
 app.get('/posts', async (req, res) => {
   try {
@@ -408,28 +445,31 @@ app.get('/posts/:id', async (req, res) => {
   }
 });
 
-
-// 게시물 수정 엔드포인트
-app.put('/posts/:id', async (req, res) => {
+// 게시물 수정 (파일만 업데이트)
+app.put('/posts/:id', upload.single('file'), async (req, res) => {
   try {
-    const { title, content } = req.body;
-    const updateFields = { title, content };
+    const { id } = req.params;
+    const file = req.file ? req.file.filename : null;
+    
+    // 파일이 첨부된 경우에만 업데이트
+    const updateData = file ? { file } : {};
 
     const result = await db.collection('Posts').updateOne(
-      { _id: new ObjectId(req.params.id) },
-      { $set: updateFields }
+      { _id: new ObjectId(id) },
+      { $set: updateData }
     );
-    
-    if (result.matchedCount === 0) {
-      res.status(404).send('Post not found');
-    } else {
-      res.send('Post updated');
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).send('Post not found');
     }
+
+    res.json({ file }); // 클라이언트가 파일 이름을 받을 수 있도록 응답
   } catch (err) {
-    console.error('Error updating post:', err);
-    res.status(500).send('Error updating post');
+    res.status(500).send(err);
   }
 });
+
+
 
 // 게시물 삭제 엔드포인트
 app.delete('/posts/:id', async (req, res) => {
@@ -445,7 +485,6 @@ app.delete('/posts/:id', async (req, res) => {
     res.status(500).send('Error deleting post');
   }
 });
-
 
 // 게시물 비밀번호 확인 엔드포인트
 app.post('/posts/check-password', async (req, res) => {
@@ -477,7 +516,6 @@ app.post('/posts/check-password', async (req, res) => {
   }
 });
 
-
 // 게시물 비밀번호 확인 후 게시물 가져오는 엔드포인트
 app.post('/posts/:id', async (req, res) => {
   const { password } = req.body;
@@ -505,7 +543,6 @@ app.post('/posts/:id', async (req, res) => {
     res.status(500).send('Error fetching post');
   }
 });
-
 
 // JSON 파일을 읽고 MongoDB에 저장하는 엔드포인트
 app.get('/upload-json', async (req, res) => {

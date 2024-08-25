@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './PostDetail.css';
@@ -13,6 +13,8 @@ const PostDetail = () => {
   const [content, setContent] = useState('');
   const [showEditForm, setShowEditForm] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
+  const [file, setFile] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -21,6 +23,7 @@ const PostDetail = () => {
         setPost(response.data);
         setTitle(response.data.title);
         setContent(response.data.content);
+        setUploadedFile(response.data.file);
       } catch (error) {
         setError('게시물을 불러오는 중 오류가 발생했습니다.');
         console.error('Error fetching post:', error.message);
@@ -33,13 +36,22 @@ const PostDetail = () => {
   }, [id]);
 
   const handleUpdatePost = async () => {
+    const formData = new FormData();
+    if (file) {
+      formData.append('file', file);
+    }
+
     try {
-      await axios.put(`http://localhost:3001/posts/${id}`, {
-        title,
-        content,
+      const response = await axios.put(`http://localhost:3001/posts/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
+
+      setUploadedFile(response.data.file);
+
       alert('게시물이 성공적으로 수정되었습니다.');
-      navigate('/'); // 홈 페이지로 이동
+      setShowEditForm(false); // 수정 폼 닫기
     } catch (error) {
       console.error('Error updating post:', error.message);
       alert('게시물 수정 중 오류가 발생했습니다: ' + error.message);
@@ -48,20 +60,18 @@ const PostDetail = () => {
 
   const handleDeletePost = async () => {
     try {
-      // 비밀번호를 확인하는 요청을 먼저 보냅니다.
       const response = await axios.post('http://localhost:3001/posts/check-password', {
         postId: id,
-        password: deletePassword
+        password: deletePassword,
       });
-  
+
       if (response.data.valid) {
-        // 비밀번호가 맞으면 게시물을 삭제합니다.
         await axios.delete(`http://localhost:3001/posts/${id}`, {
-          data: { password: deletePassword } // 비밀번호를 데이터로 전송
+          data: { password: deletePassword },
         });
-  
+
         alert('게시물이 성공적으로 삭제되었습니다.');
-        navigate('/'); // 홈 페이지로 이동
+        navigate('/', { state: { refresh: true } });
       } else {
         alert('비밀번호가 틀립니다.');
       }
@@ -70,8 +80,10 @@ const PostDetail = () => {
       alert('게시물 삭제 중 오류가 발생했습니다: ' + error.message);
     }
   };
-  
-  
+
+  const handleDiagnosisClick = () => {
+    navigate(`/diagnosis/${id}`);
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -79,20 +91,26 @@ const PostDetail = () => {
 
   return (
     <div className="post-detail-container">
-      <h1>{post.title}</h1>
+      <h1>{title}</h1>
       <small>by {post.author}</small>
-      <p>{post.content}</p>
+      <p>{content}</p>
+
+      {uploadedFile && (
+        <div>
+          <h3>첨부 파일:</h3>
+          <a href={`http://localhost:3001/uploads/${uploadedFile}`} download>
+            {uploadedFile}
+          </a>
+        </div>
+      )}
+
+      <button onClick={handleDiagnosisClick}>진단 결과 보기</button>
 
       {showEditForm ? (
         <div>
           <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            type="file"
+            onChange={(e) => setFile(e.target.files[0])}
           />
           <button onClick={handleUpdatePost}>수정</button>
           <button onClick={() => setShowEditForm(false)}>취소</button>
@@ -100,7 +118,9 @@ const PostDetail = () => {
       ) : (
         <div>
           <button onClick={() => setShowEditForm(true)}>수정</button>
-          <button onClick={() => setDeletePassword(prompt('삭제를 확인하기 위해 비밀번호를 입력하세요'))}>
+          <button
+            onClick={() => setDeletePassword(prompt('삭제를 확인하기 위해 비밀번호를 입력하세요'))}
+          >
             삭제
           </button>
           {deletePassword && (
