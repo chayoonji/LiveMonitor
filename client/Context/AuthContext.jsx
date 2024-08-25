@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     // 쿠키에서 인증 상태를 읽어 로컬 상태를 초기화
     const authCookie = Cookies.get('isAuthenticated');
     setIsAuthenticated(authCookie === 'true');
-    setLoading(false); // 인증 상태를 확인한 후 로딩 상태를 false로 설정
+    setLoading(false); // 로딩 완료
   }, []);
 
   const login = () => {

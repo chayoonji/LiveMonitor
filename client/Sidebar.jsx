@@ -9,27 +9,16 @@ import {
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
   BsPeopleFill,
-  BsListCheck,
   BsMenuButtonWideFill,
   BsFillGearFill,
   BsBoxArrowRight,
 } from 'react-icons/bs';
 
-function Sidebar({ openSidebarToggle, OpenSidebar }) {
+function Sidebar({ openSidebarToggle }) {
   const navigate = useNavigate();
   const authContext = useAuth();
-  const isAuthenticated = (authContext && authContext.isAuthenticated) ? authContext.isAuthenticated : false;
-  const logout = (authContext && authContext.logout) ? authContext.logout : () => {};
-
-  const handleReportsClick = (e) => {
-    e.preventDefault();
-    navigate('/login');
-  };
-
-  const handleRegisterClick = (e) => {
-    e.preventDefault();
-    navigate('/register');
-  };
+  const isAuthenticated = authContext && authContext.isAuthenticated;
+  const logout = authContext && authContext.logout;
 
   const handleLogoutClick = () => {
     logout();
@@ -48,14 +37,12 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </Link>
         </div>
       </div>
-
       <ul className="sidebar-list">
         <li className="sidebar-list-item">
           <Link to="/guide">
             <BsGrid1X2Fill className="icon" /> 가이드
           </Link>
         </li>
-
         <li className="sidebar-list-item">
           <Link to="/routine">
             <BsFillArchiveFill className="icon" /> 프로그램
@@ -66,22 +53,20 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
           </Link>
         </li>
-
         {!isAuthenticated && (
           <>
             <li className="sidebar-list-item">
-              <Link to="/login" onClick={handleReportsClick}>
+              <Link to="/login">
                 <BsFillGearFill className="icon" /> Login
               </Link>
             </li>
             <li className="sidebar-list-item">
-              <Link to="/register" onClick={handleRegisterClick}>
+              <Link to="/register">
                 <BsFillGearFill className="icon" /> 회원가입
               </Link>
             </li>
           </>
         )}
-
         {isAuthenticated && (
           <>
             <li className="sidebar-list-item">
@@ -89,14 +74,13 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                 <BsMenuButtonWideFill className="icon" /> CPU Reports
               </Link>
             </li>
-
             <li className="sidebar-list-item">
               <Link to="/reports2">
                 <BsMenuButtonWideFill className="icon" /> Memory Reports
               </Link>
             </li>
             <li className="sidebar-list-item">
-              <Link to="/Board">
+              <Link to="/board">
                 <BsPeopleFill className="icon" /> 게시판
               </Link>
             </li>
@@ -108,6 +92,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   background: 'none',
                   padding: 0,
                   margin: 0,
+                  color: '#9e9ea4',
+                  display: 'flex',
+                  alignItems: 'center',
                 }}
               >
                 <BsBoxArrowRight className="icon" /> Logout

@@ -1,16 +1,22 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 
-const PrivateRoute = ({ element }) => {
-  const { isAuthenticated, loading } = useAuth(); // 로딩 상태와 인증 상태를 가져옴
+const PrivateRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
-    // 로딩 중에는 아무 것도 렌더링하지 않거나 로딩 스피너를 보여줌
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // 로딩 중에는 로딩 메시지를 표시
   }
 
-  return isAuthenticated ? element : <Navigate to="/login" replace={true} />;
+  if (!isAuthenticated) {
+    // 인증되지 않은 경우, /guide 페이지로 리디렉션
+    return <Navigate to="/guide" state={{ from: location }} replace />;
+  }
+
+  // 인증된 경우, 자식 컴포넌트를 렌더링
+  return children;
 };
 
 export default PrivateRoute;

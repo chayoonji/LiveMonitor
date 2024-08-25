@@ -1,4 +1,3 @@
-// client/Header.jsx
 import React from 'react';
 import {
   BsFillBellFill,
@@ -11,8 +10,12 @@ import {
 function Header({ OpenSidebar }) {
   return (
     <header className="header">
-      <div className="menu-icon">
-        <BsJustify className="icon" onClick={OpenSidebar} />
+      <div
+        className="menu-icon"
+        onClick={OpenSidebar}
+        style={{ cursor: 'pointer' }}
+      >
+        <BsJustify className="icon" />
       </div>
       <div className="header-left">
         <BsSearch className="icon" />

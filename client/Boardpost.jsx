@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // useNavigate 사용
 import axios from 'axios';
-import './Board.css';
+import './App.css';
 
 const Board = () => {
   const [posts, setPosts] = useState([]);
@@ -14,7 +14,7 @@ const Board = () => {
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // navigate 훅 사용
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -68,16 +68,19 @@ const Board = () => {
 
   const handlePasswordSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/posts/check-password', {
-        postId: selectedPost._id,
-        password: passwordInput,
-      });
+      const response = await axios.post(
+        'http://localhost:3001/posts/check-password',
+        {
+          postId: selectedPost._id,
+          password: passwordInput,
+        }
+      );
 
       if (response.data.valid) {
-        // Fetch the full post details
-        const postResponse = await axios.get(`http://localhost:3001/posts/${selectedPost._id}`);
-        // Navigate to the detailed post view
-        navigate(`/post/${selectedPost._id}`, { state: { post: postResponse.data } });
+        // 비밀번호가 맞으면 게시글 상세 페이지로 이동
+        navigate(`/post/${selectedPost._id}`, {
+          state: { post: selectedPost },
+        });
       } else {
         setError('Invalid password');
       }
@@ -88,80 +91,82 @@ const Board = () => {
   };
 
   return (
-    <div className="board-container">
-      <div className="board-header">
-        <h1>게시판</h1>
-        {!isWriting && (
-          <button className="write-button" onClick={handleWriteClick}>
-            글쓰기
-          </button>
-        )}
-      </div>
-      {isWriting ? (
-        <form onSubmit={handleSubmit} className="board-form">
-          <input
-            type="text"
-            placeholder="제목"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-          <textarea
-            placeholder="내용"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-          />
-          <input
-            type="text"
-            placeholder="작성자"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="비밀번호"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">글쓰기</button>
-          <button type="button" onClick={handleCancelClick}>
-            취소
-          </button>
-        </form>
-      ) : (
-        <div className="posts-list">
-          {posts.map((post) => (
-            <div key={post._id} className="post-item">
-              <h2>
-                <a href="#" onClick={() => handlePostClick(post)}>
-                  {post.title}
-                </a>
-              </h2>
-              <small>{post.author}</small>
-            </div>
-          ))}
+    <div className="main-container board-page">
+      <div className="board-container">
+        <div className="board-header">
+          <h1>게시판</h1>
+          {!isWriting && (
+            <button className="write-button" onClick={handleWriteClick}>
+              글쓰기
+            </button>
+          )}
         </div>
-      )}
-
-      {showPasswordModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>비밀번호 입력</h2>
+        {isWriting ? (
+          <form onSubmit={handleSubmit} className="board-form">
+            <input
+              type="text"
+              placeholder="제목"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+            <textarea
+              placeholder="내용"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+            />
+            <input
+              type="text"
+              placeholder="작성자"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              required
+            />
             <input
               type="password"
               placeholder="비밀번호"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
-            <button onClick={handlePasswordSubmit}>확인</button>
-            <button onClick={() => setShowPasswordModal(false)}>취소</button>
-            {error && <p className="error">{error}</p>}
+            <button type="submit">글쓰기</button>
+            <button type="button" onClick={handleCancelClick}>
+              취소
+            </button>
+          </form>
+        ) : (
+          <div className="posts-list">
+            {posts.map((post) => (
+              <div key={post._id} className="post-item">
+                <h2>
+                  <a href="#" onClick={() => handlePostClick(post)}>
+                    {post.title}
+                  </a>
+                </h2>
+                <small>{post.author}</small>
+              </div>
+            ))}
           </div>
-        </div>
-      )}
+        )}
+
+        {showPasswordModal && (
+          <div className="modal">
+            <div className="modal-content">
+              <h2>비밀번호 입력</h2>
+              <input
+                type="password"
+                placeholder="비밀번호"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+              />
+              <button onClick={handlePasswordSubmit}>확인</button>
+              <button onClick={() => setShowPasswordModal(false)}>취소</button>
+              {error && <p className="error">{error}</p>}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -39,23 +39,40 @@ function App() {
             <Route path="/guide" element={<Guide />} />
             <Route path="/login" element={<LoginComponent />} />
             <Route path="/team" element={<Team />} />
-            <Route path="/" element={<Navigate to="/guide" />} /> {/* 기본 경로를 /guide로 리다이렉트 */}
+            <Route path="/" element={<Navigate to="/guide" />} />{' '}
+            {/* 기본 경로를 /guide로 리다이렉트 */}
             <Route path="/register" element={<Register />} />
             <Route
               path="/reports1"
-              element={<PrivateRoute element={<Reports1 />} />}
+              element={
+                <PrivateRoute>
+                  <Reports1 />
+                </PrivateRoute>
+              }
             />
             <Route
               path="/reports2"
-              element={<PrivateRoute element={<Reports2 />} />}
+              element={
+                <PrivateRoute>
+                  <Reports2 />
+                </PrivateRoute>
+              }
             />
             <Route
               path="/board"
-              element={<PrivateRoute element={<Board />} />}
+              element={
+                <PrivateRoute>
+                  <Board />
+                </PrivateRoute>
+              }
             />
             <Route
               path="/post/:id"
-              element={<PrivateRoute element={<PostDetail />} />}
+              element={
+                <PrivateRoute>
+                  <PostDetail />
+                </PrivateRoute>
+              }
             />
           </Routes>
         </div>
