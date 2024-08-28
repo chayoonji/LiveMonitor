@@ -1,11 +1,10 @@
-// client/LoginComponent.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './Context/AuthContext';
 
 const LoginComponent = () => {
-  const [email, setEmail] = useState('');
+  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -15,7 +14,7 @@ const LoginComponent = () => {
 
     try {
       await axios.post('http://localhost:3001/login', {
-        email,
+        userId,
         password,
       });
       login();
@@ -31,10 +30,10 @@ const LoginComponent = () => {
       <form onSubmit={handleSubmit} id="login-form">
         <input
           type="text"
-          name="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="userId"
+          placeholder="User ID"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
         />
         <input
           type="password"

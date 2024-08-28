@@ -114,12 +114,21 @@ const Diagnosis = () => {
           </thead>
           <tbody>
             {textData.map((item, index) => (
-              <tr key={index}>
+              <tr 
+                key={index} 
+                style={{ 
+                  backgroundColor: item.결과 === '취약' ? 'red' : 'white', 
+                  cursor: item.결과 === '취약' ? 'pointer' : 'default' 
+                }}
+                onClick={() => item.결과 === '취약' && handleViewSolution(item.id)}
+              >
                 {Object.entries(item)
                   .filter(([key]) => key !== '_id')
                   .sort(([aKey], [bKey]) => (aKey === 'id' ? -1 : bKey === 'id' ? 1 : 0))
                   .map(([key, value], i) => (
-                    <td key={i} style={{ padding: '10px' }}>{value}</td>
+                    <td key={i} style={{ padding: '10px', color: key === '결과' && value === '취약' ? 'white' : 'black' }}>
+                      {value}
+                    </td>
                 ))}
               </tr>
             ))}

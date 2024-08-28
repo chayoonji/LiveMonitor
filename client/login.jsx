@@ -1,10 +1,9 @@
-// client/components/Login.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../Context/AuthContext';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
 
@@ -14,7 +13,7 @@ const Login = () => {
     try {
       // 서버로 로그인 요청을 보냄
       const response = await axios.post('http://localhost:3001/login', {
-        email,
+        userId,
         password,
       });
 
@@ -32,10 +31,10 @@ const Login = () => {
       <form onSubmit={handleSubmit} id="login-form">
         <input
           type="text"
-          name="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="userId"
+          placeholder="User ID"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
         />
         <input
           type="password"
