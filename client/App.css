@@ -60,11 +60,13 @@ body {
   line-height: 1px;
   font-size: 20px;
 }
+
 .icon_header {
   vertical-align: middle;
   line-height: 1px;
   font-size: 26px;
 }
+
 .icon,
 .icon_header {
   margin-right: 5px;
@@ -79,45 +81,38 @@ body {
 
 .grid-container {
   display: grid;
-  grid-template-columns: 260px 1fr 1fr 1fr;
-  grid-template-rows: 0.2fr 3fr;
+  grid-template-columns: 260px 1fr; /* 사이드바와 메인 콘텐츠 영역을 나눕니다 */
+  grid-template-rows: auto 1fr; /* 상단 헤더와 나머지 영역을 나눕니다 */
   grid-template-areas:
-    'sidebar header header header'
-    'sidebar main main main';
+    'header header'
+    'sidebar main'; /* 사이드바와 메인 콘텐츠를 나눕니다 */
   height: 100vh;
 }
 
-/* Header  */
+/* Header */
 .header {
   grid-area: header;
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30px 0 30px;
+  padding: 0 30px;
   box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
 }
 
-.menu-icon {
-  display: none;
-}
-/* End Header  */
-
-/* Sidebar  */
+/* Sidebar */
 #sidebar {
   grid-area: sidebar;
-  height: 100%;
   background-color: #263043;
   overflow-y: auto;
   transition: all 0.5s;
-  -webkit-transition: all 0.5s;
 }
 
 .sidebar-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px 0px 30px;
+  padding: 15px 30px 0 30px;
   margin-bottom: 30px;
 }
 
@@ -137,7 +132,7 @@ body {
 }
 
 .sidebar-list-item {
-  padding: 20px 20px 20px 20px;
+  padding: 20px;
   font-size: 18px;
 }
 
@@ -157,9 +152,7 @@ body {
   z-index: 12 !important;
 }
 
-/* End Sidebar  */
-
-/* Main  */
+/* Main */
 .main-container {
   grid-area: main;
   overflow-y: auto;
@@ -181,13 +174,8 @@ body {
 
 .main-container.board-page {
   display: flex;
-  justify-content: center; /* 가로로 중앙 정렬 */
-  align-items: flex-start; /* 세로로 시작점에 정렬 */
-}
-
-/* 가이드 페이지 전용 스타일 */
-.main-container.guide-page {
-  /* 가이드 페이지에 필요한 스타일을 유지 */
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .card {
@@ -232,140 +220,12 @@ body {
   height: 300px;
 }
 
-/* End Main  */
-
-/* Medium <= 992px */
-
-@media screen and (max-width: 992px) {
-  .grid-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: 0.2fr 3fr;
-    grid-template-areas:
-      'header'
-      'main';
-  }
-
-  #sidebar {
-    display: none;
-  }
-
-  .menu-icon {
-    display: inline;
-  }
-
-  .sidebar-title > span {
-    display: inline;
-  }
-}
-
-/* Small <= 768px */
-
-@media screen and (max-width: 768px) {
-  .main-cards {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin-bottom: 0;
-  }
-
-  .charts {
-    grid-template-columns: 1fr;
-    margin-top: 30px;
-  }
-}
-
-/* Extra Small <= 576px */
-
-@media screen and (max-width: 576px) {
-  .hedaer-left {
-    display: none;
-  }
-}
-
-/* 로그인 */
-
-.login-wrapper {
-  width: 400px;
-  height: auto;
-  padding: 40px;
-  box-sizing: border-box;
-  margin-left: 440px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.login-wrapper > h2 {
-  font-size: 28px; /* 글자 크기 키움 */
-  color: #6a24fe;
-  margin-bottom: 30px; /* 여백 확대 */
-}
-
-#login-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Name 입력란 기준 정렬 */
-}
-
-#login-form > input,
-.verification-container input {
-  width: calc(100% - 30px); /* 너비 조정 */
-  height: 56px; /* 입력란 크기 키움 */
-  padding: 0 15px; /* 패딩 확대 */
-  box-sizing: border-box;
-  margin-bottom: 20px; /* 여백 확대 */
-  border-radius: 6px;
-  background-color: #f8f8f8;
-  font-size: 18px; /* 글자 크기 키움 */
-}
-
-#login-form > input::placeholder,
-.verification-container input::placeholder {
-  color: #d2d2d2;
-}
-
-.verification-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.verification-container input {
-  flex: 1;
-  margin-right: 10px;
-}
-
-.button-container {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-
-.button-container > input[type='submit'] {
-  width: 48%;
-  height: 50px; /* 버튼 높이 확대 */
-  color: #000000;
-  font-size: 18px; /* 글자 크기 키움 */
-  background-color: #ffffff;
-  margin-top: 15px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.button-container > input[type='submit'][value='SignUp'] {
-  background-color: #828282;
-}
-
 /* 게시판 */
-
 .board-container {
   padding: 20px;
-  width: 100%; /* 너비를 100%로 설정하여 전체 화면을 차지하도록 */
-  max-width: 1000px; /* 최대 너비를 1000px로 제한 */
-  margin: 0 auto; /* 가운데 정렬 */
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
   background-color: #263043;
   border-radius: 10px;
   color: #ffffff;
@@ -401,52 +261,44 @@ body {
 }
 
 .board-form {
-  width: 100%; /* 폼의 너비를 100%로 설정 */
-  max-width: 800px; /* 폼의 최대 너비를 설정 */
-  margin: 0 auto; /* 폼을 가운데 정렬 */
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
   background-color: #1d2634;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box; /* padding과 border를 width에 포함 */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* 요소들 간의 간격을 일정하게 */
 }
 
-.form-group {
-  margin-bottom: 10px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #9e9ea4;
-}
-
-.form-group input,
-.form-group textarea {
-  width: calc(100% - 20px);
+.board-form input,
+.board-form textarea {
+  width: 100%;
   padding: 10px;
-  border: 1px solid #9e9ea4;
+  margin-bottom: 10px;
   border-radius: 5px;
+  border: 1px solid #9e9ea4;
   background-color: #263043;
   color: #ffffff;
 }
 
-.form-group textarea {
+.board-form textarea {
   height: 150px;
   resize: none;
 }
 
 .submit-button,
 .cancel-button {
-  display: inline-block;
   padding: 10px 20px;
-  margin-right: 10px;
   background-color: #007bff;
   border: none;
   border-radius: 5px;
   color: #ffffff;
-  font-size: 16px;
   cursor: pointer;
+  font-size: 16px;
 }
 
 .cancel-button {
@@ -462,27 +314,222 @@ body {
 }
 
 .posts-list {
-  flex-grow: 1; /* 남은 공간을 채우도록 설정 */
-  text-align: left; /* 좌측 정렬 */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
+
 .post-item {
   background-color: #1d2634;
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .post-item h2 {
   margin-top: 0;
+  margin-bottom: 5px;
+  color: #6a24fe;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.post-item p,
+.post-item small {
+  margin: 0;
+  color: #9e9ea4;
+}
+
+.post-detail-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #263043;
+  border-radius: 10px;
   color: #ffffff;
 }
 
-.post-item p {
-  margin-bottom: 10px;
-  color: #9e9ea4;
+.post-detail-container h1 {
+  color: #6a24fe;
 }
 
-.post-item small {
-  color: #9e9ea4;
+.post-detail-container p {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+/* 게시글 작성 및 수정 폼 */
+
+.post-form-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #1d2634;
+  border-radius: 10px;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-form-container input[type='text'],
+.post-form-container textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #9e9ea4;
+  background-color: #263043;
+  color: #ffffff;
+  resize: vertical;
+}
+
+.post-form-container textarea {
+  height: 200px;
+  resize: vertical;
+}
+
+.post-form-container .submit-button,
+.post-form-container .cancel-button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-right: 10px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.post-form-container .cancel-button {
+  background-color: #6c757d;
+}
+
+.post-form-container .submit-button:hover {
+  background-color: #0056b3;
+}
+
+.post-form-container .cancel-button:hover {
+  background-color: #5a6268;
+}
+
+/* Medium <= 992px */
+@media screen and (max-width: 992px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'header'
+      'main';
+  }
+
+  #sidebar {
+    display: none;
+  }
+
+  .menu-icon {
+    display: inline;
+  }
+
+  .sidebar-title > span {
+    display: inline;
+  }
+}
+
+/* Small <= 768px */
+@media screen and (max-width: 768px) {
+  .main-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+    margin-top: 30px;
+  }
+}
+
+/* Extra Small <= 576px */
+@media screen and (max-width: 576px) {
+  .header-left {
+    display: none;
+  }
+}
+
+/* 로그인 */
+.login-wrapper {
+  width: 400px;
+  height: auto;
+  padding: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-wrapper > h2 {
+  font-size: 28px;
+  color: #6a24fe;
+  margin-bottom: 30px;
+}
+
+#login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#login-form > input,
+.verification-container input {
+  width: calc(100% - 30px);
+  height: 56px;
+  padding: 0 15px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  background-color: #f8f8f8;
+  font-size: 18px;
+}
+
+#login-form > input::placeholder,
+.verification-container input::placeholder {
+  color: #d2d2d2;
+}
+
+.verification-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.verification-container input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-container > input[type='submit'] {
+  width: 48%;
+  height: 50px;
+  color: #000000;
+  font-size: 18px;
+  background-color: #ffffff;
+  margin-top: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button-container > input[type='submit'][value='SignUp'] {
+  background-color: #828282;
 }

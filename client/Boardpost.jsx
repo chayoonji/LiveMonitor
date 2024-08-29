@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // useNavigate 사용
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 
@@ -14,7 +14,7 @@ const Board = () => {
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // navigate 훅 사용
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -77,7 +77,6 @@ const Board = () => {
       );
 
       if (response.data.valid) {
-        // 비밀번호가 맞으면 게시글 상세 페이지로 이동
         navigate(`/post/${selectedPost._id}`, {
           state: { post: selectedPost },
         });
