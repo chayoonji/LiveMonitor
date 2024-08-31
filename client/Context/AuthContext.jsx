@@ -14,14 +14,16 @@ export const AuthProvider = ({ children }) => {
     setLoading(false); // 인증 상태를 확인한 후 로딩 상태를 false로 설정
   }, []);
 
-  const login = () => {
+  const login = (userId) => {
     setIsAuthenticated(true);
     Cookies.set('isAuthenticated', 'true', { expires: 1 });
+    Cookies.set('userId', userId, { expires: 1 }); // userId도 쿠키에 저장
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     Cookies.remove('isAuthenticated');
+    Cookies.remove('userId'); // 로그아웃 시 userId 쿠키 제거
   };
 
   return (
