@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../Context/AuthContext';
 
+// 환경 변수를 사용하여 API URL을 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 const Login = () => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -12,7 +15,7 @@ const Login = () => {
 
     try {
       // 서버로 로그인 요청을 보냄
-      const response = await axios.post('http://localhost:3001/login', {
+      const response = await axios.post(`${API_URL}/login`, {
         userId,
         password,
       });

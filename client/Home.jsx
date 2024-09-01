@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
   BarChart,
   Bar,
@@ -9,13 +9,16 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
+} from 'recharts';
 import {
   BsFillArchiveFill,
   BsFillGrid3X3GapFill,
   BsPeopleFill,
   BsFillBellFill,
-} from "react-icons/bs";
+} from 'react-icons/bs';
+
+// 환경 변수를 사용하여 API URL을 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 function JuTongGiBanChuiYakJum() {
   const [data1, setData1] = useState([]);
@@ -24,19 +27,19 @@ function JuTongGiBanChuiYakJum() {
     // 데이터를 가져오고 업데이트하는 함수
     const fetchDataAndUpdate = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/api/data");
+        const response = await axios.get(`${API_URL}/api/data`);
         const chartData = response.data;
 
         if (chartData.length >= 1) {
           const formattedData1 = chartData[0].data.map((item) => ({
             name: item.name,
-            "주통기반 취약점": item.value,
+            '주통기반 취약점': item.value,
           }));
 
           setData1(formattedData1);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       }
     };
 
@@ -46,10 +49,10 @@ function JuTongGiBanChuiYakJum() {
   return (
     <div
       className="chart"
-      style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+      style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}
     >
       <div>
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: 'center' }}>
           <h4>주통기반 취약점</h4>
           <ResponsiveContainer width={800} height={300}>
             <BarChart

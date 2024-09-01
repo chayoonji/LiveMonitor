@@ -1,26 +1,29 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
+
+// 환경 변수를 사용하여 API URL을 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 const Register = () => {
-  const [userId, setUserId] = useState(""); // Changed from email to userId
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [companyEmail, setCompanyEmail] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
+  const [userId, setUserId] = useState(''); // Changed from email to userId
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [companyEmail, setCompanyEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const [idCheckResult, setIdCheckResult] = useState(""); // New state for ID check result
+  const [idCheckResult, setIdCheckResult] = useState(''); // New state for ID check result
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!isVerified) {
-      alert("Please verify your company email first");
+      alert('Please verify your company email first');
       return;
     }
 
     try {
-      await axios.post("http://localhost:3001/register", {
+      await axios.post(`${API_URL}/register`, {
         name,
         userId, // Changed from email to userId
         companyEmail,
@@ -28,71 +31,71 @@ const Register = () => {
         verificationCode,
       });
       setRegistrationSuccess(true);
-      alert("User registered successfully");
+      alert('User registered successfully');
     } catch (error) {
-      alert("Error registering user");
+      alert('Error registering user');
     }
   };
 
   const handleSendVerificationCode = async () => {
     try {
-      await axios.post("http://localhost:3001/verify-company-email", {
+      await axios.post(`${API_URL}/verify-company-email`, {
         companyEmail,
       });
-      alert("Verification code sent successfully");
+      alert('Verification code sent successfully');
     } catch (error) {
-      alert("Error sending verification code");
+      alert('Error sending verification code');
     }
   };
 
   const handleVerifyCode = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/verify-code", {
+      const response = await axios.post(`${API_URL}/verify-code`, {
         companyEmail,
         verificationCode,
       });
       if (response.data.success) {
         setIsVerified(true);
-        alert("Company email verified successfully");
+        alert('Company email verified successfully');
       } else {
-        alert("Invalid verification code");
+        alert('Invalid verification code');
       }
     } catch (error) {
-      alert("Error verifying code");
+      alert('Error verifying code');
     }
   };
 
   const handleCheckDuplicate = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/check-duplicate", {
+      const response = await axios.post(`${API_URL}/check-duplicate`, {
         userId,
       });
       if (response.data.exists) {
-        setIdCheckResult("User ID is already taken.");
-        setIdCheckResultStyle({ color: "red" });
+        setIdCheckResult('User ID is already taken.');
+        setIdCheckResultStyle({ color: 'red' });
       } else {
-        setIdCheckResult("User ID is available.");
-        setIdCheckResultStyle({ color: "green" });
+        setIdCheckResult('User ID is available.');
+        setIdCheckResultStyle({ color: 'green' });
       }
     } catch (error) {
-      alert("Error checking user ID");
+      alert('Error checking user ID');
     }
   };
 
   const [idCheckResultStyle, setIdCheckResultStyle] = useState({});
 
-  const inputStyle = { width: "100%", marginBottom: "20px", height: "40px" };
+  const inputStyle = { width: '100%', marginBottom: '20px', height: '40px' };
   const buttonStyle = {
-    marginLeft: "10px",
-    height: "40px",
-    marginTop: "-10px",
+    marginLeft: '10px',
+    height: '40px',
+    marginTop: '-10px',
   };
   const reducedMarginStyle = {
-    width: "100%",
-    marginBottom: "10px",
-    height: "40px",
+    width: '100%',
+    marginBottom: '10px',
+    height: '40px',
   };
-  const borderRadiusStyle = { borderRadius: "5px" };
+  const borderRadiusStyle = { borderRadius: '5px' };
 
   if (registrationSuccess) {
     window.location.reload();
@@ -128,9 +131,9 @@ const Register = () => {
         <span style={idCheckResultStyle}>{idCheckResult}</span>
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "10px",
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '10px',
           }}
         >
           <input
@@ -151,9 +154,9 @@ const Register = () => {
         </div>
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "10px",
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '10px',
           }}
         >
           <input
@@ -181,7 +184,7 @@ const Register = () => {
           style={reducedMarginStyle}
         />
         <div className="button-container">
-          <input type="submit" value="Register" style={{ height: "40px" }} />
+          <input type="submit" value="Register" style={{ height: '40px' }} />
         </div>
       </form>
     </div>

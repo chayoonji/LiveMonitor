@@ -11,6 +11,9 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+// 환경 변수를 사용하여 API URL을 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 function Reports2() {
   const [Vmemory, setVMemory] = useState([]);
   const [Smemory, setSMemory] = useState([]);
@@ -21,7 +24,7 @@ function Reports2() {
   useEffect(() => {
     const fetchDataAndUpdate = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/v-memory');
+        const response = await axios.get(`${API_URL}/api/v-memory`);
         const chartData = response.data;
 
         if (chartData.length >= 3) {
@@ -46,7 +49,7 @@ function Reports2() {
   useEffect(() => {
     const fetchSMemoryDataAndUpdate = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/S-memory');
+        const response = await axios.get(`${API_URL}/api/S-memory`);
         const chartData = response.data;
 
         if (chartData.length > 0) {

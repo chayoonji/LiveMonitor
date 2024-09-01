@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 
+// 환경 변수를 사용하여 API URL을 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 const Board = () => {
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState('');
@@ -20,7 +23,7 @@ const Board = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/posts');
+        const response = await axios.get(`${API_URL}/posts`);
         setPosts(response.data);
       } catch (error) {
         console.error('Error fetching posts:', error.message);
@@ -34,7 +37,7 @@ const Board = () => {
     e.preventDefault();
 
     try {
-      await axios.post('http://localhost:3001/posts', {
+      await axios.post(`${API_URL}/posts`, {
         title,
         content,
         author,
@@ -48,7 +51,7 @@ const Board = () => {
       setIsWriting(false);
 
       // 게시물 목록 새로고침
-      const updatedPosts = await axios.get('http://localhost:3001/posts');
+      const updatedPosts = await axios.get(`${API_URL}/posts`);
       setPosts(updatedPosts.data);
     } catch (error) {
       console.error('Error creating post:', error.message);
@@ -73,18 +76,15 @@ const Board = () => {
 
   const handlePasswordSubmit = async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:3001/posts/check-password',
-        {
-          postId: selectedPost._id,
-          password: passwordInput,
-        }
-      );
+      const response = await axios.post(`${API_URL}/posts/check-password`, {
+        postId: selectedPost._id,
+        password: passwordInput,
+      });
 
       if (response.data.valid) {
         // 선택한 게시물의 상세 정보 가져오기
         const postResponse = await axios.get(
-          `http://localhost:3001/posts/${selectedPost._id}`
+          `${API_URL}/posts/${selectedPost._id}`
         );
         // 상세 페이지로 이동
         navigate(`/post/${selectedPost._id}`, {

@@ -12,6 +12,9 @@ import {
 } from 'recharts';
 import { Link, useNavigate } from 'react-router-dom';
 
+// 환경 변수를 사용하여 API URL을 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 const Diagnosis = () => {
   const [data, setData] = useState([]);
   const [textData, setTextData] = useState([]);
@@ -28,11 +31,16 @@ const Diagnosis = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [dataResponse, textResponse, diagnosisResponse] = await Promise.all([
-          axios.get('http://localhost:3001/api/data'),
-          axios.get(`http://localhost:3001/api/search-text-data?page=${page}&limit=${isSearching ? limit : 4}&query=${query}`),
-          axios.get('http://localhost:3001/api/diagnosis-results') // 취약한 결과를 가져오는 API 호출
-        ]);
+        const [dataResponse, textResponse, diagnosisResponse] =
+          await Promise.all([
+            axios.get(`${API_URL}/api/data`),
+            axios.get(
+              `${API_URL}/api/search-text-data?page=${page}&limit=${
+                isSearching ? limit : 4
+              }&query=${query}`
+            ),
+            axios.get(`${API_URL}/api/diagnosis-results`), // 취약한 결과를 가져오는 API 호출
+          ]);
 
         console.log('Fetched data:', dataResponse.data);
         setData(dataResponse.data);
@@ -43,7 +51,6 @@ const Diagnosis = () => {
 
         console.log('Fetched diagnosis results:', diagnosisResponse.data);
         setDiagnosisResults(diagnosisResponse.data);
-
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
@@ -66,9 +73,9 @@ const Diagnosis = () => {
   if (data.length === 0) return <div>데이터가 없습니다.</div>;
 
   // Transform data to match chart format
-  const chartData = data[0].data.map(item => ({
+  const chartData = data[0].data.map((item) => ({
     name: item.name,
-    value: item.value
+    value: item.value,
   }));
 
   console.log('Chart Data:', chartData);
@@ -78,7 +85,7 @@ const Diagnosis = () => {
   };
 
   return (
-    <div style={{ textAlign: "center", marginLeft: '50px' }}>
+    <div style={{ textAlign: 'center', marginLeft: '50px' }}>
       <h1>진단 결과</h1>
 
       {/* Search */}
@@ -100,36 +107,55 @@ const Diagnosis = () => {
 
       {/* Text Data Table */}
       <div style={{ marginBottom: '50px', width: '1100px', margin: '0 auto' }}>
-        <table border="1" style={{ margin: '0 auto', width: '100%', textAlign: 'left' }}>
+        <table
+          border="1"
+          style={{ margin: '0 auto', width: '100%', textAlign: 'left' }}
+        >
           <thead>
             <tr>
               {/* Filter out _id and move id to the first column */}
-              {textData[0] && Object.keys(textData[0])
-                .filter(key => key !== '_id')
-                .sort((a, b) => (a === 'id' ? -1 : b === 'id' ? 1 : 0))
-                .map((key, index) => (
-                  <th key={index} style={{ padding: '10px' }}>{key}</th>
-              ))}
+              {textData[0] &&
+                Object.keys(textData[0])
+                  .filter((key) => key !== '_id')
+                  .sort((a, b) => (a === 'id' ? -1 : b === 'id' ? 1 : 0))
+                  .map((key, index) => (
+                    <th key={index} style={{ padding: '10px' }}>
+                      {key}
+                    </th>
+                  ))}
             </tr>
           </thead>
           <tbody>
             {textData.map((item, index) => (
-              <tr 
-                key={index} 
-                style={{ 
-                  backgroundColor: item.결과 === '취약' ? 'red' : 'white', 
-                  cursor: item.결과 === '취약' ? 'pointer' : 'default' 
+              <tr
+                key={index}
+                style={{
+                  backgroundColor: item.결과 === '취약' ? 'red' : 'white',
+                  cursor: item.결과 === '취약' ? 'pointer' : 'default',
                 }}
-                onClick={() => item.결과 === '취약' && handleViewSolution(item.id)}
+                onClick={() =>
+                  item.결과 === '취약' && handleViewSolution(item.id)
+                }
               >
                 {Object.entries(item)
                   .filter(([key]) => key !== '_id')
-                  .sort(([aKey], [bKey]) => (aKey === 'id' ? -1 : bKey === 'id' ? 1 : 0))
+                  .sort(([aKey], [bKey]) =>
+                    aKey === 'id' ? -1 : bKey === 'id' ? 1 : 0
+                  )
                   .map(([key, value], i) => (
-                    <td key={i} style={{ padding: '10px', color: key === '결과' && value === '취약' ? 'white' : 'black' }}>
+                    <td
+                      key={i}
+                      style={{
+                        padding: '10px',
+                        color:
+                          key === '결과' && value === '취약'
+                            ? 'white'
+                            : 'black',
+                      }}
+                    >
                       {value}
                     </td>
-                ))}
+                  ))}
               </tr>
             ))}
           </tbody>
@@ -139,20 +165,24 @@ const Diagnosis = () => {
         {isSearching && totalPages > 1 && (
           <div style={{ marginTop: '20px' }}>
             <button
-              onClick={() => setPage(prevPage => Math.max(prevPage - 1, 1))}
+              onClick={() => setPage((prevPage) => Math.max(prevPage - 1, 1))}
               disabled={page === 1}
               style={{ padding: '10px 20px', marginRight: '10px' }}
             >
               이전 페이지
             </button>
             <button
-              onClick={() => setPage(prevPage => Math.min(prevPage + 1, totalPages))}
+              onClick={() =>
+                setPage((prevPage) => Math.min(prevPage + 1, totalPages))
+              }
               disabled={page === totalPages}
               style={{ padding: '10px 20px' }}
             >
               다음 페이지
             </button>
-            <p>페이지 {page} / {totalPages}</p>
+            <p>
+              페이지 {page} / {totalPages}
+            </p>
           </div>
         )}
       </div>
@@ -172,7 +202,12 @@ const Diagnosis = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke="#8884d8"
+              activeDot={{ r: 8 }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -183,4 +218,3 @@ const Diagnosis = () => {
 };
 
 export default Diagnosis;
-

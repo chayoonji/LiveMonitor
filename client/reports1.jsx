@@ -11,6 +11,9 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+// 환경 변수를 사용하여 API URL을 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 function Reports1() {
   const [cpuData, setCpuData] = useState([]);
   const [cpuTime, setCpuTime] = useState([]);
@@ -21,7 +24,7 @@ function Reports1() {
   useEffect(() => {
     const fetchDataAndUpdate = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/cpu-data');
+        const response = await axios.get(`${API_URL}/api/cpu-data`);
         const chartData = response.data;
 
         if (chartData.length >= 3) {
@@ -47,7 +50,7 @@ function Reports1() {
   useEffect(() => {
     const fetchCpuTimeDataAndUpdate = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/cpu-time');
+        const response = await axios.get(`${API_URL}/api/cpu-time`);
         const chartData = response.data;
 
         if (chartData.length > 0) {

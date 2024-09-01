@@ -4,6 +4,9 @@ import axios from 'axios';
 import { FaArrowLeft } from 'react-icons/fa';
 import './PostDetail.css';
 
+// 환경 변수를 사용하여 API URL을 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 const PasswordModal = ({ onClose, onConfirm }) => {
   const [password, setPassword] = useState('');
 
@@ -54,7 +57,7 @@ const PostDetail = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/posts/${id}`);
+        const response = await axios.get(`${API_URL}/posts/${id}`);
         setPost(response.data);
         setTitle(response.data.title);
         setContent(response.data.content);
@@ -86,15 +89,11 @@ const PostDetail = () => {
     formData.append('author', author);
 
     try {
-      const response = await axios.put(
-        `http://localhost:3001/posts/${id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      const response = await axios.put(`${API_URL}/posts/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
       if (response.status === 200) {
         alert('게시물이 성공적으로 수정되었습니다.');
@@ -126,16 +125,13 @@ const PostDetail = () => {
 
   const handleDeletePost = async (password) => {
     try {
-      const response = await axios.post(
-        'http://localhost:3001/posts/check-password',
-        {
-          postId: id,
-          password: password,
-        }
-      );
+      const response = await axios.post(`${API_URL}/posts/check-password`, {
+        postId: id,
+        password: password,
+      });
 
       if (response.data.valid) {
-        await axios.delete(`http://localhost:3001/posts/${id}`, {
+        await axios.delete(`${API_URL}/posts/${id}`, {
           data: { password: password },
         });
 
@@ -184,7 +180,7 @@ const PostDetail = () => {
                     <div key={index}>
                       <a
                         className="attached-file-link"
-                        href={`http://localhost:3001/uploads/${file}`}
+                        href={`${API_URL}/uploads/${file}`}
                         download
                       >
                         {file}

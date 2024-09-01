@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './UploadButton.css'; // CSS 파일을 임포트합니다.
 
+// 환경 변수를 사용하여 API URL을 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 const UploadButton = () => {
   const [userId, setUserId] = useState('');
   const [isUserIdSet, setIsUserIdSet] = useState(false);
@@ -9,7 +12,7 @@ const UploadButton = () => {
 
   const handleSetUserId = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/set-user-id', {
+      const response = await axios.post(`${API_URL}/set-user-id`, {
         userId,
       });
       console.log(response.data.message);
@@ -37,7 +40,7 @@ const UploadButton = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3001/upload/${userId}`,
+        `${API_URL}/upload/${userId}`,
         {},
         {
           headers: {
