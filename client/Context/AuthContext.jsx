@@ -5,25 +5,37 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 쿠키에서 인증 상태를 읽어 로컬 상태를 초기화
-    const authCookie = Cookies.get('isAuthenticated');
-    setIsAuthenticated(authCookie === 'true');
-    setLoading(false); // 인증 상태를 확인한 후 로딩 상태를 false로 설정
+    // 컴포넌트가 언마운트될 때 상태 업데이트를 방지하기 위한 플래그
+    let isMounted = true;
+
+    const initializeAuth = () => {
+      const authCookie = Cookies.get('isAuthenticated');
+      if (isMounted) {
+        setIsAuthenticated(authCookie === 'true');
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = (userId) => {
     setIsAuthenticated(true);
     Cookies.set('isAuthenticated', 'true', { expires: 1 });
-    Cookies.set('userId', userId, { expires: 1 }); // userId도 쿠키에 저장
+    Cookies.set('userId', userId, { expires: 1 });
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     Cookies.remove('isAuthenticated');
-    Cookies.remove('userId'); // 로그아웃 시 userId 쿠키 제거
+    Cookies.remove('userId');
   };
 
   return (
