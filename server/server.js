@@ -293,7 +293,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-// 유저 아이디를 받아서 MongoDB 데이터베이스 설정
+// 사용자 아이디 설정 라우트
 app.post('/set-user-id', async (req, res) => {
   const { userId } = req.body;
 
@@ -303,7 +303,7 @@ app.post('/set-user-id', async (req, res) => {
 
   try {
     const sanitizedDbName = sanitizeDbName(userId);
-    userDb = client.db(sanitizedDbName); // 해당 userId로 데이터베이스 선택
+    userDb = client.db(sanitizedDbName); // 사용자 아이디로 데이터베이스 선택
     console.log('Using database:', sanitizedDbName);
     res.status(200).json({ message: 'Database selected', dbName: sanitizedDbName });
   } catch (err) {
@@ -729,45 +729,37 @@ app.post('/upload/:userId', upload.none(), async (req, res) => {
   const { userId } = req.params;
 
   try {
-      await client.connect(); // MongoDB에 연결
+    // 현재 연결된 데이터베이스가 설정된 사용자 아이디와 일치하는지 확인
+    const admin = client.db().admin();
+    const databases = await admin.listDatabases();
+    const dbExists = databases.databases.some(db => db.name === userId);
 
-      // 데이터베이스 목록 가져오기
-      const admin = client.db().admin();
-      const databases = await admin.listDatabases();
-      
-      // 로그인한 userId가 데이터베이스 이름으로 존재하는지 확인
-      const dbExists = databases.databases.some(db => db.name === userId);
+    if (!dbExists) {
+      return res.status(404).json({ message: '해당 데이터베이스가 존재하지 않습니다.' });
+    }
 
-      if (!dbExists) {
-          return res.status(404).json({ message: '해당 데이터베이스가 존재하지 않습니다.' });
+    const database = client.db(userId); // 사용자 데이터베이스 선택
+    const collections = ['ChartData', 'CpuData', 'CpuTime', 'VMemory', 'SMemory', 'TextData', 'Solutions'];
+
+    const files = fs.readdirSync(path.join(__dirname, 'uploads'));
+
+    for (const file of files) {
+      const filePath = path.join(__dirname, 'uploads', file);
+      const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      const collectionName = path.basename(file, path.extname(file));
+      const matchingCollection = collections.find(col => col.toLowerCase() === collectionName.toLowerCase());
+
+      if (matchingCollection) {
+        const collection = database.collection(matchingCollection);
+        // 기존 데이터를 삭제한 후 새로운 데이터 삽입
+        await collection.deleteMany({}); // 기존 데이터 삭제
+        await collection.insertMany(Array.isArray(jsonData) ? jsonData : [jsonData]);
       }
+    }
 
-      const database = client.db(userId); // 특정 사용자 데이터베이스 선택
-      const collections = ['ChartData', 'CpuData', 'CpuTime', 'VMemory', 'SMemory', 'TextData', 'Solutions'];
-
-      // uploads 폴더의 JSON 파일 목록 읽기
-      const files = fs.readdirSync(path.join(__dirname, 'uploads'));
-
-      // 각 JSON 파일에 대해 처리
-      for (const file of files) {
-          const filePath = path.join(__dirname, 'uploads', file);
-          const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-
-          // 대소문자 구분 없이 컬렉션 이름과 파일 이름 비교
-          const collectionName = path.basename(file, path.extname(file)); // 파일 이름(확장자 제외)
-          const matchingCollection = collections.find(col => col.toLowerCase() === collectionName.toLowerCase());
-
-          if (matchingCollection) {
-              const collection = database.collection(matchingCollection);
-
-              // 데이터 저장
-              await collection.insertMany(Array.isArray(jsonData) ? jsonData : [jsonData]);
-          }
-      }
-
-      res.status(200).json({ message: '파일이 성공적으로 업로드되고 저장되었습니다.' });
+    res.status(200).json({ message: '파일이 성공적으로 업로드되고 저장되었습니다.' });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: '서버 오류가 발생했습니다.', error });
+    console.error(error);
+    res.status(500).json({ message: '서버 오류가 발생했습니다.', error });
   }
 });

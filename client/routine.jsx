@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const UploadButton = () => {
     const [userId, setUserId] = useState('');
@@ -11,9 +10,15 @@ const UploadButton = () => {
             const response = await axios.post('http://localhost:3001/set-user-id', { userId });
             console.log(response.data.message);
             setIsUserIdSet(true);
+            // 데이터 초기화
+            resetData();
         } catch (error) {
             console.error('Error setting user ID:', error);
         }
+    };
+
+    const resetData = () => {
+        // 데이터 초기화 로직 추가 (예: 상태를 리셋하거나, 필요시 추가 작업 수행)
     };
 
     const handleUpload = async () => {
