@@ -21,12 +21,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Express-session 미들웨어 설정
+// 세션 미들웨어 설정 (한 번만 설정)
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
+  cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
+
 
 // Passport 미들웨어 초기화
 app.use(passport.initialize());
@@ -159,11 +161,16 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  done(null, { userId: user.id }); 
+  done(null, { userId: user.userId });
 });
 
-passport.deserializeUser((obj, done) => {
-  done(null, obj); // 세션에서 사용자 객체를 복원
+passport.deserializeUser(async (obj, done) => {
+  try {
+    const user = await db.collection('Member').findOne({ userId: obj.userId });
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
 });
 
 
@@ -277,17 +284,37 @@ function executeScripts(conn, sudoPassword, scripts, index, callback) {
       });
   });
 }
+// API 엔드포인트 정의
 
+// 터미널 입력 설정
+const readline = require('readline');
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
+// 유저 아이디를 받아서 MongoDB 데이터베이스 설정
+app.post('/set-user-id', async (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ message: 'User ID is required' });
+  }
+
+  try {
+    const sanitizedDbName = sanitizeDbName(userId);
+    userDb = client.db(sanitizedDbName); // 해당 userId로 데이터베이스 선택
+    console.log('Using database:', sanitizedDbName);
+    res.status(200).json({ message: 'Database selected', dbName: sanitizedDbName });
+  } catch (err) {
+    console.error('Error connecting to database:', err);
+    res.status(500).json({ message: 'Error connecting to database' });
+  }
+});
 
 // 주통 총합 가져오는 API 엔드포인트
 app.get('/api/data', async (req, res) => {
-  if (!req.user) {
-    return res.status(401).send('Unauthorized');
-  }
   try {
-    const userId = req.user.userId;
-    const userDb = client.db(userId); // 현재 로그인된 사용자의 데이터베이스
     const data = await userDb.collection('ChartData').find().toArray();
     
     if (!data.length) {
@@ -313,16 +340,12 @@ app.get('/api/data', async (req, res) => {
   }
 });
 
-
 // 게시물 목록을 검색 및 필터링하여 가져오는 API 엔드포인트
-app.get('/api/search-text-data',  async (req, res) => {
+app.get('/api/search-text-data', async (req, res) => {
   const { query, page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
   try {
-    const userId = req.user.userId; // 로그인된 사용자의 userId
-    const userDb = client.db(userId); // 현재 로그인된 사용자의 데이터베이스
-
     const filter = query ? {
       $or: [
         { 분류: { $regex: query, $options: 'i' } },
@@ -349,13 +372,8 @@ app.get('/api/search-text-data',  async (req, res) => {
 });
 
 // 진단 결과를 가져오는 API 엔드포인트
-app.get('/api/diagnosis-results',  async (req, res) => {
-  const { userId } = req.user; // 로그인된 사용자의 userId
-
+app.get('/api/diagnosis-results', async (req, res) => {
   try {
-    const userDb = client.db(userId); // 현재 로그인된 사용자의 데이터베이스
-
-    // 데이터베이스에서 모든 데이터를 가져옵니다
     const [chartData, cpuData, cpuTime, vMemory, sMemory, textData, solutions] = await Promise.all([
       userDb.collection('ChartData').find({}).toArray(),
       userDb.collection('CpuData').find({}).toArray(),
@@ -365,10 +383,6 @@ app.get('/api/diagnosis-results',  async (req, res) => {
       userDb.collection('TextData').find({}).toArray(),
       userDb.collection('Solutions').find({}).toArray()
     ]);
-
-    if (!chartData.length && !cpuData.length && !cpuTime.length && !vMemory.length && !sMemory.length && !solutions.length && !textData.length) {
-      return res.status(404).send('No data found');
-    }
 
     res.json({
       chartData,
@@ -388,9 +402,6 @@ app.get('/api/diagnosis-results',  async (req, res) => {
 // 해결 방안을 안내하는 페이지의 정보를 가져오는 API 엔드포인트
 app.get('/api/solutions', async (req, res) => {
   try {
-    const userId = req.user.userId; // 로그인된 사용자의 userId
-    const userDb = client.db(userId); // 현재 로그인된 사용자의 데이터베이스
-
     const solutions = await userDb.collection('Solutions').find().toArray();
     res.json(solutions);
   } catch (err) {
@@ -402,8 +413,7 @@ app.get('/api/solutions', async (req, res) => {
 // MongoDB CpuData(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
 app.get('/api/cpu-data', async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const userDb = client.db(userId);
+   
     const cpuData = await userDb
       .collection('CpuData')
       .find({ hour: { $gte: 1, $lte: 24 } })
@@ -419,8 +429,6 @@ app.get('/api/cpu-data', async (req, res) => {
 // MongoDB CpuTime(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
 app.get('/api/cpu-time', async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const userDb = client.db(userId);
     const cpuTime = await userDb
       .collection('CpuTime')
       .find({ hour: { $gte: 1, $lte: 24 } })
@@ -436,8 +444,6 @@ app.get('/api/cpu-time', async (req, res) => {
 // MongoDB V-Memory (가상메모리) 내용 가져오는 API 엔드포인트
 app.get('/api/v-memory', async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const userDb = client.db(userId);
     const vMemory = await userDb
       .collection('VMemory')
       .find({ hour: { $gte: 1, $lte: 24 } })
@@ -450,11 +456,9 @@ app.get('/api/v-memory', async (req, res) => {
   }
 });
 
-// MongoDB S-Memory (스왑메모리) 내용 가져오는 API 엔드포인트
+// MongoDB SMemory 데이터 가져오는 API 엔드포인트
 app.get('/api/s-memory', async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const userDb = client.db(userId);
     const sMemory = await userDb
       .collection('SMemory')
       .find({ hour: { $gte: 1, $lte: 24 } })
@@ -466,6 +470,9 @@ app.get('/api/s-memory', async (req, res) => {
     res.status(500).send('Error fetching SMemory data');
   }
 });
+
+
+
 
 // 이메일 전송을 위한 transporter 생성
 const transporter = nodemailer.createTransport({

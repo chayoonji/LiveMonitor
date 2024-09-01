@@ -183,3 +183,4 @@ const Diagnosis = () => {
 };
 
 export default Diagnosis;
+

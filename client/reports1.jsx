@@ -14,9 +14,7 @@ import {
 function Reports1() {
   const [cpuData, setCpuData] = useState([]);
   const [cpuTime, setCpuTime] = useState([]);
-  const [currentDate, setCurrentDate] = useState(
-    new Date().toLocaleDateString()
-  );
+  const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString());
 
   useEffect(() => {
     const fetchDataAndUpdate = async () => {
@@ -24,17 +22,19 @@ function Reports1() {
         const response = await axios.get("http://localhost:3001/api/cpu-data");
         const chartData = response.data;
 
-        if (chartData.length >= 3) {
+        if (Array.isArray(chartData) && chartData.length > 0) {
           const formattedData = chartData.map((item) => ({
-            name: item.hour.toString(),
-            "전체 CPU 사용률": item["전체 CPU 사용률"],
-            "P.C CPU 사용률": item["P.C CPU 사용률"],
-            "L.C CPU 사용률": item["L.C CPU 사용률"],
-            "P.C 코어 수": item["P.C 코어 수"],
-            "L.C 코어 수": item["L.C 코어 수"],
+            name: item.hour.toString(), // Ensure 'hour' exists and is correctly formatted
+            "전체 CPU 사용률": item["전체 CPU 사용률"] || 0,
+            "P.C CPU 사용률": item["P.C CPU 사용률"] || 0,
+            "L.C CPU 사용률": item["L.C CPU 사용률"] || 0,
+            "P.C 코어 수": item["P.C 코어 수"] || 0,
+            "L.C 코어 수": item["L.C 코어 수"] || 0,
           }));
 
           setCpuData(formattedData);
+        } else {
+          console.error("Invalid data format:", chartData);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -50,15 +50,17 @@ function Reports1() {
         const response = await axios.get("http://localhost:3001/api/cpu-time");
         const chartData = response.data;
 
-        if (chartData.length > 0) {
+        if (Array.isArray(chartData) && chartData.length > 0) {
           const formattedData = chartData.map((item) => ({
-            name: item.hour.toString(),
-            "사용자 시간": item["사용자 시간"],
-            "시스템 시간": item["시스템 시간"],
-            "유휴 시간": item["유휴 시간"],
+            name: item.hour.toString(), // Ensure 'hour' exists and is correctly formatted
+            "사용자 시간": item["사용자 시간"] || 0,
+            "시스템 시간": item["시스템 시간"] || 0,
+            "유휴 시간": item["유휴 시간"] || 0,
           }));
 
           setCpuTime(formattedData);
+        } else {
+          console.error("Invalid data format:", chartData);
         }
       } catch (error) {
         console.error("Error fetching CPU time data:", error);
@@ -153,7 +155,6 @@ function Reports1() {
         </div>
       </div>
 
-      {/* 새로운 그래프 추가 */}
       <div>
         <div style={{ textAlign: "center" }}>
           <h4 style={{ marginRight: "-110px", marginTop: "-2px" }}>
