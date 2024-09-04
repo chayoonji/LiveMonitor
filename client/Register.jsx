@@ -20,7 +20,7 @@ const Register = () => {
     }
 
     try {
-      await axios.post("http://localhost:3001/register", {
+      await axios.post("http://localhost:3002/register", {
         name,
         userId, // Changed from email to userId
         companyEmail,
@@ -36,7 +36,7 @@ const Register = () => {
 
   const handleSendVerificationCode = async () => {
     try {
-      await axios.post("http://localhost:3001/verify-company-email", {
+      await axios.post("http://localhost:3002/verify-company-email", {
         companyEmail,
       });
       alert("Verification code sent successfully");
@@ -47,7 +47,7 @@ const Register = () => {
 
   const handleVerifyCode = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/verify-code", {
+      const response = await axios.post("http://localhost:3002/verify-code", {
         companyEmail,
         verificationCode,
       });
@@ -64,7 +64,7 @@ const Register = () => {
 
   const handleCheckDuplicate = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/check-duplicate", {
+      const response = await axios.post("http://localhost:3002/check-duplicate", {
         userId,
       });
       if (response.data.exists) {

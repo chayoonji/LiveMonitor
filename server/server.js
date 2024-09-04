@@ -14,33 +14,26 @@ const multer = require('multer');
 
 // Express 애플리케이션 생성
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 // 미들웨어 설정
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// 세션 미들웨어 설정 (한 번만 설정)
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' }
-}));
-
+// 세션 미들웨어 설정
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === 'production' },
+  })
+);
 
 // Passport 미들웨어 초기화
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: process.env.NODE_ENV === 'production' } // production 환경에서는 secure 설정
-}));
-
 
 // MongoDB 연결
 const url = process.env.DB_URL;
@@ -50,10 +43,9 @@ let client;
 MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((mongoClient) => {
     console.log('DB connected');
-    client = mongoClient; // client 변수에 MongoClient 객체 할당
-    db = client.db('Login'); // 데이터베이스 선택
+    client = mongoClient;
+    db = client.db('Login');
 
-    // 서버 시작
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
@@ -69,10 +61,10 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
-  }
+  },
 });
 
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage });
 
 // 점을 제거하는 함수
 function sanitizeDbName(email) {
@@ -173,14 +165,10 @@ passport.deserializeUser(async (obj, done) => {
   }
 });
 
-
-
-
 // 회원가입 라우트
 app.post('/register', passport.authenticate('local-signup'), (req, res) => {
   res.status(201).send('User registered');
 });
-
 
 // 로그인 라우트
 app.post('/login', passport.authenticate('local-login'), (req, res) => {
@@ -190,7 +178,6 @@ app.post('/login', passport.authenticate('local-login'), (req, res) => {
     res.status(401).send('Login failed');
   }
 });
-
 
 // SSH 연결 및 명령어 실행
 app.get('/ssh-test', (req, res) => {
@@ -284,14 +271,6 @@ function executeScripts(conn, sudoPassword, scripts, index, callback) {
       });
   });
 }
-// API 엔드포인트 정의
-
-// 터미널 입력 설정
-const readline = require('readline');
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 // 사용자 아이디 설정 라우트
 app.post('/set-user-id', async (req, res) => {
@@ -305,7 +284,9 @@ app.post('/set-user-id', async (req, res) => {
     const sanitizedDbName = sanitizeDbName(userId);
     userDb = client.db(sanitizedDbName); // 사용자 아이디로 데이터베이스 선택
     console.log('Using database:', sanitizedDbName);
-    res.status(200).json({ message: 'Database selected', dbName: sanitizedDbName });
+    res
+      .status(200)
+      .json({ message: 'Database selected', dbName: sanitizedDbName });
   } catch (err) {
     console.error('Error connecting to database:', err);
     res.status(500).json({ message: 'Error connecting to database' });
@@ -316,7 +297,7 @@ app.post('/set-user-id', async (req, res) => {
 app.get('/api/data', async (req, res) => {
   try {
     const data = await userDb.collection('ChartData').find().toArray();
-    
+
     if (!data.length) {
       return res.status(404).send('No summary data found');
     }
@@ -346,24 +327,31 @@ app.get('/api/search-text-data', async (req, res) => {
   const skip = (page - 1) * limit;
 
   try {
-    const filter = query ? {
-      $or: [
-        { 분류: { $regex: query, $options: 'i' } },
-        { 결과상세: { $regex: query, $options: 'i' } },
-        { 결과: { $regex: query, $options: 'i' } }
-      ]
-    } : {};
+    const filter = query
+      ? {
+          $or: [
+            { 분류: { $regex: query, $options: 'i' } },
+            { 결과상세: { $regex: query, $options: 'i' } },
+            { 결과: { $regex: query, $options: 'i' } },
+          ],
+        }
+      : {};
 
     const [total, data] = await Promise.all([
       userDb.collection('TextData').countDocuments(filter),
-      userDb.collection('TextData').find(filter).skip(skip).limit(Number(limit)).toArray()
+      userDb
+        .collection('TextData')
+        .find(filter)
+        .skip(skip)
+        .limit(Number(limit))
+        .toArray(),
     ]);
 
     res.json({
       total,
       page,
       totalPages: Math.ceil(total / limit),
-      data
+      data,
     });
   } catch (err) {
     console.error('Error searching text data:', err);
@@ -374,15 +362,16 @@ app.get('/api/search-text-data', async (req, res) => {
 // 진단 결과를 가져오는 API 엔드포인트
 app.get('/api/diagnosis-results', async (req, res) => {
   try {
-    const [chartData, cpuData, cpuTime, vMemory, sMemory, textData, solutions] = await Promise.all([
-      userDb.collection('ChartData').find({}).toArray(),
-      userDb.collection('CpuData').find({}).toArray(),
-      userDb.collection('CpuTime').find({}).toArray(),
-      userDb.collection('VMemory').find({}).toArray(),
-      userDb.collection('SMemory').find({}).toArray(),
-      userDb.collection('TextData').find({}).toArray(),
-      userDb.collection('Solutions').find({}).toArray()
-    ]);
+    const [chartData, cpuData, cpuTime, vMemory, sMemory, textData, solutions] =
+      await Promise.all([
+        userDb.collection('ChartData').find({}).toArray(),
+        userDb.collection('CpuData').find({}).toArray(),
+        userDb.collection('CpuTime').find({}).toArray(),
+        userDb.collection('VMemory').find({}).toArray(),
+        userDb.collection('SMemory').find({}).toArray(),
+        userDb.collection('TextData').find({}).toArray(),
+        userDb.collection('Solutions').find({}).toArray(),
+      ]);
 
     res.json({
       chartData,
@@ -391,7 +380,7 @@ app.get('/api/diagnosis-results', async (req, res) => {
       vMemory,
       sMemory,
       textData,
-      solutions
+      solutions,
     });
   } catch (err) {
     console.error('Error fetching diagnosis results:', err);
@@ -413,7 +402,6 @@ app.get('/api/solutions', async (req, res) => {
 // MongoDB CpuData(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
 app.get('/api/cpu-data', async (req, res) => {
   try {
-   
     const cpuData = await userDb
       .collection('CpuData')
       .find({ hour: { $gte: 1, $lte: 24 } })
@@ -470,9 +458,6 @@ app.get('/api/s-memory', async (req, res) => {
     res.status(500).send('Error fetching SMemory data');
   }
 });
-
-
-
 
 // 이메일 전송을 위한 transporter 생성
 const transporter = nodemailer.createTransport({
@@ -573,7 +558,9 @@ app.get('/posts/:id', async (req, res) => {
     if (!ObjectId.isValid(id)) {
       return res.status(400).send('Invalid post ID format');
     }
-    const post = await db.collection('Posts').findOne({ _id: new ObjectId(id) });
+    const post = await db
+      .collection('Posts')
+      .findOne({ _id: new ObjectId(id) });
     if (post) {
       res.json(post);
     } else {
@@ -584,33 +571,59 @@ app.get('/posts/:id', async (req, res) => {
   }
 });
 
-// 게시물 수정 (파일만 업데이트)
+// 게시물 수정 엔드포인트 (파일과 텍스트 모두 업데이트)
 app.put('/posts/:id', upload.array('files'), async (req, res) => {
   try {
     const { id } = req.params;
-    const files = req.files ? req.files.map(file => file.filename) : [];
+    const { title, content, author, password } = req.body;
+    const files = req.files ? req.files.map((file) => file.filename) : [];
 
-    const updateData = files.length > 0 ? { files } : {};
+    // 기존 게시물 가져오기
+    const existingPost = await db
+      .collection('Posts')
+      .findOne({ _id: new ObjectId(id) });
+    if (!existingPost) {
+      return res.status(404).send('Post not found');
+    }
 
-    await db.collection('Posts').updateOne(
-      { _id: new ObjectId(id) },
-      { $set: updateData }
-    );
+    // 비밀번호가 제공된 경우 해시 처리
+    let hashedPassword = existingPost.password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
 
-    res.send('Post updated');
+    const updateData = {
+      ...(title && { title }),
+      ...(content && { content }),
+      ...(author && { author }),
+      ...(files.length > 0 && { files }),
+      password: hashedPassword, // 비밀번호는 항상 포함
+    };
+
+    const result = await db
+      .collection('Posts')
+      .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
+
+    if (result.matchedCount > 0) {
+      res.send('Post updated');
+    } else {
+      res.status(404).send('Post not found');
+    }
   } catch (err) {
     res.status(500).send('Error updating post');
   }
 });
 
-// 게시물 삭제
+// 게시물 삭제 엔드포인트
 app.delete('/posts/:id', async (req, res) => {
   try {
     const { id } = req.params;
     if (!ObjectId.isValid(id)) {
       return res.status(400).send('Invalid post ID format');
     }
-    const result = await db.collection('Posts').deleteOne({ _id: new ObjectId(id) });
+    const result = await db
+      .collection('Posts')
+      .deleteOne({ _id: new ObjectId(id) });
     if (result.deletedCount > 0) {
       res.send('Post deleted');
     } else {
@@ -626,11 +639,15 @@ app.post('/posts/check-password', async (req, res) => {
   try {
     const { postId, password } = req.body;
     if (!ObjectId.isValid(postId)) {
-      return res.status(400).json({ valid: false, message: 'Invalid post ID format' });
+      return res
+        .status(400)
+        .json({ valid: false, message: 'Invalid post ID format' });
     }
-    
-    const post = await db.collection('Posts').findOne({ _id: new ObjectId(postId) });
-    
+
+    const post = await db
+      .collection('Posts')
+      .findOne({ _id: new ObjectId(postId) });
+
     if (post) {
       if (post.password) {
         const isMatch = await bcrypt.compare(password, post.password);
@@ -640,14 +657,20 @@ app.post('/posts/check-password', async (req, res) => {
           res.json({ valid: false });
         }
       } else {
-        res.status(400).json({ valid: false, message: 'This post does not require a password.' });
+        res.status(400).json({
+          valid: false,
+          message: 'This post does not require a password.',
+        });
       }
     } else {
       res.status(404).json({ valid: false, message: 'Post not found' });
     }
   } catch (err) {
     console.error('Error checking password:', err);
-    res.status(500).json({ valid: false, message: 'Internal server error while checking password' });
+    res.status(500).json({
+      valid: false,
+      message: 'Internal server error while checking password',
+    });
   }
 });
 
@@ -656,7 +679,9 @@ app.post('/posts/:id', async (req, res) => {
   const { password } = req.body;
   try {
     // 게시물 조회
-    const post = await db.collection('Posts').findOne({ _id: new ObjectId(req.params.id) });
+    const post = await db
+      .collection('Posts')
+      .findOne({ _id: new ObjectId(req.params.id) });
 
     if (!post) {
       return res.status(404).send('Post not found');
@@ -666,7 +691,9 @@ app.post('/posts/:id', async (req, res) => {
     if (post.password) {
       const isMatch = await bcrypt.compare(password, post.password);
       if (!isMatch) {
-        return res.status(403).json({ valid: false, message: 'Incorrect password.' });
+        return res
+          .status(403)
+          .json({ valid: false, message: 'Incorrect password.' });
       }
     }
 
@@ -679,7 +706,6 @@ app.post('/posts/:id', async (req, res) => {
   }
 });
 
-
 // 게시물 상세 페이지를 위한 데이터 조회 및 출력
 app.get('/diagnosis-results/:objectId', async (req, res) => {
   const { objectId } = req.params;
@@ -688,17 +714,26 @@ app.get('/diagnosis-results/:objectId', async (req, res) => {
   try {
     const userDb = client.db(userId);
 
-    const [chartData, cpuData, cpuTime, vMemory, sMemory, solutions, textData] = await Promise.all([
-      userDb.collection('ChartData').findOne({ _id: new ObjectId(objectId) }),
-      userDb.collection('CpuData').findOne({ _id: new ObjectId(objectId) }),
-      userDb.collection('CpuTime').findOne({ _id: new ObjectId(objectId) }),
-      userDb.collection('VMemory').findOne({ _id: new ObjectId(objectId) }),
-      userDb.collection('SMemory').findOne({ _id: new ObjectId(objectId) }),
-      userDb.collection('TextData').findOne({ _id: new ObjectId(objectId) }),
-      userDb.collection('Solutions').findOne({ _id: new ObjectId(objectId) })
-    ]);
+    const [chartData, cpuData, cpuTime, vMemory, sMemory, solutions, textData] =
+      await Promise.all([
+        userDb.collection('ChartData').findOne({ _id: new ObjectId(objectId) }),
+        userDb.collection('CpuData').findOne({ _id: new ObjectId(objectId) }),
+        userDb.collection('CpuTime').findOne({ _id: new ObjectId(objectId) }),
+        userDb.collection('VMemory').findOne({ _id: new ObjectId(objectId) }),
+        userDb.collection('SMemory').findOne({ _id: new ObjectId(objectId) }),
+        userDb.collection('TextData').findOne({ _id: new ObjectId(objectId) }),
+        userDb.collection('Solutions').findOne({ _id: new ObjectId(objectId) }),
+      ]);
 
-    if (!chartData || !cpuData || !cpuTime || !vMemory || !sMemory || !solutions || !textData) {
+    if (
+      !chartData ||
+      !cpuData ||
+      !cpuTime ||
+      !vMemory ||
+      !sMemory ||
+      !solutions ||
+      !textData
+    ) {
       return res.status(404).send('Data not found');
     }
 
@@ -710,7 +745,7 @@ app.get('/diagnosis-results/:objectId', async (req, res) => {
       sMemory,
       solutions,
       textData,
-      title: 'Diagnosis Results'
+      title: 'Diagnosis Results',
     });
   } catch (err) {
     console.error('Error fetching diagnosis results:', err);
@@ -732,14 +767,24 @@ app.post('/upload/:userId', upload.none(), async (req, res) => {
     // 현재 연결된 데이터베이스가 설정된 사용자 아이디와 일치하는지 확인
     const admin = client.db().admin();
     const databases = await admin.listDatabases();
-    const dbExists = databases.databases.some(db => db.name === userId);
+    const dbExists = databases.databases.some((db) => db.name === userId);
 
     if (!dbExists) {
-      return res.status(404).json({ message: '해당 데이터베이스가 존재하지 않습니다.' });
+      return res
+        .status(404)
+        .json({ message: '해당 데이터베이스가 존재하지 않습니다.' });
     }
 
     const database = client.db(userId); // 사용자 데이터베이스 선택
-    const collections = ['ChartData', 'CpuData', 'CpuTime', 'VMemory', 'SMemory', 'TextData', 'Solutions'];
+    const collections = [
+      'ChartData',
+      'CpuData',
+      'CpuTime',
+      'VMemory',
+      'SMemory',
+      'TextData',
+      'Solutions',
+    ];
 
     const files = fs.readdirSync(path.join(__dirname, 'uploads'));
 
@@ -747,17 +792,23 @@ app.post('/upload/:userId', upload.none(), async (req, res) => {
       const filePath = path.join(__dirname, 'uploads', file);
       const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
       const collectionName = path.basename(file, path.extname(file));
-      const matchingCollection = collections.find(col => col.toLowerCase() === collectionName.toLowerCase());
+      const matchingCollection = collections.find(
+        (col) => col.toLowerCase() === collectionName.toLowerCase()
+      );
 
       if (matchingCollection) {
         const collection = database.collection(matchingCollection);
         // 기존 데이터를 삭제한 후 새로운 데이터 삽입
         await collection.deleteMany({}); // 기존 데이터 삭제
-        await collection.insertMany(Array.isArray(jsonData) ? jsonData : [jsonData]);
+        await collection.insertMany(
+          Array.isArray(jsonData) ? jsonData : [jsonData]
+        );
       }
     }
 
-    res.status(200).json({ message: '파일이 성공적으로 업로드되고 저장되었습니다.' });
+    res
+      .status(200)
+      .json({ message: '파일이 성공적으로 업로드되고 저장되었습니다.' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: '서버 오류가 발생했습니다.', error });

@@ -20,7 +20,7 @@ const Board = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/posts');
+        const response = await axios.get('http://localhost:3002/posts');
         setPosts(response.data);
       } catch (error) {
         console.error('Error fetching posts:', error.message);
@@ -34,7 +34,7 @@ const Board = () => {
     e.preventDefault();
 
     try {
-      await axios.post('http://localhost:3001/posts', {
+      await axios.post('http://localhost:3002/posts', {
         title,
         content,
         author,
@@ -48,7 +48,7 @@ const Board = () => {
       setIsWriting(false);
 
       // Refresh the posts list
-      const updatedPosts = await axios.get('http://localhost:3001/posts');
+      const updatedPosts = await axios.get('http://localhost:3002/posts');
       setPosts(updatedPosts.data);
     } catch (error) {
       console.error('Error creating post:', error.message);
@@ -71,14 +71,14 @@ const Board = () => {
 
   const handlePasswordSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/posts/check-password', {
+      const response = await axios.post('http://localhost:3002/posts/check-password', {
         postId: selectedPost._id,
         password: passwordInput,
       });
 
       if (response.data.valid) {
         // Fetch the full post details
-        const postResponse = await axios.get(`http://localhost:3001/posts/${selectedPost._id}`);
+        const postResponse = await axios.get(`http://localhost:3002/posts/${selectedPost._id}`);
         // Navigate to the detailed post view
         navigate(`/post/${selectedPost._id}`, { state: { post: postResponse.data } });
       } else {
