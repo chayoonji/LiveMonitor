@@ -1,17 +1,16 @@
-// src/components/PrivateRoute.jsx
 import React from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 
-const PrivateRoute = ({ element: Component, ...rest }) => {
-  const { isAuthenticated } = useAuth();
+const PrivateRoute = ({ element }) => {
+  const { isAuthenticated, loading } = useAuth();
 
-  return (
-    <Route
-      {...rest}
-      element={isAuthenticated ? Component : <Navigate to="/login" />}
-    />
-  );
+  if (loading) {
+    // 로딩 중에는 로딩 스피너를 보여줌
+    return <div>Loading...</div>;
+  }
+
+  return isAuthenticated ? element : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;

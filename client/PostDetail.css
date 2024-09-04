@@ -1,0 +1,18 @@
+
+.post-detail-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #263043;
+  border-radius: 10px;
+  color: #ffffff;
+}
+
+.post-detail-container h1 {
+  color: #6a24fe;
+}
+
+.post-detail-container p {
+  font-size: 18px;
+  line-height: 1.6;
+}

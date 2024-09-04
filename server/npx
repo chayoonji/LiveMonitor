@@ -1,0 +1,25 @@
+[33m[nodemon] 3.1.1[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node server.js`[39m
+DB connected
+Server is running on http://localhost:3001
+Finding user by email: zizi2481@gmail.com
+User found: {
+  _id: new ObjectId("66a569ffb6f612bf919049de"),
+  name: 'a',
+  email: 'zizi2481@gmail.com',
+  companyEmail: 'zizi2481@gmail.com',
+  password: '$2a$10$uIeiMXlZxf3zF7ephBCAl.zce6kDdZYK4002Fa5gu.5OFigAlQDgK'
+}
+Password matches
+Finding user by email: zizi2481@gmail.com
+User found: {
+  _id: new ObjectId("66a569ffb6f612bf919049de"),
+  name: 'a',
+  email: 'zizi2481@gmail.com',
+  companyEmail: 'zizi2481@gmail.com',
+  password: '$2a$10$uIeiMXlZxf3zF7ephBCAl.zce6kDdZYK4002Fa5gu.5OFigAlQDgK'
+}
+Password matches
