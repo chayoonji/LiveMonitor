@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
@@ -11,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Diagnosis = () => {
   const [data, setData] = useState([]);
@@ -20,11 +19,11 @@ const Diagnosis = () => {
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [limit] = useState(10); // 페이지당 항목 수
+  const [limit] = useState(4); // 페이지당 항목 수를 4로 설정
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [diagnosisResults, setDiagnosisResults] = useState([]);
-  const navigate = useNavigate(); // Hook to navigate programmatically
+  const navigate = useNavigate(); // 프로그래밍적으로 네비게이션
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,24 +32,17 @@ const Diagnosis = () => {
           await Promise.all([
             axios.get('http://localhost:3002/api/data'),
             axios.get(
-              `http://localhost:3002/api/search-text-data?page=${page}&limit=${
-                isSearching ? limit : 4
-              }&query=${query}`
+              `http://localhost:3002/api/search-text-data?page=${page}&limit=${limit}&query=${query}`
             ),
-            axios.get('http://localhost:3002/api/diagnosis-results'), // 취약한 결과를 가져오는 API 호출
+            axios.get('http://localhost:3002/api/diagnosis-results'),
           ]);
 
-        console.log('Fetched data:', dataResponse.data);
         setData(dataResponse.data);
-
-        console.log('Fetched text data:', textResponse.data);
         setTextData(textResponse.data.data);
         setTotalPages(textResponse.data.totalPages);
-
-        console.log('Fetched diagnosis results:', diagnosisResponse.data);
         setDiagnosisResults(diagnosisResponse.data);
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('데이터를 불러오는 중 오류가 발생했습니다:', err);
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
       } finally {
         setLoading(false);
@@ -65,21 +57,19 @@ const Diagnosis = () => {
     setIsSearching(true); // 검색 모드 활성화
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
   if (data.length === 0) return <div>데이터가 없습니다.</div>;
 
-  // Transform data to match chart format
-  const chartData = data[0].data.map((item) => ({
+  // 차트 데이터 변환
+  const chartData = data[0]?.data.map((item) => ({
     name: item.name,
     value: item.value,
-  }));
-
-  console.log('Chart Data:', chartData);
+  })) || [];
 
   const handleViewSolution = (id) => {
-    navigate(`/solution/${id}`); // Navigate to the solution page with the result ID
+    navigate(`/solution/${id}`); // 취약한 결과의 ID를 사용해 솔루션 페이지로 이동
   };
 
   return (
@@ -95,7 +85,7 @@ const Diagnosis = () => {
         진단 결과
       </h1>
 
-      {/* Search */}
+      {/* 검색 */}
       <div
         style={{
           marginBottom: '20px',
@@ -106,7 +96,7 @@ const Diagnosis = () => {
       >
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="검색..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={{
@@ -133,7 +123,7 @@ const Diagnosis = () => {
         </button>
       </div>
 
-      {/* Text Data Table */}
+      {/* 텍스트 데이터 테이블 */}
       <div
         style={{ marginBottom: '50px', maxWidth: '1200px', margin: '0 auto' }}
       >
@@ -149,7 +139,6 @@ const Diagnosis = () => {
         >
           <thead>
             <tr style={{ backgroundColor: '#2E3A59', color: '#FFFFFF' }}>
-              {/* Filter out _id and move id to the first column */}
               {textData[0] &&
                 Object.keys(textData[0])
                   .filter((key) => key !== '_id')
@@ -197,8 +186,8 @@ const Diagnosis = () => {
           </tbody>
         </table>
 
-        {/* Pagination Controls */}
-        {isSearching && totalPages > 1 && (
+        {/* 페이지네이션 컨트롤 */}
+        {totalPages > 1 && (
           <div
             style={{
               marginTop: '20px',
@@ -246,10 +235,10 @@ const Diagnosis = () => {
         )}
       </div>
 
-      {/* Total Results */}
+      {/* 총 결과 */}
       <h3 style={{ marginBottom: '20px', color: '#FFFFFF' }}>총 결과</h3>
 
-      {/* Line Chart */}
+      {/* 라인 차트 */}
       <div
         style={{
           maxWidth: '1200px',
