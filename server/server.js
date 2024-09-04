@@ -814,3 +814,26 @@ app.post('/upload/:userId', upload.none(), async (req, res) => {
     res.status(500).json({ message: '서버 오류가 발생했습니다.', error });
   }
 });
+
+// 페이지네이션과 검색을 지원하는 API
+app.get('/api/search-text-data', async (req, res) => {
+  const { page = 1, limit = 4, query = '' } = req.query;
+  const skip = (page - 1) * limit;
+
+  try {
+    const collection = db.collection('TextData');
+    const [data, total] = await Promise.all([
+      collection.find({ $text: { $search: query } }).skip(parseInt(skip)).limit(parseInt(limit)).toArray(),
+      collection.countDocuments({ $text: { $search: query } })
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.json({
+      data,
+      totalPages,
+    });
+  } catch (err) {
+    res.status(500).json({ error: '데이터를 불러오는 중 오류가 발생했습니다.' });
+  }
+});
