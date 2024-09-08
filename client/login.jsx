@@ -5,21 +5,24 @@ import { useAuth } from '../Context/AuthContext';
 const Login = () => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const { login, setIsAdmin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // 서버로 로그인 요청을 보냄
       const response = await axios.post('http://localhost:3002/login', {
         userId,
         password,
       });
 
-      // 로그인 성공 시, 클라이언트의 로그인 상태를 업데이트
-      login();
-      alert('Logged in successfully');
+      if (response.data.success) {
+        login(userId);
+        setIsAdmin(response.data.isAdmin); // isAdmin 상태 업데이트
+        alert('Logged in successfully');
+      } else {
+        alert('Invalid credentials');
+      }
     } catch (error) {
       alert('Error logging in');
     }

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './UploadButton.css'; // CSS 파일을 임포트합니다.
+import { useAuth } from './Context/AuthContext';
 
 const UploadButton = () => {
+  const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
   const [userId, setUserId] = useState('');
   const [isUserIdSet, setIsUserIdSet] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -67,9 +69,11 @@ const UploadButton = () => {
           Set User ID
         </button>
       </div>
-      <button onClick={handleUpload} className="upload-button">
-        Upload
-      </button>
+      {isAdmin && (
+        <button onClick={handleUpload} className="upload-button">
+          Upload
+        </button>
+      )}
       {successMessage && <p className="success-message">{successMessage}</p>}
     </div>
   );

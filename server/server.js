@@ -170,14 +170,27 @@ app.post('/register', passport.authenticate('local-signup'), (req, res) => {
   res.status(201).send('User registered');
 });
 
-// 로그인 라우트
-app.post('/login', passport.authenticate('local-login'), (req, res) => {
-  if (req.user) {
-    res.json({ user: req.user });
-  } else {
-    res.status(401).send('Login failed');
+// 로그인 라우트 
+app.post('/login', async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    // Check if the user exists
+    const user = await db.collection('Member').findOne({ userId });
+
+    if (!user) {
+      return res.status(401).send('Invalid credentials');
+    }
+
+    // Determine if the user is an admin
+    const isAdmin = user.type === 'admin';
+    res.status(200).json({ success: true, isAdmin });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).send('Server error');
   }
 });
+
 
 // SSH 연결 및 명령어 실행
 app.get('/ssh-test', (req, res) => {
