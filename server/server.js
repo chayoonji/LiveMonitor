@@ -536,13 +536,14 @@ app.get('/posts', async (req, res) => {
 // 게시물 생성 엔드포인트
 app.post('/posts', async (req, res) => {
   try {
-    const { title, content, password, author } = req.body;
+    const { title, content, password, author, status } = req.body; // status 추가
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
     await db.collection('Posts').insertOne({
       title,
       content,
       password: hashedPassword,
       author,
+      status, // status 저장
       createdAt: new Date(),
     });
     res.status(201).send('Post created');
@@ -550,6 +551,7 @@ app.post('/posts', async (req, res) => {
     res.status(500).send('Error creating post');
   }
 });
+
 
 // 특정 게시물 가져오는 엔드포인트
 app.get('/posts/:id', async (req, res) => {
@@ -837,3 +839,28 @@ app.get('/api/search-text-data', async (req, res) => {
     res.status(500).json({ error: '데이터를 불러오는 중 오류가 발생했습니다.' });
   }
 });
+
+app.put('/posts/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const post = await db.collection('Posts').findOne({ _id: new ObjectId(id) });
+    if (!post) {
+      return res.status(404).send('Post not found');
+    }
+
+    // 상태 업데이트
+    await db.collection('Posts').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { status } }
+    );
+    
+    res.send({ success: true, status });
+  } catch (error) {
+    console.error('Error updating status:', error); // 상세 오류 로그
+    res.status(500).send('Server error');
+  }
+});
+
+

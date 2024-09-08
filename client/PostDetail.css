@@ -16,3 +16,20 @@
   font-size: 18px;
   line-height: 1.6;
 }
+
+/* 기존 스타일과 추가된 스타일 */
+
+.post-detail-status {
+  font-size: 1rem;
+  color: #333;
+  margin-top: 10px;
+}
+
+.status-buttons {
+  margin-top: 20px;
+}
+
+.status-buttons button {
+  margin-right: 10px;
+}
+

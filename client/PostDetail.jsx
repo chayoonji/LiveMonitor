@@ -45,6 +45,7 @@ const PostDetail = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
+  const [status, setStatus] = useState('');
   const [showEditForm, setShowEditForm] = useState(false);
   const [files, setFiles] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -59,6 +60,7 @@ const PostDetail = () => {
         setTitle(response.data.title);
         setContent(response.data.content);
         setAuthor(response.data.author);
+        setStatus(response.data.status);
         setUploadedFiles(response.data.files || []);
       } catch (error) {
         setError('게시물을 불러오는 중 오류가 발생했습니다.');
@@ -151,7 +153,25 @@ const PostDetail = () => {
   };
 
   const handleDiagnosisClick = () => {
-    navigate(`/diagnosis`);
+    navigate('/diagnosis');
+  };
+
+  const updateStatus = async (newStatus) => {
+    // Update status in localStorage
+    const updatedPost = { ...post, status: newStatus };
+    setPost(updatedPost);
+    setStatus(newStatus);
+
+    try {
+      await axios.put(`http://localhost:3002/posts/${id}/status`, {
+        status: newStatus
+      });
+      // 상태 업데이트 후 /Board 페이지로 리다이렉트
+      navigate('/Board');
+    } catch (error) {
+      console.error('Error updating status:', error.message);
+      alert('상태 업데이트 중 오류가 발생했습니다: ' + error.message);
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -172,6 +192,7 @@ const PostDetail = () => {
                 <h1 className="post-detail-title">{title}</h1>
               </div>
               <small className="post-detail-author">by {author}</small>
+              <small className="post-detail-status">진행 상태: {status}</small>
             </div>
 
             <div className="post-detail-content">
@@ -214,6 +235,12 @@ const PostDetail = () => {
               >
                 진단 결과 보기
               </button>
+            </div>
+
+            <div className="status-buttons">
+              <button onClick={() => updateStatus('진단전')}>진단전</button>
+              <button onClick={() => updateStatus('진단중')}>진단중</button>
+              <button onClick={() => updateStatus('진단 완료')}>진단 완료</button>
             </div>
           </>
         )}

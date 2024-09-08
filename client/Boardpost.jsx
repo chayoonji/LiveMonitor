@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 
+// 기존 코드와 추가된 부분
 const Board = () => {
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState('');
@@ -14,6 +15,7 @@ const Board = () => {
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [error, setError] = useState('');
+  const [status, setStatus] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,7 +30,20 @@ const Board = () => {
     };
 
     fetchPosts();
-  }, [location.state?.refresh]); // 위치 상태 변경 시 게시물 업데이트
+  }, [location.state?.refresh]);
+
+  useEffect(() => {
+    // Load status from localStorage if available
+    const storedPosts = localStorage.getItem('posts');
+    if (storedPosts) {
+      setPosts(JSON.parse(storedPosts));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save posts to localStorage whenever posts change
+    localStorage.setItem('posts', JSON.stringify(posts));
+  }, [posts]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,6 +54,7 @@ const Board = () => {
         content,
         author,
         password,
+        status
       });
       alert('글이 성공적으로 작성되었습니다.');
       setTitle('');
@@ -47,7 +63,6 @@ const Board = () => {
       setAuthor('');
       setIsWriting(false);
 
-      // 게시물 목록 새로고침
       const updatedPosts = await axios.get('http://localhost:3002/posts');
       setPosts(updatedPosts.data);
     } catch (error) {
@@ -82,11 +97,9 @@ const Board = () => {
       );
 
       if (response.data.valid) {
-        // 선택한 게시물의 상세 정보 가져오기
         const postResponse = await axios.get(
           `http://localhost:3002/posts/${selectedPost._id}`
         );
-        // 상세 페이지로 이동
         navigate(`/post/${selectedPost._id}`, {
           state: { post: postResponse.data },
         });
@@ -154,6 +167,7 @@ const Board = () => {
                 <div key={post._id} className="post-item">
                   <h2 onClick={() => handlePostClick(post)}>{post.title}</h2>
                   <small>작성자: {post.author}</small>
+                  <small>진행 상태: {post.status}</small>
                 </div>
               ))
             ) : (
@@ -165,7 +179,7 @@ const Board = () => {
         {showPasswordModal && selectedPost && (
           <div className="modal">
             <div className="modal-content">
-              <h2>{selectedPost.title}</h2> {/* 선택된 게시물의 제목 표시 */}
+              <h2>{selectedPost.title}</h2>
               <input
                 type="password"
                 placeholder="비밀번호를 입력하세요"
