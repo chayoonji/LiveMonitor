@@ -876,4 +876,3 @@ app.put('/posts/:id/status', async (req, res) => {
   }
 });
 
-
