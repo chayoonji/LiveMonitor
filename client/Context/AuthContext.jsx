@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
       if (authCookie === 'true' && userId) {
         try {
-          const response = await axios.post('http://localhost:3002/check-admin-status', { userId });
+          const response = await axios.post('#', { userId });
           if (isMounted) {
             setIsAuthenticated(true);
             setIsAdmin(response.data.isAdmin);

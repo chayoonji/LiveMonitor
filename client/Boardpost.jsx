@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
+import { useAuth } from './Context/AuthContext';
 
-// 기존 코드와 추가된 부분
 const Board = () => {
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState('');
@@ -18,6 +18,7 @@ const Board = () => {
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -81,12 +82,24 @@ const Board = () => {
 
   const handlePostClick = (post) => {
     setSelectedPost(post);
-    setShowPasswordModal(true);
-    setError('');
-    setPasswordInput('');
+    if (isAdmin) {
+      // 관리자인 경우 비밀번호 확인 없이 바로 게시물 보기
+      navigate(`/post/${post._id}`, {
+        state: { post }
+      });
+    } else {
+      setShowPasswordModal(true);
+      setError('');
+      setPasswordInput('');
+    }
   };
 
   const handlePasswordSubmit = async () => {
+    if (isAdmin) {
+      // 관리자인 경우 비밀번호 확인 로직을 실행하지 않음
+      return;
+    }
+  
     try {
       const response = await axios.post(
         'http://localhost:3002/posts/check-password',
@@ -95,7 +108,7 @@ const Board = () => {
           password: passwordInput,
         }
       );
-
+  
       if (response.data.valid) {
         const postResponse = await axios.get(
           `http://localhost:3002/posts/${selectedPost._id}`
@@ -176,7 +189,7 @@ const Board = () => {
           </div>
         )}
 
-        {showPasswordModal && selectedPost && (
+        {!isAdmin && showPasswordModal && selectedPost && (
           <div className="modal">
             <div className="modal-content">
               <h2>{selectedPost.title}</h2>
