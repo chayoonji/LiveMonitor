@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaArrowLeft } from 'react-icons/fa';
 import './PostDetail.css';
-import { useAuth } from './Context/AuthContext';
 
 const PasswordModal = ({ onClose, onConfirm }) => {
   const [password, setPassword] = useState('');
@@ -46,13 +45,11 @@ const PostDetail = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
-  const [status, setStatus] = useState('');
   const [showEditForm, setShowEditForm] = useState(false);
   const [files, setFiles] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const textareaRef = useRef(null);
-  const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -62,7 +59,6 @@ const PostDetail = () => {
         setTitle(response.data.title);
         setContent(response.data.content);
         setAuthor(response.data.author);
-        setStatus(response.data.status);
         setUploadedFiles(response.data.files || []);
       } catch (error) {
         setError('게시물을 불러오는 중 오류가 발생했습니다.');
@@ -128,11 +124,26 @@ const PostDetail = () => {
     setFiles(newFiles);
   };
 
-  const handleDeletePost = async () => {
+  const handleDeletePost = async (password) => {
     try {
-      await axios.delete(`http://localhost:3002/posts/${id}`);
-      alert('게시물이 성공적으로 삭제되었습니다.');
-      navigate('/', { state: { refresh: true } });
+      const response = await axios.post(
+        'http://localhost:3002/posts/check-password',
+        {
+          postId: id,
+          password: password,
+        }
+      );
+
+      if (response.data.valid) {
+        await axios.delete(`http://localhost:3002/posts/${id}`, {
+          data: { password: password },
+        });
+
+        alert('게시물이 성공적으로 삭제되었습니다.');
+        navigate('/', { state: { refresh: true } });
+      } else {
+        alert('비밀번호가 틀립니다.');
+      }
     } catch (error) {
       console.error('Error deleting post:', error.message);
       alert('게시물 삭제 중 오류가 발생했습니다: ' + error.message);
@@ -140,23 +151,7 @@ const PostDetail = () => {
   };
 
   const handleDiagnosisClick = () => {
-    navigate('/diagnosis');
-  };
-
-  const updateStatus = async (newStatus) => {
-    const updatedPost = { ...post, status: newStatus };
-    setPost(updatedPost);
-    setStatus(newStatus);
-
-    try {
-      await axios.put(`http://localhost:3002/posts/${id}/status`, {
-        status: newStatus
-      });
-      navigate('/Board');
-    } catch (error) {
-      console.error('Error updating status:', error.message);
-      alert('상태 업데이트 중 오류가 발생했습니다: ' + error.message);
-    }
+    navigate(`/diagnosis`);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -177,7 +172,6 @@ const PostDetail = () => {
                 <h1 className="post-detail-title">{title}</h1>
               </div>
               <small className="post-detail-author">by {author}</small>
-              <small className="post-detail-status">진행 상태: {status}</small>
             </div>
 
             <div className="post-detail-content">
@@ -208,21 +202,12 @@ const PostDetail = () => {
               >
                 수정
               </button>
-              {isAdmin ? (
-                <button
-                  className="delete-button"
-                  onClick={handleDeletePost}
-                >
-                  삭제
-                </button>
-              ) : (
-                <button
-                  className="delete-button"
-                  onClick={() => setShowPasswordModal(true)}
-                >
-                  삭제
-                </button>
-              )}
+              <button
+                className="delete-button"
+                onClick={() => setShowPasswordModal(true)}
+              >
+                삭제
+              </button>
               <button
                 className="diagnosis-button"
                 onClick={handleDiagnosisClick}
@@ -230,16 +215,6 @@ const PostDetail = () => {
                 진단 결과 보기
               </button>
             </div>
-
-            {isAdmin && (
-              <div className="status-buttons">
-                <button onClick={() => updateStatus("진단전")}>진단전</button>
-                <button onClick={() => updateStatus("진단중")}>진단중</button>
-                <button onClick={() => updateStatus("진단 완료")}>
-                  진단 완료
-                </button>
-              </div>
-            )}
           </>
         )}
 
@@ -280,35 +255,23 @@ const PostDetail = () => {
               </div>
             ))}
             <button onClick={handleAddFile}>파일 추가</button>
-            <button onClick={handleUpdatePost}>저장</button>
-            <button onClick={() => setShowEditForm(false)}>취소</button>
+            <div className="edit-form-buttons">
+              <button onClick={handleUpdatePost}>저장</button>
+              <button onClick={() => setShowEditForm(false)}>취소</button>
+            </div>
           </div>
         )}
-
-        {showPasswordModal && (
-          <PasswordModal
-            onClose={() => setShowPasswordModal(false)}
-            onConfirm={async (password) => {
-              setShowPasswordModal(false);
-
-              try {
-                const response = await axios.post(
-                  'http://localhost:3002/check-password',
-                  { password }
-                );
-                if (response.data.isPasswordCorrect) {
-                  handleDeletePost();
-                } else {
-                  alert('비밀번호가 일치하지 않습니다.');
-                }
-              } catch (error) {
-                console.error('Error verifying password:', error.message);
-                alert('비밀번호 확인 중 오류가 발생했습니다.');
-              }
-            }}
-          />
-        )}
       </div>
+
+      {showPasswordModal && (
+        <PasswordModal
+          onClose={() => setShowPasswordModal(false)}
+          onConfirm={(password) => {
+            setShowPasswordModal(false);
+            handleDeletePost(password);
+          }}
+        />
+      )}
     </div>
   );
 };
