@@ -59,12 +59,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    setIsAdmin(false);
-    Cookies.remove('isAuthenticated');
-    Cookies.remove('userId');
+  const logout = async () => {
+    try {
+      // 데이터베이스 초기화 요청
+      await axios.post('http://localhost:3002/reset-database');
+  
+      // 상태 초기화
+      setIsAuthenticated(false);
+      setIsAdmin(false);
+      Cookies.remove('isAuthenticated');
+      Cookies.remove('userId');
+      navigate('/login');
+    } catch (error) {
+      console.error('Error resetting database on logout:', error);
+    }
   };
+  
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, isAdmin, loading, login, logout }}>

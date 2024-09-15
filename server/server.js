@@ -877,3 +877,14 @@ app.put('/posts/:id/status', async (req, res) => {
 });
 
 
+// 사용자 데이터베이스 초기화 엔드포인트
+app.post('/reset-database', async (req, res) => {
+  try {
+    userDb = null; // 데이터베이스 연결 초기화
+    console.log('Database connection reset.');
+    res.status(200).json({ message: 'Database connection reset' });
+  } catch (err) {
+    console.error('Error resetting database connection:', err);
+    res.status(500).json({ message: 'Error resetting database connection' });
+  }
+});
