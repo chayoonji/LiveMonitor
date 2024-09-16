@@ -297,14 +297,14 @@ app.post('/set-user-id', async (req, res) => {
     const sanitizedDbName = sanitizeDbName(userId);
     userDb = client.db(sanitizedDbName); // 사용자 아이디로 데이터베이스 선택
     console.log('Using database:', sanitizedDbName);
-    res
-      .status(200)
-      .json({ message: 'Database selected', dbName: sanitizedDbName });
+
+    res.status(200).json({ message: 'Database selected', dbName: sanitizedDbName });
   } catch (err) {
     console.error('Error connecting to database:', err);
     res.status(500).json({ message: 'Error connecting to database' });
   }
 });
+
 
 // 주통 총합 가져오는 API 엔드포인트
 app.get('/api/data', async (req, res) => {
@@ -877,14 +877,24 @@ app.put('/posts/:id/status', async (req, res) => {
 });
 
 
-// 사용자 데이터베이스 초기화 엔드포인트
+// 데이터베이스 초기화 라우트
 app.post('/reset-database', async (req, res) => {
   try {
-    userDb = null; // 데이터베이스 연결 초기화
-    console.log('Database connection reset.');
-    res.status(200).json({ message: 'Database connection reset' });
+    if (userDb) {
+      const dbName = userDb.databaseName;
+      await client.db(dbName).dropDatabase(); // 데이터베이스 삭제
+      console.log(`Database ${dbName} dropped`);
+
+      // 데이터베이스 재생성
+      userDb = client.db(dbName);
+      console.log(`Using database: ${dbName}`);
+
+      res.status(200).json({ message: `Database ${dbName} has been reset.` });
+    } else {
+      res.status(400).json({ message: 'No database selected.' });
+    }
   } catch (err) {
-    console.error('Error resetting database connection:', err);
-    res.status(500).json({ message: 'Error resetting database connection' });
+    console.error('Error resetting database:', err);
+    res.status(500).json({ message: 'Error resetting database' });
   }
 });

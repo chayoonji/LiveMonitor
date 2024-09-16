@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './UploadButton.css'; // CSS 파일을 임포트합니다.
+import './UploadButton.css';
 import { useAuth } from './Context/AuthContext';
 
 const UploadButton = () => {
@@ -17,16 +17,10 @@ const UploadButton = () => {
       console.log(response.data.message);
       setIsUserIdSet(true);
       setSuccessMessage('User ID has been set successfully!');
-      // 데이터 초기화
-      resetData();
     } catch (error) {
       console.error('Error setting user ID:', error);
       setSuccessMessage('Failed to set User ID. Please try again.');
     }
-  };
-
-  const resetData = () => {
-    // 데이터 초기화 로직 추가 (예: 상태를 리셋하거나, 필요시 추가 작업 수행)
   };
 
   const handleUpload = async () => {
