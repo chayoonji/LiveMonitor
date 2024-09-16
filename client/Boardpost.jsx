@@ -185,7 +185,6 @@ const Board = () => {
               onChange={(e) => setContent(e.target.value)}
               required
             />
-
             <input
               type="text"
               placeholder="작성자"
@@ -208,40 +207,40 @@ const Board = () => {
             </div>
           </form>
         ) : (
-          <div className="posts-list">
-            {displayPosts.length > 0 ? (
-              displayPosts.map((post) => (
-                <div
-                  key={post._id}
-                  className="post-item"
-                  onClick={() => handlePostClick(post)}
-                >
-                  <h2>{post.title}</h2>
-                  <small>작성자: {post.author}</small>
-                  <small>진행 상태: {post.status}</small>
-                </div>
-              ))
-            ) : (
-              <p>게시물이 없습니다.</p>
-            )}
-          </div>
-        )}
+          <>
+            <div className="posts-list">
+              {displayPosts.length > 0 ? (
+                displayPosts.map((post) => (
+                  <div
+                    key={post._id}
+                    className="post-item"
+                    onClick={() => handlePostClick(post)}
+                  >
+                    <h2>{post.title}</h2>
+                    <small>작성자: {post.author}</small>
+                    <small>진행 상태: {post.status}</small>
+                  </div>
+                ))
+              ) : (
+                <p>게시물이 없습니다.</p>
+              )}
+            </div>
 
-        {/* 페이지네이션 버튼 */}
-        <div className="pagination">
-          <button onClick={handlePrevPage} disabled={currentPage === 1}>
-            이전
-          </button>
-          <span>페이지 {currentPage}</span>
-          <button
-            onClick={handleNextPage}
-            disabled={
-              currentPage === Math.ceil(regularPosts.length / postsPerPage)
-            }
-          >
-            다음
-          </button>
-        </div>
+            {/* 페이지네이션 버튼 */}
+            <div className="pagination">
+              <button onClick={handlePrevPage} disabled={currentPage === 1}>
+                이전
+              </button>
+              <span>페이지 {currentPage}</span>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === Math.ceil(regularPosts.length / postsPerPage)}
+              >
+                다음
+              </button>
+            </div>
+          </>
+        )}
 
         {!isAdmin &&
           showPasswordModal &&
