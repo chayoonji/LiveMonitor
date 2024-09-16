@@ -59,12 +59,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
+   // 로그아웃 함수
+   const logout = async () => {
     try {
-      // 데이터베이스 초기화 요청
       await axios.post('http://localhost:3002/reset-database');
-  
-      // 상태 초기화
       setIsAuthenticated(false);
       setIsAdmin(false);
       Cookies.remove('isAuthenticated');
@@ -74,6 +72,19 @@ export const AuthProvider = ({ children }) => {
       console.error('Error resetting database on logout:', error);
     }
   };
+
+  // 새로고침 시 로그인 상태 확인
+  useEffect(() => {
+    const checkAuthStatus = () => {
+      const isAuthenticatedFromCookie = Cookies.get('isAuthenticated');
+      if (!isAuthenticatedFromCookie) {
+        // 로그아웃 처리
+        logout();
+      }
+    };
+
+    checkAuthStatus();
+  }, []); // 페이지가 처음 로드되거나 새로고침될 때 실행
   
 
   return (

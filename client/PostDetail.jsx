@@ -42,6 +42,9 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
+  const postsPerPage = 4; // 한 페이지당 게시물 수
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
@@ -50,6 +53,7 @@ const PostDetail = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const textareaRef = useRef(null);
+
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -70,6 +74,7 @@ const PostDetail = () => {
 
     fetchPost();
   }, [id]);
+
 
   useEffect(() => {
     if (showEditForm && textareaRef.current) {

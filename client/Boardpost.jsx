@@ -16,6 +16,9 @@ const Board = () => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
+  const postsPerPage = 4; // 페이지당 표시할 게시물 수
+
   const navigate = useNavigate();
   const location = useLocation();
   const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
@@ -45,6 +48,24 @@ const Board = () => {
     // Save posts to localStorage whenever posts change
     localStorage.setItem('posts', JSON.stringify(posts));
   }, [posts]);
+
+  // 페이지 이동 핸들러
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil(posts.length / postsPerPage)) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  // 현재 페이지에 해당하는 게시물 목록을 계산
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -175,8 +196,8 @@ const Board = () => {
           </form>
         ) : (
           <div className="posts-list">
-            {posts.length > 0 ? (
-              posts.map((post) => (
+            {currentPosts.length > 0 ? (
+              currentPosts.map((post) => (
                 <div key={post._id} className="post-item">
                   <h2 onClick={() => handlePostClick(post)}>{post.title}</h2>
                   <small>작성자: {post.author}</small>
@@ -188,6 +209,20 @@ const Board = () => {
             )}
           </div>
         )}
+
+        {/* 페이지네이션 버튼 */}
+        <div className="pagination">
+          <button onClick={handlePrevPage} disabled={currentPage === 1}>
+            이전
+          </button>
+          <span>{`페이지 ${currentPage}`}</span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === Math.ceil(posts.length / postsPerPage)}
+          >
+            다음
+          </button>
+        </div>
 
         {!isAdmin && showPasswordModal && selectedPost && (
           <div className="modal">
