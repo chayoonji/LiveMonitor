@@ -17,6 +17,7 @@ const Board = () => {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
   const postsPerPage = 4; // 페이지당 표시할 게시물 수
+  const [contentError, setContentError] = useState(""); // 내용 길이 오류 상태
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -82,6 +83,11 @@ const Board = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (content.length > 500) {
+      setContentError("내용은 500자를 초과할 수 없습니다.");
+      return;
+    }
+
     try {
       await axios.post("http://localhost:3002/posts", {
         title,
@@ -95,6 +101,7 @@ const Board = () => {
       setPassword("");
       setAuthor("");
       setIsWriting(false);
+      setContentError(""); // 오류 메시지 초기화
 
       const updatedPosts = await axios.get("http://localhost:3002/posts");
       setPosts(updatedPosts.data);
@@ -185,6 +192,7 @@ const Board = () => {
               onChange={(e) => setContent(e.target.value)}
               required
             />
+            {contentError && <p className="error">{contentError}</p>}
             <input
               type="text"
               placeholder="작성자"
