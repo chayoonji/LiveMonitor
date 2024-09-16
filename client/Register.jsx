@@ -2,17 +2,37 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const Register = () => {
-  const [userId, setUserId] = useState(""); // Changed from email to userId
+  const [userId, setUserId] = useState(""); 
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [companyEmail, setCompanyEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const [idCheckResult, setIdCheckResult] = useState(""); // New state for ID check result
+  const [idCheckResult, setIdCheckResult] = useState("");
+  const [passwordError, setPasswordError] = useState(""); // 패스워드 에러 메시지 상태 추가
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 패스워드 유효성 검사: 최소 8자, 숫자, 영문, 특수문자 포함
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      // 에러 메시지 설정
+      if (!/(?=.*[a-zA-Z])/.test(password)) {
+        setPasswordError("영문자를 포함해야 합니다.");
+      } else if (!/(?=.*\d)/.test(password)) {
+        setPasswordError("숫자를 포함해야 합니다.");
+      } else if (!/(?=.*[@$!%*?&])/.test(password)) {
+        setPasswordError("특수문자를 포함해야 합니다.");
+      } else if (password.length < 8) {
+        setPasswordError("비밀번호는 8자리 이상이어야 합니다.");
+      }
+      return;
+    }
+
+    setPasswordError(""); // 에러가 없으면 초기화
 
     if (!isVerified) {
       alert("Please verify your company email first");
@@ -22,7 +42,7 @@ const Register = () => {
     try {
       await axios.post("http://localhost:3002/register", {
         name,
-        userId, // Changed from email to userId
+        userId,
         companyEmail,
         password,
         verificationCode,
@@ -112,7 +132,7 @@ const Register = () => {
         />
         <input
           type="text"
-          name="userId" // Changed from email to userId
+          name="userId"
           placeholder="User ID"
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
@@ -180,6 +200,8 @@ const Register = () => {
           onChange={(e) => setPassword(e.target.value)}
           style={reducedMarginStyle}
         />
+        {/* 패스워드 에러 메시지 표시 */}
+        {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
         <div className="button-container">
           <input type="submit" value="Register" style={{ height: "40px" }} />
         </div>
