@@ -160,6 +160,8 @@ const PostDetail = () => {
   if (error) return <div>{error}</div>;
   if (!post) return <div>게시물을 찾을 수 없습니다.</div>;
 
+  const isNotice = post.title.startsWith("[공지]");
+
   return (
     <div className="post-detail-page">
       <div className="post-detail-container">
@@ -198,24 +200,28 @@ const PostDetail = () => {
             </div>
 
             <div className="post-detail-buttons">
-              <button
-                className="edit-button"
-                onClick={() => setShowEditForm(true)}
-              >
-                수정
-              </button>
-              <button
-                className="delete-button"
-                onClick={() => setShowPasswordModal(true)}
-              >
-                삭제
-              </button>
-              <button
-                className="diagnosis-button"
-                onClick={handleDiagnosisClick}
-              >
-                진단 결과 보기
-              </button>
+              {!isNotice && (
+                <>
+                  <button
+                    className="edit-button"
+                    onClick={() => setShowEditForm(true)}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="delete-button"
+                    onClick={() => setShowPasswordModal(true)}
+                  >
+                    삭제
+                  </button>
+                  <button
+                    className="diagnosis-button"
+                    onClick={handleDiagnosisClick}
+                  >
+                    진단 결과 보기
+                  </button>
+                </>
+              )}
             </div>
           </>
         )}

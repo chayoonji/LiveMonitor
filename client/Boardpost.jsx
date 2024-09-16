@@ -15,7 +15,6 @@ const Board = () => {
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [error, setError] = useState('');
-  const [status, setStatus] = useState('');
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
   const postsPerPage = 4; // 페이지당 표시할 게시물 수
 
@@ -49,9 +48,13 @@ const Board = () => {
     localStorage.setItem('posts', JSON.stringify(posts));
   }, [posts]);
 
+  // 제목에 [공지]가 포함된 게시물과 일반 게시물로 분리
+  const noticePosts = posts.filter(post => post.title.startsWith('[공지]'));
+  const regularPosts = posts.filter(post => !post.title.startsWith('[공지]'));
+
   // 페이지 이동 핸들러
   const handleNextPage = () => {
-    if (currentPage < Math.ceil(posts.length / postsPerPage)) {
+    if (currentPage < Math.ceil(regularPosts.length / postsPerPage)) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
   };
@@ -65,7 +68,10 @@ const Board = () => {
   // 현재 페이지에 해당하는 게시물 목록을 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentRegularPosts = regularPosts.slice(indexOfFirstPost, indexOfLastPost);
+
+  // 공지사항을 일반 게시물과 함께 표시
+  const displayPosts = currentPage === 1 ? [...noticePosts, ...currentRegularPosts] : currentRegularPosts;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,8 +81,7 @@ const Board = () => {
         title,
         content,
         author,
-        password,
-        status
+        password
       });
       alert('글이 성공적으로 작성되었습니다.');
       setTitle('');
@@ -103,8 +108,8 @@ const Board = () => {
 
   const handlePostClick = (post) => {
     setSelectedPost(post);
-    if (isAdmin) {
-      // 관리자인 경우 비밀번호 확인 없이 바로 게시물 보기
+    if (post.title.startsWith('[공지]') || isAdmin) {
+      // 공지사항이거나 관리자인 경우 비밀번호 확인 없이 바로 게시물 보기
       navigate(`/post/${post._id}`, {
         state: { post }
       });
@@ -116,11 +121,11 @@ const Board = () => {
   };
 
   const handlePasswordSubmit = async () => {
-    if (isAdmin) {
-      // 관리자인 경우 비밀번호 확인 로직을 실행하지 않음
+    if (isAdmin || selectedPost.title.startsWith('[공지]')) {
+      // 관리자인 경우 또는 공지사항인 경우 비밀번호 확인 로직을 실행하지 않음
       return;
     }
-  
+
     try {
       const response = await axios.post(
         'http://localhost:3002/posts/check-password',
@@ -129,11 +134,9 @@ const Board = () => {
           password: passwordInput,
         }
       );
-  
+
       if (response.data.valid) {
-        const postResponse = await axios.get(
-          `http://localhost:3002/posts/${selectedPost._id}`
-        );
+        const postResponse = await axios.get(`http://localhost:3002/posts/${selectedPost._id}`);
         navigate(`/post/${selectedPost._id}`, {
           state: { post: postResponse.data },
         });
@@ -158,6 +161,7 @@ const Board = () => {
             </button>
           )}
         </div>
+
         {isWriting ? (
           <form onSubmit={handleSubmit} className="board-form">
             <input
@@ -196,10 +200,10 @@ const Board = () => {
           </form>
         ) : (
           <div className="posts-list">
-            {currentPosts.length > 0 ? (
-              currentPosts.map((post) => (
-                <div key={post._id} className="post-item">
-                  <h2 onClick={() => handlePostClick(post)}>{post.title}</h2>
+            {displayPosts.length > 0 ? (
+              displayPosts.map((post) => (
+                <div key={post._id} className="post-item" onClick={() => handlePostClick(post)}>
+                  <h2>{post.title}</h2>
                   <small>작성자: {post.author}</small>
                   <small>진행 상태: {post.status}</small>
                 </div>
@@ -215,33 +219,28 @@ const Board = () => {
           <button onClick={handlePrevPage} disabled={currentPage === 1}>
             이전
           </button>
-          <span>{`페이지 ${currentPage}`}</span>
+          <span>페이지 {currentPage}</span>
           <button
             onClick={handleNextPage}
-            disabled={currentPage === Math.ceil(posts.length / postsPerPage)}
+            disabled={currentPage === Math.ceil(regularPosts.length / postsPerPage)}
           >
             다음
           </button>
         </div>
 
-        {!isAdmin && showPasswordModal && selectedPost && (
+        {!isAdmin && showPasswordModal && selectedPost && !selectedPost.title.startsWith('[공지]') && (
           <div className="modal">
             <div className="modal-content">
-              <h2>{selectedPost.title}</h2>
+              <h2>{selectedPost.title} 보기</h2>
               <input
                 type="password"
-                placeholder="비밀번호를 입력하세요"
+                placeholder="비밀번호"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                className="modal-input"
               />
-              {error && <p className="error-message">{error}</p>}
-              <div className="modal-buttons">
-                <button onClick={handlePasswordSubmit}>확인</button>
-                <button onClick={() => setShowPasswordModal(false)}>
-                  취소
-                </button>
-              </div>
+              {error && <p className="error">{error}</p>}
+              <button onClick={handlePasswordSubmit}>확인</button>
+              <button onClick={() => setShowPasswordModal(false)}>취소</button>
             </div>
           </div>
         )}
