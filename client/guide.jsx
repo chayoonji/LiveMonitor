@@ -1,7 +1,10 @@
 import React from 'react';
+import { useAuth } from './Context/AuthContext'; // AuthContext에서 로그인 상태 가져오기
 import './App.css';
 
 function Guide() {
+  const { isAuthenticated } = useAuth(); // 로그인 상태 가져오기
+
   return (
     <div className="main-container">
       <div className="guide-header">
@@ -18,7 +21,9 @@ function Guide() {
           <li><strong>게시판</strong>: 서버 진단을 요청할 수 있습니다. 글을 작성할때 작성자 이름은 가입한 ID로 입력하지 말아주세요. 그리고 입력한 비밀번호는 꼭 기억해주세요. 게시물 수정, 삭제, 진단 결과 확인할때 사용됩니다.</li>
           <li><strong>로그아웃 및 새로고침</strong>: 이 사이트는 로그아웃 버튼을 누르거나 새로고침을 하면 자동으로 로그아웃 됩니다. 설정해놓은 데이터 베이스가 초기화 되니 프로그램 페이지에 가서 다시 아이디를 입력하고 버튼을 눌러주세요. </li>
         </ul>
-        <p>시작하기 전에, 먼저 <a href="/register">회원가입</a> 또는 <a href="/login">로그인</a>을 해주세요. 이후 원하시는 서비스를 자유롭게 이용하실 수 있습니다.</p>
+        {!isAuthenticated && (
+          <p>시작하기 전에, 먼저 <a href="/register">회원가입</a> 또는 <a href="/login">로그인</a>을 해주세요. 이후 원하시는 서비스를 자유롭게 이용하실 수 있습니다.</p>
+        )}
       </div>
     </div>
   );
