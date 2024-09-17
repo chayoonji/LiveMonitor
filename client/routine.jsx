@@ -4,12 +4,16 @@ import './UploadButton.css';
 import { useAuth } from './Context/AuthContext';
 
 const UploadButton = () => {
-  const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
-  const [userId, setUserId] = useState('');
+  const { isAdmin, userId, setUserId } = useAuth(); // AuthContext에서 isAdmin과 userId 가져오기
   const [isUserIdSet, setIsUserIdSet] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
   const handleSetUserId = async () => {
+    if (!userId) {
+      setSuccessMessage('Please enter a User ID.');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:3002/set-user-id', {
         userId,
@@ -63,11 +67,20 @@ const UploadButton = () => {
           Set User ID
         </button>
       </div>
-      {isAdmin && (
+
+      {isAdmin && isUserIdSet && (
         <button onClick={handleUpload} className="upload-button">
           Upload
         </button>
       )}
+
+      {/* userId가 설정되지 않았으면 그래프를 숨김 */}
+      {isUserIdSet && userId ? (
+        <div>{/* 그래프를 표시하는 컴포넌트 */}</div>
+      ) : (
+        <p>그래프를 표시하려면 User ID를 먼저 입력하세요.</p>
+      )}
+
       {successMessage && <p className="success-message">{successMessage}</p>}
     </div>
   );

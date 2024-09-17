@@ -876,25 +876,16 @@ app.put('/posts/:id/status', async (req, res) => {
   }
 });
 
-
-// 데이터베이스 초기화 라우트
-app.post('/reset-database', async (req, res) => {
+app.post('/reset-database-values', async (req, res) => {
   try {
-    if (userDb) {
-      const dbName = userDb.databaseName;
-      await client.db(dbName).dropDatabase(); // 데이터베이스 삭제
-      console.log(`Database ${dbName} dropped`);
+    // 유저의 database 정보만 리셋
+    userDb = null;
+    console.log('Database values have been reset.');
 
-      // 데이터베이스 재생성
-      userDb = client.db(dbName);
-      console.log(`Using database: ${dbName}`);
-
-      res.status(200).json({ message: `Database ${dbName} has been reset.` });
-    } else {
-      res.status(400).json({ message: 'No database selected.' });
-    }
+    res.status(200).json({ message: 'Database values have been reset.' });
   } catch (err) {
-    console.error('Error resetting database:', err);
-    res.status(500).json({ message: 'Error resetting database' });
+    console.error('Error resetting database values:', err);
+    res.status(500).json({ message: 'Error resetting database values' });
   }
 });
+
