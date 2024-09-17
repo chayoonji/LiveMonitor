@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { FaArrowLeft } from 'react-icons/fa';
-import './PostDetail.css';
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { FaArrowLeft } from "react-icons/fa";
+import "./PostDetail.css";
+import { useAuth } from "./Context/AuthContext";
 
 const PasswordModal = ({ onClose, onConfirm }) => {
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
 
   const handleConfirm = () => {
     onConfirm(password);
-    setPassword(''); // 비밀번호 초기화
+    setPassword(""); // 비밀번호 초기화
   };
 
   return (
@@ -42,9 +43,10 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [author, setAuthor] = useState('');
+  const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [author, setAuthor] = useState("");
   const [showEditForm, setShowEditForm] = useState(false);
   const [files, setFiles] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -61,8 +63,8 @@ const PostDetail = () => {
         setAuthor(response.data.author);
         setUploadedFiles(response.data.files || []);
       } catch (error) {
-        setError('게시물을 불러오는 중 오류가 발생했습니다.');
-        console.error('Error fetching post:', error.message);
+        setError("게시물을 불러오는 중 오류가 발생했습니다.");
+        console.error("Error fetching post:", error.message);
       } finally {
         setLoading(false);
       }
@@ -73,17 +75,17 @@ const PostDetail = () => {
 
   useEffect(() => {
     if (showEditForm && textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [showEditForm]);
 
   const handleUpdatePost = async () => {
     const formData = new FormData();
-    files.forEach((file) => formData.append('files', file));
-    formData.append('title', title);
-    formData.append('content', content);
-    formData.append('author', author);
+    files.forEach((file) => formData.append("files", file));
+    formData.append("title", title);
+    formData.append("content", content);
+    formData.append("author", author);
 
     try {
       const response = await axios.put(
@@ -91,21 +93,21 @@ const PostDetail = () => {
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
 
       if (response.status === 200) {
-        alert('게시물이 성공적으로 수정되었습니다.');
+        alert("게시물이 성공적으로 수정되었습니다.");
         setShowEditForm(false);
         navigate(`/post/${id}`); // 수정된 게시물 페이지로 리다이렉트
       } else {
-        alert('게시물 수정 중 문제가 발생했습니다.');
+        alert("게시물 수정 중 문제가 발생했습니다.");
       }
     } catch (error) {
-      console.error('Error updating post:', error.message);
-      alert('게시물 수정 중 오류가 발생했습니다: ' + error.message);
+      console.error("Error updating post:", error.message);
+      alert("게시물 수정 중 오류가 발생했습니다: " + error.message);
     }
   };
 
@@ -127,7 +129,7 @@ const PostDetail = () => {
   const handleDeletePost = async (password) => {
     try {
       const response = await axios.post(
-        'http://localhost:3002/posts/check-password',
+        "http://localhost:3002/posts/check-password",
         {
           postId: id,
           password: password,
@@ -139,14 +141,14 @@ const PostDetail = () => {
           data: { password: password },
         });
 
-        alert('게시물이 성공적으로 삭제되었습니다.');
-        navigate('/', { state: { refresh: true } });
+        alert("게시물이 성공적으로 삭제되었습니다.");
+        navigate("/", { state: { refresh: true } });
       } else {
-        alert('비밀번호가 틀립니다.');
+        alert("비밀번호가 틀립니다.");
       }
     } catch (error) {
-      console.error('Error deleting post:', error.message);
-      alert('게시물 삭제 중 오류가 발생했습니다: ' + error.message);
+      console.error("Error deleting post:", error.message);
+      alert("게시물 삭제 중 오류가 발생했습니다: " + error.message);
     }
   };
 
@@ -157,6 +159,8 @@ const PostDetail = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
   if (!post) return <div>게시물을 찾을 수 없습니다.</div>;
+
+  const isNotice = post.title.startsWith("[공지]");
 
   return (
     <div className="post-detail-page">
@@ -196,24 +200,28 @@ const PostDetail = () => {
             </div>
 
             <div className="post-detail-buttons">
-              <button
-                className="edit-button"
-                onClick={() => setShowEditForm(true)}
-              >
-                수정
-              </button>
-              <button
-                className="delete-button"
-                onClick={() => setShowPasswordModal(true)}
-              >
-                삭제
-              </button>
-              <button
-                className="diagnosis-button"
-                onClick={handleDiagnosisClick}
-              >
-                진단 결과 보기
-              </button>
+              {!isNotice && (
+                <>
+                  <button
+                    className="edit-button"
+                    onClick={() => setShowEditForm(true)}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="delete-button"
+                    onClick={() => setShowPasswordModal(true)}
+                  >
+                    삭제
+                  </button>
+                  <button
+                    className="diagnosis-button"
+                    onClick={handleDiagnosisClick}
+                  >
+                    진단 결과 보기
+                  </button>
+                </>
+              )}
             </div>
           </>
         )}
@@ -241,7 +249,7 @@ const PostDetail = () => {
               className="edit-content"
               placeholder="내용"
               onInput={(e) => {
-                e.target.style.height = 'auto';
+                e.target.style.height = "auto";
                 e.target.style.height = `${e.target.scrollHeight}px`;
               }}
             />
@@ -254,7 +262,7 @@ const PostDetail = () => {
                 <button onClick={() => handleRemoveFile(index)}>삭제</button>
               </div>
             ))}
-            <button onClick={handleAddFile}>파일 추가</button>
+            {isAdmin && <button onClick={handleAddFile}>파일 추가</button>}
             <div className="edit-form-buttons">
               <button onClick={handleUpdatePost}>저장</button>
               <button onClick={() => setShowEditForm(false)}>취소</button>

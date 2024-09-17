@@ -170,14 +170,27 @@ app.post('/register', passport.authenticate('local-signup'), (req, res) => {
   res.status(201).send('User registered');
 });
 
-// 로그인 라우트
-app.post('/login', passport.authenticate('local-login'), (req, res) => {
-  if (req.user) {
-    res.json({ user: req.user });
-  } else {
-    res.status(401).send('Login failed');
+// 로그인 라우트 
+app.post('/login', async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    // Check if the user exists
+    const user = await db.collection('Member').findOne({ userId });
+
+    if (!user) {
+      return res.status(401).send('Invalid credentials');
+    }
+
+    // Determine if the user is an admin
+    const isAdmin = user.type === 'admin';
+    res.status(200).json({ success: true, isAdmin });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).send('Server error');
   }
 });
+
 
 // SSH 연결 및 명령어 실행
 app.get('/ssh-test', (req, res) => {
@@ -284,14 +297,14 @@ app.post('/set-user-id', async (req, res) => {
     const sanitizedDbName = sanitizeDbName(userId);
     userDb = client.db(sanitizedDbName); // 사용자 아이디로 데이터베이스 선택
     console.log('Using database:', sanitizedDbName);
-    res
-      .status(200)
-      .json({ message: 'Database selected', dbName: sanitizedDbName });
+
+    res.status(200).json({ message: 'Database selected', dbName: sanitizedDbName });
   } catch (err) {
     console.error('Error connecting to database:', err);
     res.status(500).json({ message: 'Error connecting to database' });
   }
 });
+
 
 // 주통 총합 가져오는 API 엔드포인트
 app.get('/api/data', async (req, res) => {
@@ -536,13 +549,14 @@ app.get('/posts', async (req, res) => {
 // 게시물 생성 엔드포인트
 app.post('/posts', async (req, res) => {
   try {
-    const { title, content, password, author } = req.body;
+    const { title, content, password, author, status } = req.body; // status 추가
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
     await db.collection('Posts').insertOne({
       title,
       content,
       password: hashedPassword,
       author,
+      status, // status 저장
       createdAt: new Date(),
     });
     res.status(201).send('Post created');
@@ -550,6 +564,7 @@ app.post('/posts', async (req, res) => {
     res.status(500).send('Error creating post');
   }
 });
+
 
 // 특정 게시물 가져오는 엔드포인트
 app.get('/posts/:id', async (req, res) => {
@@ -837,3 +852,40 @@ app.get('/api/search-text-data', async (req, res) => {
     res.status(500).json({ error: '데이터를 불러오는 중 오류가 발생했습니다.' });
   }
 });
+
+app.put('/posts/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const post = await db.collection('Posts').findOne({ _id: new ObjectId(id) });
+    if (!post) {
+      return res.status(404).send('Post not found');
+    }
+
+    // 상태 업데이트
+    await db.collection('Posts').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { status } }
+    );
+    
+    res.send({ success: true, status });
+  } catch (error) {
+    console.error('Error updating status:', error); // 상세 오류 로그
+    res.status(500).send('Server error');
+  }
+});
+
+app.post('/reset-database-values', async (req, res) => {
+  try {
+    // 유저의 database 정보만 리셋
+    userDb = null;
+    console.log('Database values have been reset.');
+
+    res.status(200).json({ message: 'Database values have been reset.' });
+  } catch (err) {
+    console.error('Error resetting database values:', err);
+    res.status(500).json({ message: 'Error resetting database values' });
+  }
+});
+

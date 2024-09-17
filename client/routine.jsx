@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './UploadButton.css'; // CSS 파일을 임포트합니다.
+import './UploadButton.css';
+import { useAuth } from './Context/AuthContext';
 
 const UploadButton = () => {
-  const [userId, setUserId] = useState('');
+  const { isAdmin, userId, setUserId } = useAuth(); // AuthContext에서 isAdmin과 userId 가져오기
   const [isUserIdSet, setIsUserIdSet] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
   const handleSetUserId = async () => {
+    if (!userId) {
+      setSuccessMessage('Please enter a User ID.');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:3002/set-user-id', {
         userId,
@@ -15,16 +21,10 @@ const UploadButton = () => {
       console.log(response.data.message);
       setIsUserIdSet(true);
       setSuccessMessage('User ID has been set successfully!');
-      // 데이터 초기화
-      resetData();
     } catch (error) {
       console.error('Error setting user ID:', error);
       setSuccessMessage('Failed to set User ID. Please try again.');
     }
-  };
-
-  const resetData = () => {
-    // 데이터 초기화 로직 추가 (예: 상태를 리셋하거나, 필요시 추가 작업 수행)
   };
 
   const handleUpload = async () => {
@@ -67,9 +67,20 @@ const UploadButton = () => {
           Set User ID
         </button>
       </div>
-      <button onClick={handleUpload} className="upload-button">
-        Upload
-      </button>
+
+      {isAdmin && isUserIdSet && (
+        <button onClick={handleUpload} className="upload-button">
+          Upload
+        </button>
+      )}
+
+      {/* userId가 설정되지 않았으면 그래프를 숨김 */}
+      {isUserIdSet && userId ? (
+        <div>{/* 그래프를 표시하는 컴포넌트 */}</div>
+      ) : (
+        <p>그래프를 표시하려면 User ID를 먼저 입력하세요.</p>
+      )}
+
       {successMessage && <p className="success-message">{successMessage}</p>}
     </div>
   );
