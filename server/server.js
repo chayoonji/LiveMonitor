@@ -375,16 +375,34 @@ app.get('/api/search-text-data', async (req, res) => {
 // 진단 결과를 가져오는 API 엔드포인트
 app.get('/api/diagnosis-results', async (req, res) => {
   try {
+    // 데이터베이스 컬렉션 이름을 소문자로 변환하여 찾기
+    const collections = [
+      'ChartData',
+      'CpuData',
+      'CpuTime',
+      'VMemory',
+      'SMemory',
+      'TextData',
+      'Solutions'
+    ];
+
+    const uploadsPath = path.join(__dirname, 'uploads'); // 서버에서 uploads 폴더의 절대 경로
+
     const [chartData, cpuData, cpuTime, vMemory, sMemory, textData, solutions] =
-      await Promise.all([
-        userDb.collection('ChartData').find({}).toArray(),
-        userDb.collection('CpuData').find({}).toArray(),
-        userDb.collection('CpuTime').find({}).toArray(),
-        userDb.collection('VMemory').find({}).toArray(),
-        userDb.collection('SMemory').find({}).toArray(),
-        userDb.collection('TextData').find({}).toArray(),
-        userDb.collection('Solutions').find({}).toArray(),
-      ]);
+      await Promise.all(collections.map(async (collectionName) => {
+        const normalizedCollectionName = collectionName.toLowerCase();
+        const files = fs.readdirSync(uploadsPath); // 인코딩 없이 폴더의 파일 목록 읽기
+        const jsonFile = files.find(file => 
+          file.toLowerCase() === `${normalizedCollectionName}.json`
+        );
+
+        if (jsonFile) {
+          const data = fs.readFileSync(path.join(uploadsPath, jsonFile), 'utf8'); // 인코딩을 'utf8'로 설정하여 파일 읽기
+          return JSON.parse(data);
+        } else {
+          return []; // 파일이 없으면 빈 배열 반환
+        }
+      }));
 
     res.json({
       chartData,
@@ -412,6 +430,7 @@ app.get('/api/solutions', async (req, res) => {
   }
 });
 
+
 // MongoDB CpuData(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
 app.get('/api/cpu-data', async (req, res) => {
   try {
@@ -435,6 +454,8 @@ app.get('/api/cpu-time', async (req, res) => {
       .find({ hour: { $gte: 1, $lte: 24 } })
       .toArray();
 
+    console.log('Fetched CPU Time Data:', cpuTime); // 로그 추가
+
     res.json(cpuTime);
   } catch (err) {
     console.error('Error fetching CPU time:', err);
@@ -442,8 +463,9 @@ app.get('/api/cpu-time', async (req, res) => {
   }
 });
 
+
 // MongoDB V-Memory (가상메모리) 내용 가져오는 API 엔드포인트
-app.get('/api/v-memory', async (req, res) => {
+app.get('/api/V-memory', async (req, res) => {
   try {
     const vMemory = await userDb
       .collection('VMemory')
@@ -458,7 +480,7 @@ app.get('/api/v-memory', async (req, res) => {
 });
 
 // MongoDB SMemory 데이터 가져오는 API 엔드포인트
-app.get('/api/s-memory', async (req, res) => {
+app.get('/api/S-memory', async (req, res) => {
   try {
     const sMemory = await userDb
       .collection('SMemory')

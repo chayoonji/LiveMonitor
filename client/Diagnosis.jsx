@@ -15,32 +15,33 @@ import { useNavigate } from 'react-router-dom';
 const Diagnosis = () => {
   const [data, setData] = useState([]);
   const [textData, setTextData] = useState([]);
+  const [solutions, setSolutions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [limit] = useState(4); // 페이지당 항목 수를 4로 설정
+  const [limit] = useState(4);
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [diagnosisResults, setDiagnosisResults] = useState([]);
-  const navigate = useNavigate(); // 프로그래밍적으로 네비게이션
+  const [selectedSolution, setSelectedSolution] = useState(null); // 선택된 조치방법
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [dataResponse, textResponse, diagnosisResponse] =
+        const [dataResponse, textResponse, solutionsResponse] =
           await Promise.all([
             axios.get('http://localhost:3002/api/data'),
             axios.get(
               `http://localhost:3002/api/search-text-data?page=${page}&limit=${limit}&query=${query}`
             ),
-            axios.get('http://localhost:3002/api/diagnosis-results'),
+            axios.get('http://localhost:3002/api/solutions')
           ]);
 
         setData(dataResponse.data);
         setTextData(textResponse.data.data);
         setTotalPages(textResponse.data.totalPages);
-        setDiagnosisResults(diagnosisResponse.data);
+        setSolutions(solutionsResponse.data);
       } catch (err) {
         console.error('데이터를 불러오는 중 오류가 발생했습니다:', err);
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
@@ -53,24 +54,56 @@ const Diagnosis = () => {
   }, [page, limit, query, isSearching]);
 
   const handleSearch = () => {
-    setPage(1); // 검색 시 첫 페이지로 리셋
-    setIsSearching(true); // 검색 모드 활성화
+    setPage(1);
+    setIsSearching(true);
+  };
+
+  const handleViewSolution = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3002/api/solutions`);
+      setSelectedSolution(response.data);
+      navigate(`/solutions`);
+    } catch (err) {
+      console.error('솔루션을 가져오는 중 오류가 발생했습니다:', err);
+      setError('솔루션을 가져오는 중 오류가 발생했습니다.');
+    }
   };
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
-  if (data.length === 0) return <div>데이터가 없습니다.</div>;
+  if (textData.length === 0) return <div>데이터가 없습니다.</div>;
 
-  // 차트 데이터 변환
+  const tableHeaders = textData[0] ? Object.keys(textData[0]) : [];
+  const tableRows = textData.map((item, index) => (
+    <tr
+      key={index}
+      style={{
+        backgroundColor: item.결과 === '취약' ? '#B71C1C' : '#303F9F',
+        cursor: item.결과 === '취약' ? 'pointer' : 'default',
+      }}
+      onClick={() =>
+        item.결과 === '취약' && handleViewSolution(item.id)
+      }
+    >
+      {tableHeaders.map((header, idx) => (
+        <td
+          key={idx}
+          style={{
+            padding: '10px',
+            color: header === '결과' && item[header] === '취약' ? '#FFFFFF' : '#E0E0E0',
+          }}
+        >
+          {item[header]}
+        </td>
+      ))}
+    </tr>
+  ));
+
   const chartData = data[0]?.data.map((item) => ({
     name: item.name,
     value: item.value,
   })) || [];
-
-  const handleViewSolution = (id) => {
-    navigate(`/solution/${id}`); // 취약한 결과의 ID를 사용해 솔루션 페이지로 이동
-  };
 
   return (
     <div
@@ -139,51 +172,14 @@ const Diagnosis = () => {
         >
           <thead>
             <tr style={{ backgroundColor: '#2E3A59', color: '#FFFFFF' }}>
-              {textData[0] &&
-                Object.keys(textData[0])
-                  .filter((key) => key !== '_id')
-                  .sort((a, b) => (a === 'id' ? -1 : b === 'id' ? 1 : 0))
-                  .map((key, index) => (
-                    <th key={index} style={{ padding: '10px' }}>
-                      {key}
-                    </th>
-                  ))}
+              {tableHeaders.map((header, index) => (
+                <th key={index} style={{ padding: '10px' }}>
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody>
-            {textData.map((item, index) => (
-              <tr
-                key={index}
-                style={{
-                  backgroundColor: item.결과 === '취약' ? '#B71C1C' : '#303F9F',
-                  cursor: item.결과 === '취약' ? 'pointer' : 'default',
-                }}
-                onClick={() =>
-                  item.결과 === '취약' && handleViewSolution(item.id)
-                }
-              >
-                {Object.entries(item)
-                  .filter(([key]) => key !== '_id')
-                  .sort(([aKey], [bKey]) =>
-                    aKey === 'id' ? -1 : bKey === 'id' ? 1 : 0
-                  )
-                  .map(([key, value], i) => (
-                    <td
-                      key={i}
-                      style={{
-                        padding: '10px',
-                        color:
-                          key === '결과' && value === '취약'
-                            ? '#FFFFFF'
-                            : '#E0E0E0',
-                      }}
-                    >
-                      {value}
-                    </td>
-                  ))}
-              </tr>
-            ))}
-          </tbody>
+          <tbody>{tableRows}</tbody>
         </table>
 
         {/* 페이지네이션 컨트롤 */}
@@ -254,20 +250,32 @@ const Diagnosis = () => {
             data={chartData}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#B0BEC5" />
-            <XAxis dataKey="name" stroke="#E0E0E0" />
-            <YAxis stroke="#E0E0E0" />
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
             <Tooltip />
             <Legend />
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="#FFEB3B"
-              activeDot={{ r: 8 }}
-            />
+            <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
+
+      {/* 선택된 조치방법 내용 표시 */}
+      {selectedSolution && (
+        <div
+          style={{
+            marginTop: '30px',
+            padding: '20px',
+            border: '1px solid #E0E0E0',
+            borderRadius: '4px',
+            backgroundColor: '#1A237E',
+            color: '#E0E0E0',
+          }}
+        >
+          <h2 style={{ color: '#FFFFFF' }}>조치방법</h2>
+          <p>{selectedSolution.content}</p>
+        </div>
+      )}
     </div>
   );
 };

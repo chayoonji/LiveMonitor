@@ -27,11 +27,11 @@ function Reports1() {
         if (chartData.length >= 3) {
           const formattedData = chartData.map((item) => ({
             name: item.hour.toString(),
-            '전체 CPU 사용률': item['전체 CPU 사용률'],
-            'P.C CPU 사용률': item['P.C CPU 사용률'],
-            'L.C CPU 사용률': item['L.C CPU 사용률'],
-            'P.C 코어 수': item['P.C 코어 수'],
-            'L.C 코어 수': item['L.C 코어 수'],
+            '전체 CPU 사용률': parseFloat(item['전체 CPU 사용률']),
+            'P.C CPU 사용률': parseFloat(item['P.C CPU 사용률']),
+            'L.C CPU 사용률': parseFloat(item['L.C CPU 사용률']),
+            'P.C 코어 수': parseInt(item['P.C 코어 수'], 10),
+            'L.C 코어 수': parseInt(item['L.C 코어 수'], 10),
           }));
 
           setCpuData(formattedData);
@@ -49,24 +49,28 @@ function Reports1() {
       try {
         const response = await axios.get('http://localhost:3002/api/cpu-time');
         const chartData = response.data;
-
+  
+        console.log('Fetched CPU Time Data in Frontend:', chartData); // 로그 추가
+  
         if (chartData.length > 0) {
           const formattedData = chartData.map((item) => ({
             name: item.hour.toString(),
-            '사용자 시간': item['사용자 시간'],
-            '시스템 시간': item['시스템 시간'],
-            '유휴 시간': item['유휴 시간'],
+            '사용자 시간': parseFloat(item['사용자 시간']),
+            '시스템 시간': parseFloat(item['시스템 시간']),
+            '유휴 시간': parseFloat(item['유휴 시간']),
           }));
-
+  
           setCpuTime(formattedData);
         }
       } catch (error) {
         console.error('Error fetching CPU time data:', error);
       }
     };
-
+  
     fetchCpuTimeDataAndUpdate();
   }, []);
+  
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
