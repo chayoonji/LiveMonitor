@@ -588,6 +588,30 @@ app.post('/posts', async (req, res) => {
 });
 
 
+// 상태 변경 엔드포인트
+app.patch('/posts/:id', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const result = await db.collection('Posts').updateOne(
+      { _id: new mongodb.ObjectId(id) }, // _id를 ObjectId로 변환
+      { $set: { status } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send('Post not found');
+    }
+
+    res.status(200).send('Post status updated');
+  } catch (err) {
+    console.error('Error updating status:', err); // 에러 로그 추가
+    res.status(500).send('Error updating status');
+  }
+});
+
+
+
 // 특정 게시물 가져오는 엔드포인트
 app.get('/posts/:id', async (req, res) => {
   try {

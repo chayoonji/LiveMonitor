@@ -62,6 +62,13 @@ const PostDetail = () => {
         setContent(response.data.content);
         setAuthor(response.data.author);
         setUploadedFiles(response.data.files || []);
+
+        // 파일이 없으면 상태를 "진단 전"으로 설정
+        if (!response.data.files || response.data.files.length === 0) {
+          await axios.put(`http://localhost:3002/posts/${id}/status`, {
+            status: "진단 전",
+          });
+        }
       } catch (error) {
         setError("게시물을 불러오는 중 오류가 발생했습니다.");
         console.error("Error fetching post:", error.message);
@@ -88,6 +95,7 @@ const PostDetail = () => {
     formData.append("author", author);
 
     try {
+      // 게시물 수정 요청
       const response = await axios.put(
         `http://localhost:3002/posts/${id}`,
         formData,
@@ -97,6 +105,12 @@ const PostDetail = () => {
           },
         }
       );
+
+      // 파일이 추가되었는지 확인하고 상태 업데이트
+      const newStatus = files.length > 0 ? "진단 완료" : "진단 전";
+      await axios.put(`http://localhost:3002/posts/${id}/status`, {
+        status: newStatus,
+      });
 
       if (response.status === 200) {
         alert("게시물이 성공적으로 수정되었습니다.");
@@ -258,15 +272,38 @@ const PostDetail = () => {
                 <input
                   type="file"
                   onChange={(e) => handleFileChange(e, index)}
+                  className="file-input"
                 />
-                <button onClick={() => handleRemoveFile(index)}>삭제</button>
+                <button
+                  type="button"
+                  className="remove-file-button"
+                  onClick={() => handleRemoveFile(index)}
+                >
+                  파일 제거
+                </button>
               </div>
             ))}
-            {isAdmin && <button onClick={handleAddFile}>파일 추가</button>}
-            <div className="edit-form-buttons">
-              <button onClick={handleUpdatePost}>저장</button>
-              <button onClick={() => setShowEditForm(false)}>취소</button>
-            </div>
+            <button
+              type="button"
+              className="add-file-button"
+              onClick={handleAddFile}
+            >
+              파일 추가
+            </button>
+
+            <button
+              className="save-button"
+              onClick={handleUpdatePost}
+              disabled={!title.trim() || !content.trim() || !author.trim()}
+            >
+              저장
+            </button>
+            <button
+              className="cancel-button"
+              onClick={() => setShowEditForm(false)}
+            >
+              취소
+            </button>
           </div>
         )}
       </div>
@@ -274,10 +311,7 @@ const PostDetail = () => {
       {showPasswordModal && (
         <PasswordModal
           onClose={() => setShowPasswordModal(false)}
-          onConfirm={(password) => {
-            setShowPasswordModal(false);
-            handleDeletePost(password);
-          }}
+          onConfirm={handleDeletePost}
         />
       )}
     </div>
