@@ -283,18 +283,18 @@ const PostDetail = () => {
                 </button>
               </div>
             ))}
-            <button
-              type="button"
-              className="add-file-button"
-              onClick={handleAddFile}
-            >
-              파일 추가
-            </button>
-
+            {isAdmin && (
+              <button
+                type="button"
+                className="add-file-button"
+                onClick={handleAddFile}
+              >
+                파일 추가
+              </button>
+            )}
             <button
               className="save-button"
               onClick={handleUpdatePost}
-              disabled={!title.trim() || !content.trim() || !author.trim()}
             >
               저장
             </button>
