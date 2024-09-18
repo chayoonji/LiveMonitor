@@ -170,7 +170,7 @@ app.post('/register', passport.authenticate('local-signup'), (req, res) => {
   res.status(201).send('User registered');
 });
 
-// 로그인 라우트 
+// 로그인 라우트
 app.post('/login', async (req, res) => {
   const { userId } = req.body;
 
@@ -190,7 +190,6 @@ app.post('/login', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-
 
 // SSH 연결 및 명령어 실행
 app.get('/ssh-test', (req, res) => {
@@ -298,13 +297,14 @@ app.post('/set-user-id', async (req, res) => {
     userDb = client.db(sanitizedDbName); // 사용자 아이디로 데이터베이스 선택
     console.log('Using database:', sanitizedDbName);
 
-    res.status(200).json({ message: 'Database selected', dbName: sanitizedDbName });
+    res
+      .status(200)
+      .json({ message: 'Database selected', dbName: sanitizedDbName });
   } catch (err) {
     console.error('Error connecting to database:', err);
     res.status(500).json({ message: 'Error connecting to database' });
   }
 });
-
 
 // 주통 총합 가져오는 API 엔드포인트
 app.get('/api/data', async (req, res) => {
@@ -564,7 +564,6 @@ app.post('/posts', async (req, res) => {
     res.status(500).send('Error creating post');
   }
 });
-
 
 // 특정 게시물 가져오는 엔드포인트
 app.get('/posts/:id', async (req, res) => {
@@ -838,8 +837,12 @@ app.get('/api/search-text-data', async (req, res) => {
   try {
     const collection = db.collection('TextData');
     const [data, total] = await Promise.all([
-      collection.find({ $text: { $search: query } }).skip(parseInt(skip)).limit(parseInt(limit)).toArray(),
-      collection.countDocuments({ $text: { $search: query } })
+      collection
+        .find({ $text: { $search: query } })
+        .skip(parseInt(skip))
+        .limit(parseInt(limit))
+        .toArray(),
+      collection.countDocuments({ $text: { $search: query } }),
     ]);
 
     const totalPages = Math.ceil(total / limit);
@@ -849,7 +852,9 @@ app.get('/api/search-text-data', async (req, res) => {
       totalPages,
     });
   } catch (err) {
-    res.status(500).json({ error: '데이터를 불러오는 중 오류가 발생했습니다.' });
+    res
+      .status(500)
+      .json({ error: '데이터를 불러오는 중 오류가 발생했습니다.' });
   }
 });
 
@@ -858,24 +863,24 @@ app.put('/posts/:id/status', async (req, res) => {
   const { status } = req.body;
 
   try {
-    const post = await db.collection('Posts').findOne({ _id: new ObjectId(id) });
+    const post = await db
+      .collection('Posts')
+      .findOne({ _id: new ObjectId(id) });
     if (!post) {
       return res.status(404).send('Post not found');
     }
 
     // 상태 업데이트
-    await db.collection('Posts').updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { status } }
-    );
-    
+    await db
+      .collection('Posts')
+      .updateOne({ _id: new ObjectId(id) }, { $set: { status } });
+
     res.send({ success: true, status });
   } catch (error) {
     console.error('Error updating status:', error); // 상세 오류 로그
     res.status(500).send('Server error');
   }
 });
-
 
 // 데이터베이스 초기화 라우트
 app.post('/reset-database', async (req, res) => {

@@ -23,6 +23,7 @@ const Diagnosis = () => {
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [diagnosisResults, setDiagnosisResults] = useState([]);
+  const [showHelp, setShowHelp] = useState(false); // 도움말 창 상태
   const navigate = useNavigate(); // 프로그래밍적으로 네비게이션
 
   useEffect(() => {
@@ -57,20 +58,25 @@ const Diagnosis = () => {
     setIsSearching(true); // 검색 모드 활성화
   };
 
+  const handleViewSolution = (id) => {
+    navigate(`/solution/${id}`); // 취약한 결과의 ID를 사용해 솔루션 페이지로 이동
+  };
+
+  const toggleHelp = () => {
+    setShowHelp(!showHelp); // 도움말 창을 토글
+  };
+
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
   if (data.length === 0) return <div>데이터가 없습니다.</div>;
 
   // 차트 데이터 변환
-  const chartData = data[0]?.data.map((item) => ({
-    name: item.name,
-    value: item.value,
-  })) || [];
-
-  const handleViewSolution = (id) => {
-    navigate(`/solution/${id}`); // 취약한 결과의 ID를 사용해 솔루션 페이지로 이동
-  };
+  const chartData =
+    data[0]?.data.map((item) => ({
+      name: item.name,
+      value: item.value,
+    })) || [];
 
   return (
     <div
@@ -81,9 +87,74 @@ const Diagnosis = () => {
         color: '#E0E0E0',
       }}
     >
-      <h1 style={{ color: '#FFFFFF', fontSize: '24px', marginBottom: '20px' }}>
-        진단 결과
-      </h1>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
+        }}
+      >
+        <h1
+          style={{
+            color: '#FFFFFF',
+            fontSize: '30px', // 글씨 크기 증가
+            marginBottom: '20px',
+            textAlign: 'center', // 중앙 정렬
+            width: '100%', // 가로로 꽉 채우기
+          }}
+        >
+          진단 결과
+        </h1>
+
+        {/* 도움말 버튼 */}
+        <button
+          onMouseEnter={() => setShowHelp(true)}
+          onMouseLeave={() => setShowHelp(false)}
+          style={{
+            position: 'absolute',
+            right: '15px', // 버튼 위치 조정
+            top: '20px',
+            padding: '5px 10px',
+            fontSize: '12px',
+            borderRadius: '4px',
+            backgroundColor: '#6200EA',
+            color: '#FFFFFF',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          ?
+        </button>
+
+        {/* 도움말 창 */}
+        {showHelp && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '30px', // 도움말 창이 버튼 아래로 조금 더 떨어지도록 조정
+              right: '150px', // 도움말 창을 왼쪽으로 조금 이동
+              width: '350px',
+              backgroundColor: '#FFFFFF',
+              color: '#000000',
+              border: '1px solid #6200EA',
+              borderRadius: '4px',
+              padding: '10px',
+              zIndex: 1000,
+              textAlign: 'left',
+            }}
+          >
+            <strong>검색 도움말</strong>
+            <p>검색은 아래 항목에 대해 가능합니다:</p>
+            <ul>
+              <li>분류 (계정관리 등)</li>
+              <li>결과 (양호, 취약 등)</li>
+              <li>결과상세 (세부 설명 내용)</li>
+            </ul>
+            <p>해당 항목 중 하나를 입력하여 검색을 진행하세요.</p>
+          </div>
+        )}
+      </div>
 
       {/* 검색 */}
       <div

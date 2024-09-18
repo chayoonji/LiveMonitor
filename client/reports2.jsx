@@ -82,14 +82,16 @@ function Reports2() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        height: '90vh',
-        paddingTop: '20px',
+        height: '80vh',
+        paddingTop: '5px',
       }}
     >
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', width: '70%' }}>
+        <div style={{ textAlign: 'center', width: '80%' }}>
+          {' '}
+          {/* Increased width to 80% */}
           <h4 style={{ marginBottom: '10px' }}>가상 메모리 사용 정보</h4>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={200}>
             <LineChart
               data={
                 Vmemory.length > 0
@@ -157,9 +159,11 @@ function Reports2() {
           marginTop: '10px',
         }}
       >
-        <div style={{ textAlign: 'center', width: '70%' }}>
+        <div style={{ textAlign: 'center', width: '80%' }}>
+          {' '}
+          {/* Increased width to 80% */}
           <h4 style={{ marginBottom: '10px' }}>스왑 메모리 사용 정보</h4>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={200}>
             <LineChart
               data={
                 Smemory.length > 0

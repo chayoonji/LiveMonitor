@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
-import "./App.css";
-import { useAuth } from "./Context/AuthContext";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import './App.css';
+import { useAuth } from './Context/AuthContext';
 
 const Board = () => {
   const [posts, setPosts] = useState([]);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [password, setPassword] = useState("");
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [author, setAuthor] = useState('');
+  const [password, setPassword] = useState('');
   const [isWriting, setIsWriting] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
-  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
   const postsPerPage = 4; // 페이지당 표시할 게시물 수
-  const [contentError, setContentError] = useState(""); // 내용 길이 오류 상태
+  const [contentError, setContentError] = useState(''); // 내용 길이 오류 상태
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,10 +26,10 @@ const Board = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:3002/posts");
+        const response = await axios.get('http://localhost:3002/posts');
         setPosts(response.data);
       } catch (error) {
-        console.error("Error fetching posts:", error.message);
+        console.error('Error fetching posts:', error.message);
       }
     };
 
@@ -38,7 +38,7 @@ const Board = () => {
 
   useEffect(() => {
     // Load status from localStorage if available
-    const storedPosts = localStorage.getItem("posts");
+    const storedPosts = localStorage.getItem('posts');
     if (storedPosts) {
       setPosts(JSON.parse(storedPosts));
     }
@@ -46,12 +46,12 @@ const Board = () => {
 
   useEffect(() => {
     // Save posts to localStorage whenever posts change
-    localStorage.setItem("posts", JSON.stringify(posts));
+    localStorage.setItem('posts', JSON.stringify(posts));
   }, [posts]);
 
   // 제목에 [공지]가 포함된 게시물과 일반 게시물로 분리
-  const noticePosts = posts.filter((post) => post.title.startsWith("[공지]"));
-  const regularPosts = posts.filter((post) => !post.title.startsWith("[공지]"));
+  const noticePosts = posts.filter((post) => post.title.startsWith('[공지]'));
+  const regularPosts = posts.filter((post) => !post.title.startsWith('[공지]'));
 
   // 페이지 이동 핸들러
   const handleNextPage = () => {
@@ -84,30 +84,30 @@ const Board = () => {
     e.preventDefault();
 
     if (content.length > 500) {
-      setContentError("내용은 500자를 초과할 수 없습니다.");
+      setContentError('내용은 500자를 초과할 수 없습니다.');
       return;
     }
 
     try {
-      await axios.post("http://localhost:3002/posts", {
+      await axios.post('http://localhost:3002/posts', {
         title,
         content,
         author,
         password,
       });
-      alert("글이 성공적으로 작성되었습니다.");
-      setTitle("");
-      setContent("");
-      setPassword("");
-      setAuthor("");
+      alert('글이 성공적으로 작성되었습니다.');
+      setTitle('');
+      setContent('');
+      setPassword('');
+      setAuthor('');
       setIsWriting(false);
-      setContentError(""); // 오류 메시지 초기화
+      setContentError(''); // 오류 메시지 초기화
 
-      const updatedPosts = await axios.get("http://localhost:3002/posts");
+      const updatedPosts = await axios.get('http://localhost:3002/posts');
       setPosts(updatedPosts.data);
     } catch (error) {
-      console.error("Error creating post:", error.message);
-      alert("글 작성 중 오류가 발생했습니다: " + error.message);
+      console.error('Error creating post:', error.message);
+      alert('글 작성 중 오류가 발생했습니다: ' + error.message);
     }
   };
 
@@ -121,27 +121,27 @@ const Board = () => {
 
   const handlePostClick = (post) => {
     setSelectedPost(post);
-    if (post.title.startsWith("[공지]") || isAdmin) {
+    if (post.title.startsWith('[공지]') || isAdmin) {
       // 공지사항이거나 관리자인 경우 비밀번호 확인 없이 바로 게시물 보기
       navigate(`/post/${post._id}`, {
         state: { post },
       });
     } else {
       setShowPasswordModal(true);
-      setError("");
-      setPasswordInput("");
+      setError('');
+      setPasswordInput('');
     }
   };
 
   const handlePasswordSubmit = async () => {
-    if (isAdmin || selectedPost.title.startsWith("[공지]")) {
+    if (isAdmin || selectedPost.title.startsWith('[공지]')) {
       // 관리자인 경우 또는 공지사항인 경우 비밀번호 확인 로직을 실행하지 않음
       return;
     }
 
     try {
       const response = await axios.post(
-        "http://localhost:3002/posts/check-password",
+        'http://localhost:3002/posts/check-password',
         {
           postId: selectedPost._id,
           password: passwordInput,
@@ -157,11 +157,11 @@ const Board = () => {
         });
         setShowPasswordModal(false);
       } else {
-        setError("비밀번호가 올바르지 않습니다.");
+        setError('비밀번호가 올바르지 않습니다.');
       }
     } catch (error) {
-      console.error("Error verifying password:", error.message);
-      setError("비밀번호 확인 중 오류가 발생했습니다.");
+      console.error('Error verifying password:', error.message);
+      setError('비밀번호 확인 중 오류가 발생했습니다.');
     }
   };
 
@@ -195,7 +195,7 @@ const Board = () => {
             {contentError && <p className="error">{contentError}</p>}
             <input
               type="text"
-              placeholder="작성자"
+              placeholder="작성자 - (회원가입 때 사용한 userID 이외의 이름을 작성하세요.)"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               required
@@ -242,7 +242,9 @@ const Board = () => {
               <span>페이지 {currentPage}</span>
               <button
                 onClick={handleNextPage}
-                disabled={currentPage === Math.ceil(regularPosts.length / postsPerPage)}
+                disabled={
+                  currentPage === Math.ceil(regularPosts.length / postsPerPage)
+                }
               >
                 다음
               </button>
@@ -253,21 +255,24 @@ const Board = () => {
         {!isAdmin &&
           showPasswordModal &&
           selectedPost &&
-          !selectedPost.title.startsWith("[공지]") && (
+          !selectedPost.title.startsWith('[공지]') && (
             <div className="modal">
-              <div className="modal-content">
+              <div className="modal-content centered-modal">
                 <h2>{selectedPost.title} 보기</h2>
                 <input
                   type="password"
+                  className="modal-input"
                   placeholder="비밀번호"
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
                 />
                 {error && <p className="error">{error}</p>}
-                <button onClick={handlePasswordSubmit}>확인</button>
-                <button onClick={() => setShowPasswordModal(false)}>
-                  취소
-                </button>
+                <div className="modal-buttons">
+                  <button onClick={handlePasswordSubmit}>확인</button>
+                  <button onClick={() => setShowPasswordModal(false)}>
+                    취소
+                  </button>
+                </div>
               </div>
             </div>
           )}

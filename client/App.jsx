@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   BrowserRouter as Router,
@@ -22,7 +21,6 @@ import PostDetail from './PostDetail';
 import Diagnosis from './Diagnosis';
 import Routine from './routine';
 
-
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = React.useState(false);
 
@@ -32,7 +30,6 @@ function App() {
 
   return (
     <AuthProvider>
-   
       <Router>
         <div className="grid-container">
           <Header OpenSidebar={OpenSidebar} />
@@ -42,10 +39,11 @@ function App() {
           />
           <Routes>
             <Route path="/guide" element={<Guide />} />
-            <Route path="/routine" element={<Routine />} />
+            {/* <Route path="/routine" element={<Routine />} /> */}
             <Route path="/login" element={<LoginComponent />} />
             <Route path="/team" element={<Team />} />
-            <Route path="/" element={<Navigate to="/guide" />} /> {/* 기본 경로를 /guide로 리다이렉트 */}
+            <Route path="/" element={<Navigate to="/guide" />} />{' '}
+            {/* 기본 경로를 /guide로 리다이렉트 */}
             <Route path="/register" element={<Register />} />
             <Route
               path="/reports1"
@@ -54,6 +52,10 @@ function App() {
             <Route
               path="/reports2"
               element={<PrivateRoute element={<Reports2 />} />}
+            />
+            <Route
+              path="/routine"
+              element={<PrivateRoute element={<Routine />} />}
             />
             <Route
               path="/board"
@@ -67,11 +69,9 @@ function App() {
               path="/diagnosis"
               element={<PrivateRoute element={<Diagnosis />} />}
             />
-          
           </Routes>
         </div>
       </Router>
-    
     </AuthProvider>
   );
 }

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -19,8 +18,12 @@ import {
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
   const authContext = useAuth();
-  const isAuthenticated = (authContext && authContext.isAuthenticated) ? authContext.isAuthenticated : false;
-  const logout = (authContext && authContext.logout) ? authContext.logout : () => {};
+  const isAuthenticated =
+    authContext && authContext.isAuthenticated
+      ? authContext.isAuthenticated
+      : false;
+  const logout =
+    authContext && authContext.logout ? authContext.logout : () => {};
 
   const handleReportsClick = (e) => {
     e.preventDefault();
@@ -57,11 +60,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </Link>
         </li>
 
-        <li className="sidebar-list-item">
-          <Link to="/routine">
-            <BsFillArchiveFill className="icon" /> 프로그램
-          </Link>
-        </li>
+        {/* <li className="sidebar-list-item">
+            <Link to="/routine">
+              <BsFillArchiveFill className="icon" /> 프로그램
+            </Link>
+          </li> */}
         <li className="sidebar-list-item">
           <Link to="/team">
             <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
@@ -85,6 +88,12 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
         {isAuthenticated && (
           <>
+            <li className="sidebar-list-item">
+              <Link to="/routine">
+                <BsFillArchiveFill className="icon" /> 프로그램
+              </Link>
+            </li>
+
             <li className="sidebar-list-item">
               <Link to="/reports1">
                 <BsMenuButtonWideFill className="icon" /> CPU Reports
