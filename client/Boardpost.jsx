@@ -187,7 +187,7 @@ const Board = () => {
               required
             />
             <textarea
-              placeholder={`\n서버 IP : \n\n관리자 ID : \n\n관리자 PW : \n\n회원가입할 때 작성한 이름 또는 ID :`}
+              placeholder={`\n서버 IP : \n\n관리자 ID : \n\n관리자 PW : \n\n루트 비밀번호 : \n\n회원가입할 때 작성한 이름 또는 ID :`}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required

@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { FaArrowLeft } from "react-icons/fa";
-import "./PostDetail.css";
-import { useAuth } from "./Context/AuthContext";
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { FaArrowLeft } from 'react-icons/fa';
+import './PostDetail.css';
+import { useAuth } from './Context/AuthContext';
 
 const PasswordModal = ({ onClose, onConfirm }) => {
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
 
   const handleConfirm = () => {
     onConfirm(password);
-    setPassword(""); // 비밀번호 초기화
+    setPassword(''); // 비밀번호 초기화
   };
 
   return (
@@ -44,9 +44,9 @@ const PostDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [author, setAuthor] = useState('');
   const [showEditForm, setShowEditForm] = useState(false);
   const [files, setFiles] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -66,12 +66,12 @@ const PostDetail = () => {
         // 파일이 없으면 상태를 "진단 전"으로 설정
         if (!response.data.files || response.data.files.length === 0) {
           await axios.put(`http://localhost:3002/posts/${id}/status`, {
-            status: "진단 전",
+            status: '진단 전',
           });
         }
       } catch (error) {
-        setError("게시물을 불러오는 중 오류가 발생했습니다.");
-        console.error("Error fetching post:", error.message);
+        setError('게시물을 불러오는 중 오류가 발생했습니다.');
+        console.error('Error fetching post:', error.message);
       } finally {
         setLoading(false);
       }
@@ -82,17 +82,17 @@ const PostDetail = () => {
 
   useEffect(() => {
     if (showEditForm && textareaRef.current) {
-      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [showEditForm]);
 
   const handleUpdatePost = async () => {
     const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
-    formData.append("title", title);
-    formData.append("content", content);
-    formData.append("author", author);
+    files.forEach((file) => formData.append('files', file));
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('author', author);
 
     try {
       // 게시물 수정 요청
@@ -101,27 +101,27 @@ const PostDetail = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
 
       // 파일이 추가되었는지 확인하고 상태 업데이트
-      const newStatus = files.length > 0 ? "진단 완료" : "진단 전";
+      const newStatus = files.length > 0 ? '진단 완료' : '진단 전';
       await axios.put(`http://localhost:3002/posts/${id}/status`, {
         status: newStatus,
       });
 
       if (response.status === 200) {
-        alert("게시물이 성공적으로 수정되었습니다.");
+        alert('게시물이 성공적으로 수정되었습니다.');
         setShowEditForm(false);
         navigate(`/post/${id}`); // 수정된 게시물 페이지로 리다이렉트
       } else {
-        alert("게시물 수정 중 문제가 발생했습니다.");
+        alert('게시물 수정 중 문제가 발생했습니다.');
       }
     } catch (error) {
-      console.error("Error updating post:", error.message);
-      alert("게시물 수정 중 오류가 발생했습니다: " + error.message);
+      console.error('Error updating post:', error.message);
+      alert('게시물 수정 중 오류가 발생했습니다: ' + error.message);
     }
   };
 
@@ -143,7 +143,7 @@ const PostDetail = () => {
   const handleDeletePost = async (password) => {
     try {
       const response = await axios.post(
-        "http://localhost:3002/posts/check-password",
+        'http://localhost:3002/posts/check-password',
         {
           postId: id,
           password: password,
@@ -155,14 +155,14 @@ const PostDetail = () => {
           data: { password: password },
         });
 
-        alert("게시물이 성공적으로 삭제되었습니다.");
-        navigate("/", { state: { refresh: true } });
+        alert('게시물이 성공적으로 삭제되었습니다.');
+        navigate('/', { state: { refresh: true } });
       } else {
-        alert("비밀번호가 틀립니다.");
+        alert('비밀번호가 틀립니다.');
       }
     } catch (error) {
-      console.error("Error deleting post:", error.message);
-      alert("게시물 삭제 중 오류가 발생했습니다: " + error.message);
+      console.error('Error deleting post:', error.message);
+      alert('게시물 삭제 중 오류가 발생했습니다: ' + error.message);
     }
   };
 
@@ -174,7 +174,7 @@ const PostDetail = () => {
   if (error) return <div>{error}</div>;
   if (!post) return <div>게시물을 찾을 수 없습니다.</div>;
 
-  const isNotice = post.title.startsWith("[공지]");
+  const isNotice = post.title.startsWith('[공지]');
 
   return (
     <div className="post-detail-page">
@@ -202,10 +202,10 @@ const PostDetail = () => {
                     <div key={index}>
                       <a
                         className="attached-file-link"
-                        href={`http://localhost:3002/uploads/${file}`}
+                        href={file.downloadUrl}
                         download
                       >
-                        {file}
+                        {file.filename}
                       </a>
                     </div>
                   ))}
@@ -263,7 +263,7 @@ const PostDetail = () => {
               className="edit-content"
               placeholder="내용"
               onInput={(e) => {
-                e.target.style.height = "auto";
+                e.target.style.height = 'auto';
                 e.target.style.height = `${e.target.scrollHeight}px`;
               }}
             />
@@ -292,10 +292,7 @@ const PostDetail = () => {
                 파일 추가
               </button>
             )}
-            <button
-              className="save-button"
-              onClick={handleUpdatePost}
-            >
+            <button className="save-button" onClick={handleUpdatePost}>
               저장
             </button>
             <button

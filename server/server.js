@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
@@ -60,7 +61,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    cb(null, Buffer.from(file.originalname, 'latin1').toString('utf8')); // Correctly encode the filename
   },
 });
 
@@ -969,4 +970,3 @@ app.post('/reset-database-values', async (req, res) => {
     res.status(500).json({ message: 'Error resetting database values' });
   }
 });
-
