@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // useNavigate import 추가
 
 const Solutions = () => {
   const [solutions, setSolutions] = useState([]);
@@ -8,6 +9,7 @@ const Solutions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [searchId, setSearchId] = useState('');
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   useEffect(() => {
     const fetchSolutions = async () => {
@@ -56,6 +58,24 @@ const Solutions = () => {
         color: '#E0E0E0',
       }}
     >
+      {/* 왼쪽에 뒤로가기 버튼 추가 */}
+      <button
+        onClick={() => navigate('/diagnosis')}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          left: '20px',
+          padding: '10px',
+          backgroundColor: '#1C2331',
+          color: '#FFFFFF',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+        }}
+      >
+        뒤로가기
+      </button>
+
       <h1 style={{ color: '#FFFFFF', fontSize: '24px', marginBottom: '20px' }}>
         솔루션 목록
       </h1>
