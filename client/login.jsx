@@ -19,35 +19,35 @@ const Login = () => {
       if (response.data.success) {
         login(userId);
         setIsAdmin(response.data.isAdmin); // isAdmin 상태 업데이트
-        alert('Logged in successfully');
+        alert('로그인 성공');
       } else {
-        alert('Invalid credentials');
+        alert('로그인 실패');
       }
     } catch (error) {
-      alert('Error logging in');
+      alert('로그인 에러 발생');
     }
   };
 
   return (
     <div className="login-wrapper">
-      <h2>Login</h2>
+      <h2>로그인</h2>
       <form onSubmit={handleSubmit} id="login-form">
         <input
           type="text"
           name="userId"
-          placeholder="User ID"
+          placeholder="아이디"
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
         />
         <input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder="비밀번호"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <div className="button-container">
-          <input type="submit" value="Login" />
+          <input type="submit" value="로그인" />
         </div>
       </form>
     </div>

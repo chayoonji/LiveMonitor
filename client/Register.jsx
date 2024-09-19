@@ -21,13 +21,13 @@ const Register = () => {
     if (!passwordRegex.test(password)) {
       // 에러 메시지 설정
       if (!/(?=.*[a-zA-Z])/.test(password)) {
-        setPasswordError("영문자를 포함해야 합니다.");
+        setPasswordError("영문자를 포함해야 합니다");
       } else if (!/(?=.*\d)/.test(password)) {
-        setPasswordError("숫자를 포함해야 합니다.");
+        setPasswordError("숫자를 포함해야 합니다");
       } else if (!/(?=.*[@$!%*?&])/.test(password)) {
-        setPasswordError("특수문자를 포함해야 합니다.");
+        setPasswordError("특수문자를 포함해야 합니다");
       } else if (password.length < 8) {
-        setPasswordError("비밀번호는 8자리 이상이어야 합니다.");
+        setPasswordError("비밀번호는 8자리 이상이어야 합니다");
       }
       return;
     }
@@ -35,7 +35,7 @@ const Register = () => {
     setPasswordError(""); // 에러가 없으면 초기화
 
     if (!isVerified) {
-      alert("Please verify your company email first");
+      alert("회사 이메일 인증부터 먼저 해주세요."); 
       return;
     }
 
@@ -48,9 +48,9 @@ const Register = () => {
         verificationCode,
       });
       setRegistrationSuccess(true);
-      alert("User registered successfully");
+      alert("회원가입이 완료되었습니다");
     } catch (error) {
-      alert("Error registering user");
+      alert("회원가입에 실패했습니다");
     }
   };
 
@@ -59,9 +59,9 @@ const Register = () => {
       await axios.post("http://localhost:3002/verify-company-email", {
         companyEmail,
       });
-      alert("Verification code sent successfully");
+      alert("인증 코드 메일 전송에 성공했습니다");
     } catch (error) {
-      alert("Error sending verification code");
+      alert("인증 코드 메일 전송에 실패했습니다");
     }
   };
 
@@ -73,12 +73,12 @@ const Register = () => {
       });
       if (response.data.success) {
         setIsVerified(true);
-        alert("Company email verified successfully");
+        alert("회사 이메일 인증에 성공했습니다");
       } else {
-        alert("Invalid verification code");
+        alert("회사 이메일 인증에 실패했습니다");
       }
     } catch (error) {
-      alert("Error verifying code");
+      alert("인증 코드가 잘못되었습니다");
     }
   };
 
@@ -88,14 +88,14 @@ const Register = () => {
         userId,
       });
       if (response.data.exists) {
-        setIdCheckResult("User ID is already taken.");
+        setIdCheckResult("이미 사용중인 아이디입니다");
         setIdCheckResultStyle({ color: "red" });
       } else {
-        setIdCheckResult("User ID is available.");
+        setIdCheckResult("사용 가능한 아이디입니다");
         setIdCheckResultStyle({ color: "green" });
       }
     } catch (error) {
-      alert("Error checking user ID");
+      alert("아이디 중복 체크에 문제가 있습니다.");
     }
   };
 
@@ -120,12 +120,12 @@ const Register = () => {
 
   return (
     <div className="login-wrapper">
-      <h2>Register</h2>
+      <h2>회원가입</h2>
       <form onSubmit={handleSubmit} id="login-form">
         <input
           type="text"
           name="name"
-          placeholder="Name"
+          placeholder="이름"
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={inputStyle}
@@ -133,7 +133,7 @@ const Register = () => {
         <input
           type="text"
           name="userId"
-          placeholder="User ID"
+          placeholder="아이디"
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
           style={inputStyle}
@@ -143,7 +143,7 @@ const Register = () => {
           onClick={handleCheckDuplicate}
           style={{ ...buttonStyle, ...borderRadiusStyle }}
         >
-          Check Duplicate
+          아이디 중복 체크
         </button>
         <span style={idCheckResultStyle}>{idCheckResult}</span>
         <div
@@ -156,7 +156,7 @@ const Register = () => {
           <input
             type="text"
             name="companyEmail"
-            placeholder="Company Email"
+            placeholder="회사 이메일 주소"
             value={companyEmail}
             onChange={(e) => setCompanyEmail(e.target.value)}
             style={{ ...reducedMarginStyle, ...borderRadiusStyle }}
@@ -166,7 +166,7 @@ const Register = () => {
             onClick={handleSendVerificationCode}
             style={{ ...buttonStyle, ...borderRadiusStyle }}
           >
-            Send Verification Code
+            인증 코드 메일 전송
           </button>
         </div>
         <div
@@ -179,7 +179,7 @@ const Register = () => {
           <input
             type="text"
             name="verificationCode"
-            placeholder="Verification Code"
+            placeholder="인증 코드 입력"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
             style={{ ...reducedMarginStyle, ...borderRadiusStyle }}
@@ -189,13 +189,13 @@ const Register = () => {
             onClick={handleVerifyCode}
             style={{ ...buttonStyle, ...borderRadiusStyle }}
           >
-            Verify Code
+           입력한 인증 코드 확인
           </button>
         </div>
         <input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder="비밀번호"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           style={reducedMarginStyle}
@@ -203,7 +203,7 @@ const Register = () => {
         {/* 패스워드 에러 메시지 표시 */}
         {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
         <div className="button-container">
-          <input type="submit" value="Register" style={{ height: "40px" }} />
+          <input type="submit" value="회원가입" style={{ height: "40px" }} />
         </div>
       </form>
     </div>

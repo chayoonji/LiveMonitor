@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
             setUserId(userIdCookie); // 쿠키에서 userId 설정
           }
         } catch (error) {
-          console.error('Error checking admin status:', error);
+          console.error('관리자인지 확인하는데 실패했습니다:', error);
         }
       } else {
         setIsAuthenticated(false);
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
         setIsAdmin(false);
       }
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error('로그인중에 오류가 발생했습니다:', error);
       setIsAuthenticated(false);
       setIsAdmin(false);
     }
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
       setUserId(''); // userId 초기화
       navigate('/login'); // 페이지 이동
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('로그아웃중에 오류가 발생했습니다:', error);
     }
   };
   

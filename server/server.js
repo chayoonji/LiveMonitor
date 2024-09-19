@@ -949,11 +949,11 @@ app.post('/reset-database-values', async (req, res) => {
   try {
     // 유저의 database 정보만 리셋
     userDb = null;
-    console.log('Database values have been reset.');
+    console.log('데이터 베이스 초기화에 성공했습니다');
 
-    res.status(200).json({ message: 'Database values have been reset.' });
+    res.status(200).json({ message: '이미 데이터 베이스가 초기화 되었습니다' });
   } catch (err) {
-    console.error('Error resetting database values:', err);
-    res.status(500).json({ message: 'Error resetting database values' });
+    console.error('데이터 베이스 초기화 오류:', err);
+    res.status(500).json({ message: '데이터 베이스 초기화에 오류가 발생했습니다다' });
   }
 });
