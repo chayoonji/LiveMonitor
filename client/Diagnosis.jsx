@@ -107,6 +107,7 @@ const Diagnosis = () => {
   return (
     <div style={{ textAlign: 'center', marginLeft: '60px', marginRight: '60px', color: '#E0E0E0' }}>
       <h1 style={{ color: '#FFFFFF', fontSize: '24px', marginBottom: '20px' }}>진단 결과</h1>
+      
 
       {/* 검색 기능 추가 */}
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
