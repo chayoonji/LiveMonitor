@@ -641,7 +641,7 @@ app.put('/posts/:id', upload.array('files'), async (req, res) => {
     const { title, content, author, password } = req.body;
     const files = req.files ? req.files.map((file) => ({
       filename: file.filename,
-      downloadUrl: `${req.protocol}://${req.get('host')}/uploads/${file.filename}`
+      downloadUrl: `${req.protocol}://${req.get('host')}/download/${file.filename}`
     })) : [];
 
     // 기존 게시물 가져오기
@@ -694,7 +694,7 @@ app.post('/posts/:id/upload', upload.array('files'), (req, res) => {
   res.status(200).json({ files: files.map(file => file.filename) });
 });
 
-
+// 파일 다운로드 처리
 app.get('/download/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, 'uploads', filename);
