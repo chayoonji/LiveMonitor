@@ -114,6 +114,29 @@ const Diagnosis = () => {
         color: '#E0E0E0',
       }}
     >
+      {/* 뒤로가기 버튼 */}
+      <div
+        style={{
+          marginBottom: '20px',
+          textAlign: 'left',
+        }}
+      >
+        <button
+          onClick={() => navigate('/Board')}
+          style={{
+            padding: '10px 20px',
+            fontSize: '16px',
+            borderRadius: '4px',
+            backgroundColor: '#6200EA',
+            color: '#FFFFFF',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          뒤로가기
+        </button>
+      </div>
+
       <h1 style={{ color: '#FFFFFF', fontSize: '24px', marginBottom: '20px' }}>
         진단 결과
       </h1>
@@ -259,23 +282,6 @@ const Diagnosis = () => {
           </LineChart>
         </ResponsiveContainer>
       </div>
-
-      {/* 선택된 조치방법 내용 표시 */}
-      {selectedSolution && (
-        <div
-          style={{
-            marginTop: '30px',
-            padding: '20px',
-            border: '1px solid #E0E0E0',
-            borderRadius: '4px',
-            backgroundColor: '#1A237E',
-            color: '#E0E0E0',
-          }}
-        >
-          <h2 style={{ color: '#FFFFFF' }}>조치방법</h2>
-          <p>{selectedSolution.content}</p>
-        </div>
-      )}
     </div>
   );
 };
