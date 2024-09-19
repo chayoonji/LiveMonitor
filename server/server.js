@@ -632,17 +632,20 @@ app.get('/posts/:id', async (req, res) => {
   }
 });
 
-// 게시물 수정 엔드포인트 (파일과 텍스트 모두 업데이트)
+
+
+// 게시물 수정 및 파일 업로드 처리
 app.put('/posts/:id', upload.array('files'), async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content, author, password } = req.body;
-    const files = req.files ? req.files.map((file) => file.filename) : [];
+    const files = req.files ? req.files.map((file) => ({
+      filename: file.filename,
+      downloadUrl: `${req.protocol}://${req.get('host')}/uploads/${file.filename}`
+    })) : [];
 
     // 기존 게시물 가져오기
-    const existingPost = await db
-      .collection('Posts')
-      .findOne({ _id: new ObjectId(id) });
+    const existingPost = await db.collection('Posts').findOne({ _id: new ObjectId(id) });
     if (!existingPost) {
       return res.status(404).send('Post not found');
     }
@@ -657,23 +660,55 @@ app.put('/posts/:id', upload.array('files'), async (req, res) => {
       ...(title && { title }),
       ...(content && { content }),
       ...(author && { author }),
-      ...(files.length > 0 && { files }),
+      ...(files.length > 0 && { files }), // 업로드된 파일 정보 저장
       password: hashedPassword, // 비밀번호는 항상 포함
     };
 
-    const result = await db
-      .collection('Posts')
-      .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
+    const result = await db.collection('Posts').updateOne({ _id: new ObjectId(id) }, { $set: updateData });
 
     if (result.matchedCount > 0) {
-      res.send('Post updated');
+      res.json({ message: 'Post updated', files }); // 파일 다운로드 URL 반환
     } else {
       res.status(404).send('Post not found');
     }
   } catch (err) {
+    console.error('Error updating post:', err);
     res.status(500).send('Error updating post');
   }
 });
+
+// 파일만 업로드 처리 (게시물에 추가하지 않음)
+app.post('/posts/:id/upload', upload.array('files'), (req, res) => {
+  const { id } = req.params;
+  const files = req.files;
+
+  if (!files) {
+    return res.status(400).send('No files were uploaded.');
+  }
+
+  files.forEach(file => {
+    console.log('Uploaded file:', file.path);
+  });
+
+  // 파일 이름을 응답으로 반환
+  res.status(200).json({ files: files.map(file => file.filename) });
+});
+
+
+app.get('/download/:filename', (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join(__dirname, 'uploads', filename);
+
+  // 파일이 존재하는지 확인
+  if (fs.existsSync(filePath)) {
+    res.download(filePath); // 파일 다운로드 처리
+  } else {
+    res.status(404).send('File not found');
+  }
+});
+
+
+
 
 // 게시물 삭제 엔드포인트
 app.delete('/posts/:id', async (req, res) => {

@@ -202,7 +202,7 @@ const PostDetail = () => {
                     <div key={index}>
                       <a
                         className="attached-file-link"
-                        href={`http://localhost:300/uploads/${file}`}
+                        href={`http://localhost:3002/uploads/${file}`}
                         download
                       >
                         {file}
