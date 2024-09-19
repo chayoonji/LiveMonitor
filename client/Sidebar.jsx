@@ -72,7 +72,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           <>
             <li className="sidebar-list-item">
               <Link to="/login" onClick={handleReportsClick}>
-                <BsFillGearFill className="icon" /> Login
+                <BsFillGearFill className="icon" /> 로그인
               </Link>
             </li>
             <li className="sidebar-list-item">
@@ -111,7 +111,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   margin: 0,
                 }}
               >
-                <BsBoxArrowRight className="icon" /> Logout
+                <BsBoxArrowRight className="icon" /> 로그아웃
               </button>
             </li>
           </>

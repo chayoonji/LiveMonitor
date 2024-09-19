@@ -10,7 +10,7 @@ const nodemailer = require('nodemailer');
 const { Client } = require('ssh2');
 const fs = require('fs');
 const path = require('path');
-const { MongoClient, ObjectId } = require('mongodb'); // MongoClient 가져오기
+const { MongoClient, GridFSBucket, ObjectId } = require('mongodb');
 const multer = require('multer');
 
 // Express 애플리케이션 생성
@@ -46,6 +46,8 @@ MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
     console.log('DB connected');
     client = mongoClient;
     db = client.db('Login');
+    bucket = new GridFSBucket(db, { bucketName: 'uploads' });
+    
 
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
@@ -55,7 +57,7 @@ MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
     console.error('DB connection error:', err);
   });
 
-// Multer 설정
+// Multer 설정: 디스크 스토리지 및 메모리 스토리지 설정
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -65,6 +67,8 @@ const storage = multer.diskStorage({
   },
 });
 
+const memoryStorage = multer.memoryStorage();
+const fileUpload = multer({ storage: memoryStorage });
 const upload = multer({ storage });
 
 // 점을 제거하는 함수
@@ -634,23 +638,28 @@ app.get('/posts/:id', async (req, res) => {
 });
 
 
+// 파일 업로드 및 수정
 
-app.put('/posts/:id', upload.array('files'), async (req, res) => {
+app.put('/posts/:id', fileUpload.array('files'), async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content, author, password } = req.body;
-    const files = req.files ? req.files.map((file) => ({
-      filename: file.filename,
-      downloadUrl: `${req.protocol}://${req.get('host')}/download/${file.filename}`
-    })) : [];
+    
+    const files = req.files ? req.files.map((file) => {
+      const filename = file.originalname;
+      const uploadStream = bucket.openUploadStream(filename);
+      uploadStream.end(file.buffer);
+      return {
+        filename,
+        downloadUrl: `${req.protocol}://${req.get('host')}/download/${encodeURIComponent(filename)}`
+      };
+    }) : [];
 
-    // 기존 게시물 가져오기
     const existingPost = await db.collection('Posts').findOne({ _id: new ObjectId(id) });
     if (!existingPost) {
       return res.status(404).send('Post not found');
     }
 
-    // 비밀번호 해시 처리
     let hashedPassword = existingPost.password;
     if (password) {
       hashedPassword = await bcrypt.hash(password, 10);
@@ -660,14 +669,14 @@ app.put('/posts/:id', upload.array('files'), async (req, res) => {
       ...(title && { title }),
       ...(content && { content }),
       ...(author && { author }),
-      ...(files.length > 0 && { files }), // 업로드된 파일 정보 저장
+      ...(files.length > 0 && { files }),
       password: hashedPassword,
     };
 
     const result = await db.collection('Posts').updateOne({ _id: new ObjectId(id) }, { $set: updateData });
 
     if (result.matchedCount > 0) {
-      res.json({ message: 'Post updated', files }); // 파일 다운로드 URL 반환
+      res.json({ message: 'Post updated', files });
     } else {
       res.status(404).send('Post not found');
     }
@@ -677,38 +686,15 @@ app.put('/posts/:id', upload.array('files'), async (req, res) => {
   }
 });
 
-// 파일만 업로드 처리 (게시물에 추가하지 않음)
-app.post('/posts/:id/upload', upload.array('files'), (req, res) => {
-  const { id } = req.params;
-  const files = req.files;
-
-  if (!files) {
-    return res.status(400).send('No files were uploaded.');
-  }
-
-  files.forEach(file => {
-    console.log('Uploaded file:', file.path);
-  });
-
-  // 파일 이름을 응답으로 반환
-  res.status(200).json({ files: files.map(file => file.filename) });
-});
-
 // 파일 다운로드 처리
 app.get('/download/:filename', (req, res) => {
-  const { filename } = req.params;
-  const filePath = path.join(__dirname, 'uploads', filename);
+  const filename = decodeURIComponent(req.params.filename);
+  const downloadStream = bucket.openDownloadStreamByName(filename);
 
-  // 파일이 존재하는지 확인
-  if (fs.existsSync(filePath)) {
-    res.download(filePath); // 파일 다운로드 처리
-  } else {
-    res.status(404).send('File not found');
-  }
+  downloadStream.on('data', (chunk) => res.write(chunk));
+  downloadStream.on('end', () => res.end());
+  downloadStream.on('error', () => res.status(404).send('File not found'));
 });
-
-
-
 
 
 
@@ -963,11 +949,11 @@ app.post('/reset-database-values', async (req, res) => {
   try {
     // 유저의 database 정보만 리셋
     userDb = null;
-    console.log('Database values have been reset.');
+    console.log('데이터 베이스 초기화에 성공했습니다');
 
-    res.status(200).json({ message: 'Database values have been reset.' });
+    res.status(200).json({ message: '이미 데이터 베이스가 초기화 되었습니다' });
   } catch (err) {
-    console.error('Error resetting database values:', err);
-    res.status(500).json({ message: 'Error resetting database values' });
+    console.error('데이터 베이스 초기화 오류:', err);
+    res.status(500).json({ message: '데이터 베이스 초기화에 오류가 발생했습니다다' });
   }
 });

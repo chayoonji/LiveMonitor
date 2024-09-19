@@ -10,7 +10,7 @@ const UploadButton = () => {
 
   const handleSetUserId = async () => {
     if (!userId) {
-      setSuccessMessage('Please enter a User ID.');
+      setSuccessMessage('회원가입할때 등록했던 아이디를 입력해주세요');
       return;
     }
 
@@ -20,17 +20,17 @@ const UploadButton = () => {
       });
       console.log(response.data.message);
       setIsUserIdSet(true);
-      setSuccessMessage('User ID has been set successfully!');
+      setSuccessMessage('등록한 아이디로 데이터 베이스 설정에 성공했습니다');
     } catch (error) {
-      console.error('Error setting user ID:', error);
-      setSuccessMessage('Failed to set User ID. Please try again.');
+      console.error('아이디로 데이터 베이스 설정하는데 문제가 있습니다:', error);
+      setSuccessMessage('아이디로 데이터 베이스 설정하는데 실패했습니다');
     }
   };
 
   const handleUpload = async () => {
     if (!isUserIdSet) {
-      console.error('User ID not set.');
-      setSuccessMessage('Please set the User ID first.');
+      console.error('데이터 베이스 설정을 안 했습니다');
+      setSuccessMessage('프로그램 페이지에서 데이터 베이스 설정을 먼저 해주세요');
       return;
     }
 
@@ -45,32 +45,32 @@ const UploadButton = () => {
         }
       );
       console.log(response.data);
-      setSuccessMessage('File uploaded successfully!');
+      setSuccessMessage('데이터 베이스에 파일 업로드를 성공적으로 마쳤습니다');
     } catch (error) {
-      console.error('Error uploading files:', error);
-      setSuccessMessage('File upload failed. Please try again.');
+      console.error('파일 업로드하는데 문제가 발생했습니다:', error);
+      setSuccessMessage('데이터 베이스에 파일 업로드를 실패했습니다. 다시 시도해주세요');
     }
   };
 
   return (
     <div className="upload-container">
-      <h1 className="upload-title">JSON 파일 업로드</h1>
+      <h1 className="upload-title">DB 설정</h1>
       <div className="upload-input-group">
         <input
           type="text"
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
-          placeholder="Enter User ID"
+          placeholder="아이디를 입력해주세요"
           className="upload-input"
         />
         <button onClick={handleSetUserId} className="upload-button">
-          Set User ID
+         데이터 베이스 설정 
         </button>
       </div>
 
       {isAdmin && isUserIdSet && (
         <button onClick={handleUpload} className="upload-button">
-          Upload
+          JSON 파일 DB에 업로드
         </button>
       )}
 
@@ -78,7 +78,7 @@ const UploadButton = () => {
       {isUserIdSet && userId ? (
         <div>{/* 그래프를 표시하는 컴포넌트 */}</div>
       ) : (
-        <p>그래프를 표시하려면 User ID를 먼저 입력하세요.</p>
+        <p>그래프를 표시하려면 아이디를 먼저 입력하세요.</p>
       )}
 
       {successMessage && <p className="success-message">{successMessage}</p>}

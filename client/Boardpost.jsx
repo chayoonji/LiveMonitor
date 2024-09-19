@@ -106,7 +106,7 @@ const Board = () => {
       const updatedPosts = await axios.get("http://localhost:3002/posts");
       setPosts(updatedPosts.data);
     } catch (error) {
-      console.error("Error creating post:", error.message);
+      console.error("게시물 생성중 오류가 발생했습니다:", error.message);
       alert("글 작성 중 오류가 발생했습니다: " + error.message);
     }
   };
@@ -230,7 +230,7 @@ const Board = () => {
                   </div>
                 ))
               ) : (
-                <p>게시물이 없습니다.</p>
+                <p>게시물이 없습니다</p>
               )}
             </div>
 
