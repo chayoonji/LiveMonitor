@@ -555,9 +555,9 @@ app.post('/verify-code', async (req, res) => {
     res.status(500).send('Error verifying code');
   }
 });
-
 // 정적 파일 제공 설정
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // 게시물 목록을 가져오는 API 엔드포인트
 app.get('/posts', async (req, res) => {
@@ -635,7 +635,6 @@ app.get('/posts/:id', async (req, res) => {
 
 
 
-// 게시물 수정 및 파일 업로드 처리
 app.put('/posts/:id', upload.array('files'), async (req, res) => {
   try {
     const { id } = req.params;
@@ -651,7 +650,7 @@ app.put('/posts/:id', upload.array('files'), async (req, res) => {
       return res.status(404).send('Post not found');
     }
 
-    // 비밀번호가 제공된 경우 해시 처리
+    // 비밀번호 해시 처리
     let hashedPassword = existingPost.password;
     if (password) {
       hashedPassword = await bcrypt.hash(password, 10);
@@ -662,7 +661,7 @@ app.put('/posts/:id', upload.array('files'), async (req, res) => {
       ...(content && { content }),
       ...(author && { author }),
       ...(files.length > 0 && { files }), // 업로드된 파일 정보 저장
-      password: hashedPassword, // 비밀번호는 항상 포함
+      password: hashedPassword,
     };
 
     const result = await db.collection('Posts').updateOne({ _id: new ObjectId(id) }, { $set: updateData });
@@ -707,6 +706,8 @@ app.get('/download/:filename', (req, res) => {
     res.status(404).send('File not found');
   }
 });
+
+
 
 
 
