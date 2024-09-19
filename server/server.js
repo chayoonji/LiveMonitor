@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
@@ -60,7 +61,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    cb(null, Buffer.from(file.originalname, 'latin1').toString('utf8')); // Correctly encode the filename
   },
 });
 
@@ -375,16 +376,34 @@ app.get('/api/search-text-data', async (req, res) => {
 // 진단 결과를 가져오는 API 엔드포인트
 app.get('/api/diagnosis-results', async (req, res) => {
   try {
+    // 데이터베이스 컬렉션 이름을 소문자로 변환하여 찾기
+    const collections = [
+      'ChartData',
+      'CpuData',
+      'CpuTime',
+      'VMemory',
+      'SMemory',
+      'TextData',
+      'Solutions'
+    ];
+
+    const uploadsPath = path.join(__dirname, 'uploads'); // 서버에서 uploads 폴더의 절대 경로
+
     const [chartData, cpuData, cpuTime, vMemory, sMemory, textData, solutions] =
-      await Promise.all([
-        userDb.collection('ChartData').find({}).toArray(),
-        userDb.collection('CpuData').find({}).toArray(),
-        userDb.collection('CpuTime').find({}).toArray(),
-        userDb.collection('VMemory').find({}).toArray(),
-        userDb.collection('SMemory').find({}).toArray(),
-        userDb.collection('TextData').find({}).toArray(),
-        userDb.collection('Solutions').find({}).toArray(),
-      ]);
+      await Promise.all(collections.map(async (collectionName) => {
+        const normalizedCollectionName = collectionName.toLowerCase();
+        const files = fs.readdirSync(uploadsPath); // 인코딩 없이 폴더의 파일 목록 읽기
+        const jsonFile = files.find(file => 
+          file.toLowerCase() === `${normalizedCollectionName}.json`
+        );
+
+        if (jsonFile) {
+          const data = fs.readFileSync(path.join(uploadsPath, jsonFile), 'utf8'); // 인코딩을 'utf8'로 설정하여 파일 읽기
+          return JSON.parse(data);
+        } else {
+          return []; // 파일이 없으면 빈 배열 반환
+        }
+      }));
 
     res.json({
       chartData,
@@ -412,6 +431,7 @@ app.get('/api/solutions', async (req, res) => {
   }
 });
 
+
 // MongoDB CpuData(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
 app.get('/api/cpu-data', async (req, res) => {
   try {
@@ -435,6 +455,8 @@ app.get('/api/cpu-time', async (req, res) => {
       .find({ hour: { $gte: 1, $lte: 24 } })
       .toArray();
 
+    console.log('Fetched CPU Time Data:', cpuTime); // 로그 추가
+
     res.json(cpuTime);
   } catch (err) {
     console.error('Error fetching CPU time:', err);
@@ -442,8 +464,9 @@ app.get('/api/cpu-time', async (req, res) => {
   }
 });
 
+
 // MongoDB V-Memory (가상메모리) 내용 가져오는 API 엔드포인트
-app.get('/api/v-memory', async (req, res) => {
+app.get('/api/V-memory', async (req, res) => {
   try {
     const vMemory = await userDb
       .collection('VMemory')
@@ -458,7 +481,7 @@ app.get('/api/v-memory', async (req, res) => {
 });
 
 // MongoDB SMemory 데이터 가져오는 API 엔드포인트
-app.get('/api/s-memory', async (req, res) => {
+app.get('/api/S-memory', async (req, res) => {
   try {
     const sMemory = await userDb
       .collection('SMemory')
@@ -532,9 +555,9 @@ app.post('/verify-code', async (req, res) => {
     res.status(500).send('Error verifying code');
   }
 });
-
 // 정적 파일 제공 설정
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // 게시물 목록을 가져오는 API 엔드포인트
 app.get('/posts', async (req, res) => {
@@ -566,6 +589,30 @@ app.post('/posts', async (req, res) => {
 });
 
 
+// 상태 변경 엔드포인트
+app.patch('/posts/:id', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const result = await db.collection('Posts').updateOne(
+      { _id: new mongodb.ObjectId(id) }, // _id를 ObjectId로 변환
+      { $set: { status } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send('Post not found');
+    }
+
+    res.status(200).send('Post status updated');
+  } catch (err) {
+    console.error('Error updating status:', err); // 에러 로그 추가
+    res.status(500).send('Error updating status');
+  }
+});
+
+
+
 // 특정 게시물 가져오는 엔드포인트
 app.get('/posts/:id', async (req, res) => {
   try {
@@ -586,22 +633,24 @@ app.get('/posts/:id', async (req, res) => {
   }
 });
 
-// 게시물 수정 엔드포인트 (파일과 텍스트 모두 업데이트)
+
+
 app.put('/posts/:id', upload.array('files'), async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content, author, password } = req.body;
-    const files = req.files ? req.files.map((file) => file.filename) : [];
+    const files = req.files ? req.files.map((file) => ({
+      filename: file.filename,
+      downloadUrl: `${req.protocol}://${req.get('host')}/download/${file.filename}`
+    })) : [];
 
     // 기존 게시물 가져오기
-    const existingPost = await db
-      .collection('Posts')
-      .findOne({ _id: new ObjectId(id) });
+    const existingPost = await db.collection('Posts').findOne({ _id: new ObjectId(id) });
     if (!existingPost) {
       return res.status(404).send('Post not found');
     }
 
-    // 비밀번호가 제공된 경우 해시 처리
+    // 비밀번호 해시 처리
     let hashedPassword = existingPost.password;
     if (password) {
       hashedPassword = await bcrypt.hash(password, 10);
@@ -611,23 +660,57 @@ app.put('/posts/:id', upload.array('files'), async (req, res) => {
       ...(title && { title }),
       ...(content && { content }),
       ...(author && { author }),
-      ...(files.length > 0 && { files }),
-      password: hashedPassword, // 비밀번호는 항상 포함
+      ...(files.length > 0 && { files }), // 업로드된 파일 정보 저장
+      password: hashedPassword,
     };
 
-    const result = await db
-      .collection('Posts')
-      .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
+    const result = await db.collection('Posts').updateOne({ _id: new ObjectId(id) }, { $set: updateData });
 
     if (result.matchedCount > 0) {
-      res.send('Post updated');
+      res.json({ message: 'Post updated', files }); // 파일 다운로드 URL 반환
     } else {
       res.status(404).send('Post not found');
     }
   } catch (err) {
+    console.error('Error updating post:', err);
     res.status(500).send('Error updating post');
   }
 });
+
+// 파일만 업로드 처리 (게시물에 추가하지 않음)
+app.post('/posts/:id/upload', upload.array('files'), (req, res) => {
+  const { id } = req.params;
+  const files = req.files;
+
+  if (!files) {
+    return res.status(400).send('No files were uploaded.');
+  }
+
+  files.forEach(file => {
+    console.log('Uploaded file:', file.path);
+  });
+
+  // 파일 이름을 응답으로 반환
+  res.status(200).json({ files: files.map(file => file.filename) });
+});
+
+// 파일 다운로드 처리
+app.get('/download/:filename', (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join(__dirname, 'uploads', filename);
+
+  // 파일이 존재하는지 확인
+  if (fs.existsSync(filePath)) {
+    res.download(filePath); // 파일 다운로드 처리
+  } else {
+    res.status(404).send('File not found');
+  }
+});
+
+
+
+
+
 
 // 게시물 삭제 엔드포인트
 app.delete('/posts/:id', async (req, res) => {
@@ -888,4 +971,3 @@ app.post('/reset-database-values', async (req, res) => {
     res.status(500).json({ message: 'Error resetting database values' });
   }
 });
-

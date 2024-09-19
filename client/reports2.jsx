@@ -11,6 +11,17 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+// 숫자 포맷을 처리하는 유틸리티 함수
+const parseNumber = (value) => {
+  if (typeof value === 'object' && value.$numberDouble) {
+    return parseFloat(value.$numberDouble);
+  }
+  if (typeof value === 'object' && value.$numberInt) {
+    return parseInt(value.$numberInt, 10);
+  }
+  return value;
+};
+
 function Reports2() {
   const [Vmemory, setVMemory] = useState([]);
   const [Smemory, setSMemory] = useState([]);
@@ -27,10 +38,10 @@ function Reports2() {
         if (chartData.length >= 3) {
           const formattedData = chartData.map((item) => ({
             name: item.hour.toString(),
-            '총 메모리': item['총 메모리'],
-            '사용 중인 메모리': item['사용 중인 메모리'],
-            '사용 가능한 메모리': item['사용 가능한 메모리'],
-            '메모리 사용률': item['메모리 사용률'],
+            '총 메모리': parseNumber(item['총 메모리']),
+            '사용 중인 메모리': parseNumber(item['사용 중인 메모리']),
+            '사용 가능한 메모리': parseNumber(item['사용 가능한 메모리']),
+            '메모리 사용률': parseNumber(item['메모리 사용률']),
           }));
 
           setVMemory(formattedData);
@@ -49,12 +60,14 @@ function Reports2() {
         const response = await axios.get('http://localhost:3002/api/S-memory');
         const chartData = response.data;
 
+        console.log('Fetched S-Memory Data:', chartData); // 디버깅용 콘솔 로그
+
         if (chartData.length > 0) {
           const formattedData = chartData.map((item) => ({
             name: item.hour.toString(),
-            '총 스왑 메모리': item['총 스왑 메모리'],
-            '사용 중인 스왑 메모리': item['사용 중인 스왑 메모리'],
-            '사용 가능한 스왑 메모리': item['사용 가능한 스왑 메모리'],
+            '총 스왑 메모리': parseNumber(item['총 스왑 메모리']),
+            '사용 중인 스왑 메모리': parseNumber(item['사용 중인 스왑 메모리']),
+            '사용 가능한 스왑 메모리': parseNumber(item['사용 가능한 스왑 메모리']),
           }));
 
           setSMemory(formattedData);

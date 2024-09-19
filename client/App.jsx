@@ -21,6 +21,7 @@ import Board from './Boardpost'; // Board 컴포넌트를 import 합니다
 import PostDetail from './PostDetail';
 import Diagnosis from './Diagnosis';
 import Routine from './routine';
+import Solutions from './SolutionPage';
 
 
 function App() {
@@ -66,6 +67,10 @@ function App() {
             <Route
               path="/diagnosis"
               element={<PrivateRoute element={<Diagnosis />} />}
+            />
+            <Route
+              path="/solutions"
+              element={<PrivateRoute element={<Solutions />} />}
             />
           
           </Routes>
