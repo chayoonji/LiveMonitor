@@ -58,24 +58,24 @@ const Solutions = () => {
         color: '#E0E0E0',
       }}
     >
-      {/* 왼쪽에 뒤로가기 버튼 추가 */}
-      <button
-        onClick={() => navigate('/diagnosis')}
-        style={{
-          position: 'absolute',
-          top: '20px',
-          left: '20px',
-          padding: '10px',
-          backgroundColor: '#1C2331',
-          color: '#FFFFFF',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-        }}
-      >
-        뒤로가기
-      </button>
-
+      {/* 상단 레이아웃을 flexbox로 조정하여 버튼은 왼쪽, 제목은 가운데로 배치 */}
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+        <button
+          onClick={() => navigate('/diagnosis')}
+          style={{
+            padding: '10px',
+            backgroundColor: '#1C2331',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            marginRight: 'auto', // 버튼을 왼쪽에 위치시키기 위해 추가
+          }}
+        >
+          뒤로가기
+        </button>
+      </div>
+      
       <h1 style={{ color: '#FFFFFF', fontSize: '24px', marginBottom: '20px' }}>
         솔루션 목록
       </h1>
