@@ -8,7 +8,7 @@ const Solutions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [searchId, setSearchId] = useState('');
-  
+
   useEffect(() => {
     const fetchSolutions = async () => {
       try {
@@ -101,6 +101,21 @@ const Solutions = () => {
 
       {/* 페이지네이션 */}
       <div>
+        <button
+          onClick={() => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))}
+          disabled={currentPage === 1}
+          style={{
+            margin: '0 5px',
+            padding: '10px',
+            backgroundColor: '#1C2331',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+          }}
+        >
+          이전
+        </button>
         {Array.from({ length: Math.ceil(filteredSolutions.length / itemsPerPage) }, (_, index) => (
           <button
             key={index + 1}
@@ -117,6 +132,21 @@ const Solutions = () => {
             {index + 1}
           </button>
         ))}
+        <button
+          onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, Math.ceil(filteredSolutions.length / itemsPerPage)))}
+          disabled={currentPage === Math.ceil(filteredSolutions.length / itemsPerPage)}
+          style={{
+            margin: '0 5px',
+            padding: '10px',
+            backgroundColor: '#1C2331',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: currentPage === Math.ceil(filteredSolutions.length / itemsPerPage) ? 'not-allowed' : 'pointer',
+          }}
+        >
+          다음
+        </button>
       </div>
     </div>
   );
