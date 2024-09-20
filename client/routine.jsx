@@ -8,6 +8,8 @@ const UploadButton = () => {
   const [isUserIdSet, setIsUserIdSet] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
+  const API_URL = import.meta.env.VITE_API_URL; // API URL을 환경 변수에서 가져옴
+
   const handleSetUserId = async () => {
     if (!userId) {
       setSuccessMessage('Please enter a User ID.');
@@ -15,7 +17,7 @@ const UploadButton = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3002/set-user-id', {
+      const response = await axios.post(`${API_URL}/set-user-id`, {
         userId,
       });
       console.log(response.data.message);
@@ -52,6 +54,10 @@ const UploadButton = () => {
     }
   };
 
+  const toggleHelp = () => {
+    setShowHelp(!showHelp); // Toggle help visibility
+  };
+
   return (
     <div className="upload-container">
       <h1 className="upload-title">JSON 파일 업로드</h1>
@@ -82,6 +88,26 @@ const UploadButton = () => {
       )}
 
       {successMessage && <p className="success-message">{successMessage}</p>}
+
+      {/* Help Section */}
+      <button onClick={toggleHelp} className="help-button">
+        {showHelp ? 'Close Help' : 'Show Help'}
+      </button>
+
+      {showHelp && (
+        <div className="help-section">
+          <h2>도움말</h2>
+          <p>
+            프로그램 페이지에서 회원가입 할 때 입력한 User ID를 위에 입력하고
+            <strong> 입력하기</strong> 버튼을 클릭하세요.
+          </p>
+          <p>
+            User ID가 설정된 후, <strong>Upload</strong> 버튼을 클릭해 JSON
+            파일을 업로드할 수 있습니다. <br></br>모든 그래프 및 표는 User ID가
+            설정된 후에만 보여집니다.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
