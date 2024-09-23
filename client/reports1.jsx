@@ -49,9 +49,9 @@ function Reports1() {
       try {
         const response = await axios.get('http://localhost:3002/api/cpu-time');
         const chartData = response.data;
-  
+
         console.log('Fetched CPU Time Data in Frontend:', chartData); // 로그 추가
-  
+
         if (chartData.length > 0) {
           const formattedData = chartData.map((item) => ({
             name: item.hour.toString(),
@@ -59,18 +59,16 @@ function Reports1() {
             '시스템 시간': parseFloat(item['시스템 시간']),
             '유휴 시간': parseFloat(item['유휴 시간']),
           }));
-  
+
           setCpuTime(formattedData);
         }
       } catch (error) {
         console.error('Error fetching CPU time data:', error);
       }
     };
-  
+
     fetchCpuTimeDataAndUpdate();
   }, []);
-  
-  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -80,147 +78,151 @@ function Reports1() {
   }, []);
 
   return (
-    <div
-      className="charts"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        height: '90vh',
-        paddingTop: '20px',
-      }}
-    >
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', width: '70%' }}>
-          <h4 style={{ marginBottom: '10px' }}>CPU 사용률 및 코어 수</h4>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart
-              data={
-                cpuData.length > 0
-                  ? cpuData
-                  : [
-                      {
-                        name: '',
-                        '전체 CPU 사용률': 0,
-                        'P.C CPU 사용률': 0,
-                        'L.C CPU 사용률': 0,
-                        'P.C 코어 수': 0,
-                        'L.C 코어 수': 0,
-                      },
-                    ]
-              }
-              margin={{
-                top: 10,
-                right: 30,
-                left: 0,
-                bottom: 10,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="전체 CPU 사용률"
-                stroke="#ff7300"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="P.C CPU 사용률"
-                stroke="#82ca9d"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="L.C CPU 사용률"
-                stroke="#8884d8"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="P.C 코어 수"
-                stroke="#0088FE"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="L.C 코어 수"
-                stroke="#00C49F"
-                dot={false}
-                connectNulls={true}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
+    <div className="main-container">
       <div
+        className="charts"
         style={{
-          width: '100%',
           display: 'flex',
-          justifyContent: 'center',
-          marginTop: '10px',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          height: '90vh',
+          paddingTop: '20px',
         }}
       >
-        <div style={{ textAlign: 'center', width: '70%' }}>
-          <h4 style={{ marginBottom: '10px' }}>CPU 시간 비율</h4>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart
-              data={
-                cpuTime.length > 0
-                  ? cpuTime
-                  : [
-                      {
-                        name: '',
-                        '사용자 시간': 0,
-                        '시스템 시간': 0,
-                        '유휴 시간': 0,
-                      },
-                    ]
-              }
-              margin={{
-                top: 10,
-                right: 30,
-                left: 0,
-                bottom: 10,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="사용자 시간"
-                stroke="#8884d8"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="시스템 시간"
-                stroke="#82ca9d"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="유휴 시간"
-                stroke="#ff7300"
-                dot={false}
-                connectNulls={true}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <div
+          style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+        >
+          <div style={{ textAlign: 'center', width: '70%' }}>
+            <h4 style={{ marginBottom: '10px' }}>CPU 사용률 및 코어 수</h4>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart
+                data={
+                  cpuData.length > 0
+                    ? cpuData
+                    : [
+                        {
+                          name: '',
+                          '전체 CPU 사용률': 0,
+                          'P.C CPU 사용률': 0,
+                          'L.C CPU 사용률': 0,
+                          'P.C 코어 수': 0,
+                          'L.C 코어 수': 0,
+                        },
+                      ]
+                }
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 0,
+                  bottom: 10,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="전체 CPU 사용률"
+                  stroke="#ff7300"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="P.C CPU 사용률"
+                  stroke="#82ca9d"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="L.C CPU 사용률"
+                  stroke="#8884d8"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="P.C 코어 수"
+                  stroke="#0088FE"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="L.C 코어 수"
+                  stroke="#00C49F"
+                  dot={false}
+                  connectNulls={true}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '10px',
+          }}
+        >
+          <div style={{ textAlign: 'center', width: '70%' }}>
+            <h4 style={{ marginBottom: '10px' }}>CPU 시간 비율</h4>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart
+                data={
+                  cpuTime.length > 0
+                    ? cpuTime
+                    : [
+                        {
+                          name: '',
+                          '사용자 시간': 0,
+                          '시스템 시간': 0,
+                          '유휴 시간': 0,
+                        },
+                      ]
+                }
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 0,
+                  bottom: 10,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="사용자 시간"
+                  stroke="#8884d8"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="시스템 시간"
+                  stroke="#82ca9d"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="유휴 시간"
+                  stroke="#ff7300"
+                  dot={false}
+                  connectNulls={true}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>

@@ -5,10 +5,16 @@ import axios from 'axios';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // 페이지 로드 시 쿠키에서 로그인 상태 확인
+    return Cookies.get('isAuthenticated') === 'true';
+  });
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState(''); // userId 상태 추가
+  const [userId, setUserId] = useState(() => {
+    // 페이지 로드 시 쿠키에서 userId 확인
+    return Cookies.get('userId') || '';
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -44,7 +50,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (newUserId) => {
     try {
-      const response = await axios.post('http://localhost:3002/login', { userId: newUserId });
+      const response = await axios.post('http://localhost:3002/login', {
+        userId: newUserId,
+      });
       if (response.data.success) {
         setIsAuthenticated(true);
         Cookies.set('isAuthenticated', 'true', { expires: 1 });
@@ -66,7 +74,7 @@ export const AuthProvider = ({ children }) => {
     try {
       // 데이터베이스 값 초기화 요청
       await axios.post('http://localhost:3002/reset-database-values');
-      
+
       // 인증 및 상태 초기화
       setIsAuthenticated(false);
       setIsAdmin(false);
@@ -78,29 +86,37 @@ export const AuthProvider = ({ children }) => {
       console.error('로그아웃중에 오류가 발생했습니다:', error);
     }
   };
-  
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       const isAuthenticatedFromCookie = Cookies.get('isAuthenticated');
+      const userIdFromCookie = Cookies.get('userId');
+
       if (!isAuthenticatedFromCookie) {
         // 로그아웃 처리 및 데이터베이스 값 초기화
         await axios.post('http://localhost:3002/reset-database-values');
         logout(); // 로그아웃 시 userId 값도 초기화
       } else {
-        // 새로고침 시 userId 초기화
-        setUserId('');
+        // 새로고침 시 쿠키에서 userId 확인
+        setUserId(userIdFromCookie || '');
       }
     };
-  
+
     checkAuthStatus();
   }, []); // 페이지가 처음 로드되거나 새로고침될 때 실행
-  
-  
-  
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isAdmin, loading, login, logout, userId, setUserId }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isAdmin,
+        loading,
+        login,
+        logout,
+        userId,
+        setUserId,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

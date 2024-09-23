@@ -14,23 +14,25 @@ const PasswordModal = ({ onClose, onConfirm }) => {
   };
 
   return (
-    <div className="modal-background">
-      <div className="modal-content">
-        <h2 className="modal-title">비밀번호 확인</h2>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="modal-input"
-          placeholder="비밀번호를 입력하세요"
-        />
-        <div className="modal-buttons">
-          <button className="modal-button" onClick={onClose}>
-            취소
-          </button>
-          <button className="modal-button" onClick={handleConfirm}>
-            확인
-          </button>
+    <div className="main-container">
+      <div className="modal-background">
+        <div className="modal-content">
+          <h2 className="modal-title">비밀번호 확인</h2>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="modal-input"
+            placeholder="비밀번호를 입력하세요"
+          />
+          <div className="modal-buttons">
+            <button className="modal-button" onClick={onClose}>
+              취소
+            </button>
+            <button className="modal-button" onClick={handleConfirm}>
+              확인
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -177,140 +179,142 @@ const PostDetail = () => {
   const isNotice = post.title.startsWith('[공지]');
 
   return (
-    <div className="post-detail-page">
-      <div className="post-detail-container">
-        {!showEditForm && (
-          <>
-            <div className="post-detail-header">
-              <div className="post-detail-title-container">
-                <FaArrowLeft
-                  className="back-button"
-                  onClick={() => navigate(-1)}
-                />
-                <h1 className="post-detail-title">{title}</h1>
-              </div>
-              <small className="post-detail-author">by {author}</small>
-            </div>
-
-            <div className="post-detail-content">
-              <p>{content}</p>
-
-              {uploadedFiles.length > 0 && (
-                <div>
-                  <h3 className="attached-files-title">첨부 파일:</h3>
-                  {uploadedFiles.map((file, index) => (
-                    <div key={index}>
-                      <a
-                        className="attached-file-link"
-                        href={file.downloadUrl}
-                        download
-                      >
-                        {file.filename}
-                      </a>
-                    </div>
-                  ))}
+    <div className="main-container">
+      <div className="post-detail-page">
+        <div className="post-detail-container">
+          {!showEditForm && (
+            <>
+              <div className="post-detail-header">
+                <div className="post-detail-title-container">
+                  <FaArrowLeft
+                    className="back-button"
+                    onClick={() => navigate(-1)}
+                  />
+                  <h1 className="post-detail-title">{title}</h1>
                 </div>
-              )}
-            </div>
+                <small className="post-detail-author">by {author}</small>
+              </div>
 
-            <div className="post-detail-buttons">
-              {!isNotice && (
-                <>
-                  <button
-                    className="edit-button"
-                    onClick={() => setShowEditForm(true)}
-                  >
-                    수정
-                  </button>
-                  <button
-                    className="delete-button"
-                    onClick={() => setShowPasswordModal(true)}
-                  >
-                    삭제
-                  </button>
-                  <button
-                    className="diagnosis-button"
-                    onClick={handleDiagnosisClick}
-                  >
-                    진단 결과 보기
-                  </button>
-                </>
-              )}
-            </div>
-          </>
-        )}
+              <div className="post-detail-content">
+                <p>{content}</p>
 
-        {showEditForm && (
-          <div className="edit-form">
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="edit-title"
-              placeholder="제목"
-            />
-            <input
-              type="text"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              className="edit-author"
-              placeholder="작성자"
-            />
-            <textarea
-              ref={textareaRef}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="edit-content"
-              placeholder="내용"
-              onInput={(e) => {
-                e.target.style.height = 'auto';
-                e.target.style.height = `${e.target.scrollHeight}px`;
-              }}
-            />
-            {files.map((_, index) => (
-              <div key={index} className="file-input-container">
-                <input
-                  type="file"
-                  onChange={(e) => handleFileChange(e, index)}
-                  className="file-input"
-                />
+                {uploadedFiles.length > 0 && (
+                  <div>
+                    <h3 className="attached-files-title">첨부 파일:</h3>
+                    {uploadedFiles.map((file, index) => (
+                      <div key={index}>
+                        <a
+                          className="attached-file-link"
+                          href={file.downloadUrl}
+                          download
+                        >
+                          {file.filename}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="post-detail-buttons">
+                {!isNotice && (
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => setShowEditForm(true)}
+                    >
+                      수정
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => setShowPasswordModal(true)}
+                    >
+                      삭제
+                    </button>
+                    <button
+                      className="diagnosis-button"
+                      onClick={handleDiagnosisClick}
+                    >
+                      진단 결과 보기
+                    </button>
+                  </>
+                )}
+              </div>
+            </>
+          )}
+
+          {showEditForm && (
+            <div className="edit-form">
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="edit-title"
+                placeholder="제목"
+              />
+              <input
+                type="text"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                className="edit-author"
+                placeholder="작성자"
+              />
+              <textarea
+                ref={textareaRef}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="edit-content"
+                placeholder="내용"
+                onInput={(e) => {
+                  e.target.style.height = 'auto';
+                  e.target.style.height = `${e.target.scrollHeight}px`;
+                }}
+              />
+              {files.map((_, index) => (
+                <div key={index} className="file-input-container">
+                  <input
+                    type="file"
+                    onChange={(e) => handleFileChange(e, index)}
+                    className="file-input"
+                  />
+                  <button
+                    type="button"
+                    className="remove-file-button"
+                    onClick={() => handleRemoveFile(index)}
+                  >
+                    파일 제거
+                  </button>
+                </div>
+              ))}
+              {isAdmin && (
                 <button
                   type="button"
-                  className="remove-file-button"
-                  onClick={() => handleRemoveFile(index)}
+                  className="add-file-button"
+                  onClick={handleAddFile}
                 >
-                  파일 제거
+                  파일 추가
                 </button>
-              </div>
-            ))}
-            {isAdmin && (
-              <button
-                type="button"
-                className="add-file-button"
-                onClick={handleAddFile}
-              >
-                파일 추가
+              )}
+              <button className="save-button" onClick={handleUpdatePost}>
+                저장
               </button>
-            )}
-            <button className="save-button" onClick={handleUpdatePost}>
-              저장
-            </button>
-            <button
-              className="cancel-button"
-              onClick={() => setShowEditForm(false)}
-            >
-              취소
-            </button>
-          </div>
+              <button
+                className="cancel-button"
+                onClick={() => setShowEditForm(false)}
+              >
+                취소
+              </button>
+            </div>
+          )}
+        </div>
+
+        {showPasswordModal && (
+          <PasswordModal
+            onClose={() => setShowPasswordModal(false)}
+            onConfirm={handleDeletePost}
+          />
         )}
       </div>
-
-      {showPasswordModal && (
-        <PasswordModal
-          onClose={() => setShowPasswordModal(false)}
-          onConfirm={handleDeletePost}
-        />
-      )}
     </div>
   );
 };

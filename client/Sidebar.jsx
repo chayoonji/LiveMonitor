@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -15,12 +14,17 @@ import {
   BsFillGearFill,
   BsBoxArrowRight,
 } from 'react-icons/bs';
+import './Sidebar.css'; // Add this to import the new CSS
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
   const authContext = useAuth();
-  const isAuthenticated = (authContext && authContext.isAuthenticated) ? authContext.isAuthenticated : false;
-  const logout = (authContext && authContext.logout) ? authContext.logout : () => {};
+  const isAuthenticated =
+    authContext && authContext.isAuthenticated
+      ? authContext.isAuthenticated
+      : false;
+  const logout =
+    authContext && authContext.logout ? authContext.logout : () => {};
 
   const handleReportsClick = (e) => {
     e.preventDefault();
@@ -45,7 +49,8 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       <div className="sidebar-title">
         <div className="sidebar-brand">
           <Link to="/" style={{ textDecoration: 'none', color: '#9e9ea4' }}>
-            <BsCart3 className="icon_header" /> 강김홍차
+            {' '}
+            강김홍차
           </Link>
         </div>
       </div>
@@ -102,15 +107,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </Link>
             </li>
             <li className="sidebar-list-item">
-              <button
-                onClick={handleLogoutClick}
-                style={{
-                  border: 'none',
-                  background: 'none',
-                  padding: 0,
-                  margin: 0,
-                }}
-              >
+              <button onClick={handleLogoutClick} className="icon">
                 <BsBoxArrowRight className="icon" /> 로그아웃
               </button>
             </li>
