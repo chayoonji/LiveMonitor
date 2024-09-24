@@ -21,69 +21,62 @@ const Diagnosis = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(4);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(''); // 검색어 상태
   const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [dataResponse, textResponse, solutionsResponse] =
-          await Promise.all([
-            axios.get('http://localhost:3002/api/data'),
-            axios.get(
-              `http://localhost:3002/api/search-text-data?page=${page}&limit=${limit}&query=${query}`
-            ),
-            axios.get('http://localhost:3002/api/solutions'),
-          ]);
-  
+        const [dataResponse, textResponse, solutionsResponse] = await Promise.all([
+          axios.get('http://localhost:3002/api/data'),
+          axios.get(`http://localhost:3002/api/search-text-data?page=${page}&limit=${limit}&query=${encodeURIComponent(query)}`), // 쿼리 인코딩
+          axios.get('http://localhost:3002/api/solutions'),
+        ]);
         setData(dataResponse.data);
         setTextData(textResponse.data.data);
         setTotalPages(textResponse.data.totalPages);
         setSolutions(solutionsResponse.data);
         setIsSearching(false);
       } catch (err) {
-        console.error('데이터를 불러오는 중 오류가 발생했습니다:', err);
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
         setIsSearching(false);
       } finally {
         setLoading(false);
       }
     };
-  
     fetchData();
-  }, [page, limit, query]);
+  }, [page, limit, query]); // 페이지, 제한, 검색어가 바뀔 때마다 실행
 
-  const handleSearch = () => {
-    setPage(1);
+  // 검색 버튼 클릭 핸들러
+  const handleSearch = async () => {
+    setPage(1); // 검색 시 페이지를 1로 초기화
     setIsSearching(true);
-  };
-
-  const handleViewSolution = async (id) => {
     try {
-      // URL에 id를 직접 추가하여 솔루션 페이지로 이동
-      navigate(`/solutions/${id}`);
+      const response = await axios.get(
+        `http://localhost:3002/api/search-text-data?page=1&limit=${limit}&query=${encodeURIComponent(query)}` // 쿼리 인코딩
+      );
+      setTextData(response.data.data);
+      setTotalPages(response.data.totalPages);
     } catch (err) {
-      console.error('솔루션으로 이동하는 중 오류가 발생했습니다:', err);
-      setError('솔루션으로 이동하는 중 오류가 발생했습니다.');
+      setError('검색 중 오류가 발생했습니다.');
+    } finally {
+      setIsSearching(false);
     }
   };
-  
+
+  const handleViewSolution = (id) => {
+    navigate(`/solutions/${id}`);
+  };
+
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
-  if (textData.length === 0) return <div>데이터가 없습니다.</div>;
-
-  // id, 분류, 결과, 결과상세만 출력하기 위해 필터링
   const filteredTableHeaders = ['id', '분류', '결과', '결과상세'];
-
   const filteredTableRows = textData.map((item, index) => (
     <tr
       key={index}
-      style={{
-        backgroundColor: item.결과 === '취약' ? '#B71C1C' : '#303F9F',
-        cursor: item.결과 === '취약' ? 'pointer' : 'default',
-      }}
+      style={{ backgroundColor: item.결과 === '취약' ? '#B71C1C' : '#303F9F', cursor: item.결과 === '취약' ? 'pointer' : 'default' }}
       onClick={() => item.결과 === '취약' && handleViewSolution(item.id)}
     >
       <td style={{ padding: '10px', color: '#E0E0E0' }}>{item.id}</td>
@@ -93,10 +86,7 @@ const Diagnosis = () => {
     </tr>
   ));
 
-  const chartData = data[0]?.data.map((item) => ({
-    name: item.name,
-    value: item.value,
-  })) || [];
+  const chartData = data[0]?.data.map(item => ({ name: item.name, value: item.value })) || [];
 
   return (
     <div style={{ textAlign: 'center', marginLeft: '60px', marginRight: '60px', color: '#E0E0E0' }}>

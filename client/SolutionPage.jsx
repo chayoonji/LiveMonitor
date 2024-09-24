@@ -1,10 +1,11 @@
 // Solutions.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
 
 const Solutions = () => {
   const { id } = useParams(); // Get the ID from the URL
+  const navigate = useNavigate(); // useNavigate 훅을 사용하여 내비게이션 함수 생성
   const [solution, setSolution] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -25,6 +26,10 @@ const Solutions = () => {
     fetchSolution();
   }, [id]);
 
+  const handleBack = () => {
+    navigate('/diagnosis'); // /diagnosis로 이동
+  };
+
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
@@ -33,6 +38,9 @@ const Solutions = () => {
   return (
     <div style={{ padding: '20px', color: '#E0E0E0' }}>
       <h1 style={{ color: '#FFFFFF' }}>조치 방법</h1>
+      <button onClick={handleBack} style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#2E3A59', color: '#FFFFFF', border: 'none', cursor: 'pointer' }}>
+        뒤로가기
+      </button>
       <table
         border="1"
         style={{ margin: '0 auto', width: '50%', textAlign: 'left', borderCollapse: 'collapse', color: '#E0E0E0' }}
