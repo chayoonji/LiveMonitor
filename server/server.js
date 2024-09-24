@@ -343,19 +343,20 @@ app.get('/api/data', async (req, res) => {
 
 
 // 게시물 목록을 검색 및 필터링하여 가져오는 API 엔드포인트
+// 텍스트 데이터를 검색하는 API 엔드포인트
 app.get('/api/search-text-data', async (req, res) => {
   const { query, page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
   try {
-    // 검색어가 있는 경우 필터 조건에 id와 텍스트 필드를 모두 검색
+    // 검색 필터 설정
     const filter = query
       ? {
-          $search: [
+          $or: [
             { id: query }, // 정확히 일치하는 id 검색
             { 분류: { $regex: query, $options: 'i' } },
-            { 결과상세: { $regex: query, $options: 'i' } },
-            { 결과: { $regex: query, $options: 'i' } },
+            { 결과: { $regex: query, $options: 'i' } }, // '결과' 필드에서 검색
+            { 결과: query } // 정확히 일치하는 '결과' 검색
           ],
         }
       : {};
@@ -377,10 +378,12 @@ app.get('/api/search-text-data', async (req, res) => {
       data,
     });
   } catch (err) {
-    console.error('Error searching text data:', err);
-    res.status(500).send('Error searching text data');
+    console.error('검색 중 오류가 발생했습니다:', err);
+    res.status(500).send('검색 중 오류가 발생했습니다.');
   }
 });
+
+
 
 
 // 진단 결과를 가져오는 API 엔드포인트
