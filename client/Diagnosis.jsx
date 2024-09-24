@@ -23,7 +23,6 @@ const Diagnosis = () => {
   const [limit] = useState(4);
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const [selectedSolution, setSelectedSolution] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,21 +36,23 @@ const Diagnosis = () => {
             ),
             axios.get('http://localhost:3002/api/solutions'),
           ]);
-
+  
         setData(dataResponse.data);
         setTextData(textResponse.data.data);
         setTotalPages(textResponse.data.totalPages);
         setSolutions(solutionsResponse.data);
+        setIsSearching(false);
       } catch (err) {
         console.error('데이터를 불러오는 중 오류가 발생했습니다:', err);
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
+        setIsSearching(false);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
-  }, [page, limit, query, isSearching]);
+  }, [page, limit, query]);
 
   const handleSearch = () => {
     setPage(1);
@@ -60,22 +61,23 @@ const Diagnosis = () => {
 
   const handleViewSolution = async (id) => {
     try {
-      // ID에 따라 솔루션으로 이동
-      navigate(`/solutions?id=${id}`);
+      // URL에 id를 직접 추가하여 솔루션 페이지로 이동
+      navigate(`/solutions/${id}`);
     } catch (err) {
-      console.error('솔루션을 가져오는 중 오류가 발생했습니다:', err);
-      setError('솔루션을 가져오는 중 오류가 발생했습니다.');
+      console.error('솔루션으로 이동하는 중 오류가 발생했습니다:', err);
+      setError('솔루션으로 이동하는 중 오류가 발생했습니다.');
     }
   };
-
+  
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
   if (textData.length === 0) return <div>데이터가 없습니다.</div>;
 
-  const tableHeaders = textData[0] ? ['id', ...Object.keys(textData[0]).filter(header => header !== '_id' && header !== 'id')] : [];
+  // id, 분류, 결과, 결과상세만 출력하기 위해 필터링
+  const filteredTableHeaders = ['id', '분류', '결과', '결과상세'];
 
-  const tableRows = textData.map((item, index) => (
+  const filteredTableRows = textData.map((item, index) => (
     <tr
       key={index}
       style={{
@@ -85,17 +87,9 @@ const Diagnosis = () => {
       onClick={() => item.결과 === '취약' && handleViewSolution(item.id)}
     >
       <td style={{ padding: '10px', color: '#E0E0E0' }}>{item.id}</td>
-      {tableHeaders.map((header, idx) => (
-        <td
-          key={idx}
-          style={{
-            padding: '10px',
-            color: header === '결과' && item[header] === '취약' ? '#FFFFFF' : '#E0E0E0',
-          }}
-        >
-          {item[header]}
-        </td>
-      ))}
+      <td style={{ padding: '10px', color: '#E0E0E0' }}>{item.분류}</td>
+      <td style={{ padding: '10px', color: item.결과 === '취약' ? '#FFFFFF' : '#E0E0E0' }}>{item.결과}</td>
+      <td style={{ padding: '10px', color: '#E0E0E0' }}>{item.결과상세}</td>
     </tr>
   ));
 
@@ -108,7 +102,6 @@ const Diagnosis = () => {
     <div style={{ textAlign: 'center', marginLeft: '60px', marginRight: '60px', color: '#E0E0E0' }}>
       <h1 style={{ color: '#FFFFFF', fontSize: '24px', marginBottom: '20px' }}>진단 결과</h1>
       
-
       {/* 검색 기능 추가 */}
       <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <input
@@ -141,12 +134,12 @@ const Diagnosis = () => {
       >
         <thead>
           <tr style={{ backgroundColor: '#2E3A59', color: '#FFFFFF' }}>
-            {tableHeaders.map((header, index) => (
+            {filteredTableHeaders.map((header, index) => (
               <th key={index} style={{ padding: '10px' }}>{header}</th>
             ))}
           </tr>
         </thead>
-        <tbody>{tableRows}</tbody>
+        <tbody>{filteredTableRows}</tbody>
       </table>
 
       {/* 페이지네이션 */}
