@@ -1,35 +1,279 @@
+.post-detail-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: auto;
+  box-sizing: border-box;
+}
 
 .post-detail-container {
-  padding: 20px;
+  width: 100%;
   max-width: 800px;
-  margin: 0 auto;
   background-color: #263043;
+  padding: 20px;
   border-radius: 10px;
   color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
 }
 
-.post-detail-container h1 {
+.post-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #6a24fe;
+}
+
+.post-detail-title {
+  font-size: 24px;
   color: #6a24fe;
+  margin: 0;
 }
 
-.post-detail-container p {
-  font-size: 18px;
+.post-detail-author {
+  font-size: 16px;
+  color: #a5a5a5;
+  margin: 0;
+  line-height: 24px;
+  align-self: flex-end;
+}
+
+.post-detail-content {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 16px;
   line-height: 1.6;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  white-space: pre-line;
 }
 
-/* 기존 스타일과 추가된 스타일 */
-
-.post-detail-status {
-  font-size: 1rem;
-  color: #333;
-  margin-top: 10px;
-}
-
-.status-buttons {
+.post-detail-buttons {
+  display: flex;
+  justify-content: flex-end;
   margin-top: 20px;
 }
 
-.status-buttons button {
-  margin-right: 10px;
+.post-detail-buttons button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  background-color: #6a24fe;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
+.post-detail-buttons button:hover {
+  background-color: #4b1ab9;
+}
+
+@media (max-width: 768px) {
+  .post-detail-container {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .post-detail-title {
+    font-size: 20px;
+  }
+
+  .post-detail-author {
+    font-size: 14px;
+  }
+
+  .post-detail-content {
+    font-size: 14px;
+    padding: 15px;
+  }
+
+  .post-detail-buttons button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+/* 전체 페이지 중앙 정렬 및 상단 여백 추가 */
+.post-edit-page {
+  display: flex;
+  justify-content: center; /* 중앙 배치 */
+  align-items: flex-start;
+  padding-top: 80px;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: auto;
+  box-sizing: border-box;
+}
+
+/* 수정 페이지 컨테이너 */
+.post-edit-container {
+  width: 100%;
+  max-width: 800px; /* 최대 너비 설정 */
+  background-color: #263043; /* 다크 배경 */
+  padding: 20px;
+  border-radius: 10px;
+  color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 */
+  margin-bottom: 40px;
+}
+
+/* 제목과 작성자 입력 필드 */
+.edit-form input[type='text'] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* 본문 수정 필드 */
+.edit-form textarea {
+  width: 100%;
+  height: 200px;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  color: #333;
+  resize: none; /* 크기 조절 불가 */
+}
+
+/* 버튼 컨테이너 */
+.edit-form-buttons {
+  display: flex;
+  justify-content: flex-end; /* 버튼을 오른쪽에 배치 */
+  gap: 10px;
+}
+
+/* 저장 및 취소 버튼 스타일 */
+.edit-form-buttons button {
+  padding: 10px 20px;
+  background-color: #6a24fe;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-form-buttons button:hover {
+  background-color: #4b1ab9;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .post-edit-container {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .edit-form input[type='text'] {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .edit-form textarea {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .edit-form-buttons button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Password Modal Background */
+.delete-modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Darker background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* Ensures it's on top of other elements */
+}
+
+/* Password Modal Content */
+.delete-modal-content {
+  background-color: #1b284b; /* Darker modal content */
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(43, 19, 121, 0.1);
+  text-align: center;
+  color: #ffffff; /* White text for readability */
+}
+
+.delete-modal-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #ffffff; /* White title for contrast */
+}
+
+/* Password Modal Input */
+.delete-modal-input {
+  width: 90%; /* Ensures the input stays inside the modal */
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: #333;
+  text-align: center; /* Centers the input text */
+  box-sizing: border-box;
+}
+
+.delete-modal-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.delete-modal-button {
+  padding: 10px 20px;
+  background-color: #6a24fe;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-modal-button:hover {
+  background-color: #4b1ab9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .delete-modal-content {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .delete-modal-title {
+    font-size: 20px;
+  }
+
+  .delete-modal-button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}

@@ -81,11 +81,11 @@ body {
 
 .grid-container {
   display: grid;
-  grid-template-columns: 260px 1fr; /* 사이드바와 메인 콘텐츠 영역을 나눕니다 */
-  grid-template-rows: auto 1fr; /* 상단 헤더와 나머지 영역을 나눕니다 */
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: auto 1fr;
   grid-template-areas:
     'header header'
-    'sidebar main'; /* 사이드바와 메인 콘텐츠를 나눕니다 */
+    'sidebar main';
   height: 100vh;
 }
 
@@ -260,6 +260,7 @@ body {
   background-color: #0056b3;
 }
 
+/* 게시물 작성 폼 */
 .board-form {
   width: 100%;
   max-width: 1000px;
@@ -271,7 +272,7 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* 요소들 간의 간격을 일정하게 */
+  gap: 10px;
 }
 
 .board-form input,
@@ -283,6 +284,7 @@ body {
   border: 1px solid #9e9ea4;
   background-color: #263043;
   color: #ffffff;
+  box-sizing: border-box; /* Ensures padding is included in the width */
 }
 
 .board-form textarea {
@@ -290,27 +292,41 @@ body {
   resize: none;
 }
 
-.submit-button,
-.cancel-button {
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 수정된 작성 완료 및 취소 버튼 */
+.form-buttons button {
   padding: 10px 20px;
-  background-color: #007bff;
+  font-size: 16px;
   border: none;
   border-radius: 5px;
-  color: #ffffff;
   cursor: pointer;
-  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.cancel-button {
-  background-color: #6c757d;
+/* 작성 완료 버튼 */
+.form-buttons button[type='submit'] {
+  background-color: #2b65b1;
+  color: white;
 }
 
-.submit-button:hover {
-  background-color: #0056b3;
+.form-buttons button[type='submit']:hover {
+  background-color: #273348;
+  color: #ffffff;
 }
 
-.cancel-button:hover {
-  background-color: #5a6268;
+/* 취소 버튼 */
+.form-buttons button[type='button'] {
+  background-color: #3d3b52;
+  color: white;
+}
+
+.form-buttons button[type='button']:hover {
+  background-color: #2b2222;
+  color: #ffffff;
 }
 
 .posts-list {
@@ -335,11 +351,11 @@ body {
   color: #6a24fe;
   font-size: 20px;
   font-weight: bold;
-  transition: color 0.3s ease; /* 색상 변화에 애니메이션 효과 추가 */
+  transition: color 0.3s ease;
 }
 
 .post-item h2:hover {
-  color: #3399ff; /* 마우스를 올렸을 때 밝은 색상으로 변경 */
+  color: #3399ff;
 }
 
 .post-item p,
@@ -348,229 +364,109 @@ body {
   color: #9e9ea4;
 }
 
-.post-detail-container {
-  padding: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-  background-color: #263043;
-  border-radius: 10px;
-  color: #ffffff;
-}
-
-/* 게시글 작성 및 수정 폼 */
-
-.post-form-container {
-  padding: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-  background-color: #1d2634;
-  border-radius: 10px;
-  color: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.post-form-container input[type='text'],
-.post-form-container textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border: 1px solid #9e9ea4;
-  background-color: #263043;
-  color: #ffffff;
-  resize: vertical;
-}
-
-.post-form-container textarea {
-  height: 200px;
-  resize: vertical;
-}
-
-.post-form-container .submit-button,
-.post-form-container .cancel-button {
-  display: inline-block;
-  padding: 10px 20px;
-  margin-right: 10px;
-  background-color: #007bff;
-  border: none;
-  border-radius: 5px;
-  color: #ffffff;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.post-form-container .cancel-button {
-  background-color: #6c757d;
-}
-
-.post-form-container .submit-button:hover {
-  background-color: #0056b3;
-}
-
-.post-form-container .cancel-button:hover {
-  background-color: #5a6268;
-}
-
-/* Post Detail Page */
-.post-detail-page {
+/* Pagination */
+.pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 0 20px;
+  margin: 20px 0;
 }
 
-.post-detail-container {
-  padding: 30px;
-  max-width: 1000px;
-  width: 100%;
-  background-color: #263043;
-  border-radius: 10px;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.post-detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #6a24fe;
-  padding-bottom: 10px;
-}
-
-.post-detail-title-container {
-  display: flex;
-  align-items: center;
-}
-
-.back-button {
-  cursor: pointer;
-  margin-right: 15px;
-  color: #6a24fe;
-  font-size: 20px;
-}
-
-.post-detail-title {
-  color: #6a24fe;
-  font-size: 28px;
-  margin: 0;
-}
-
-.post-detail-author {
-  color: #9e9ea4;
-  font-size: 16px;
-}
-
-.post-detail-content {
-  background-color: #f8f8f8;
-  color: #000000;
-  padding: 20px;
-  border-radius: 5px;
-  margin-top: 20px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  min-height: 300px;
-}
-
-.attached-files-title {
-  color: red;
-}
-
-.attached-file-link {
-  color: red;
-}
-
-.post-detail-buttons {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
-.edit-button,
-.delete-button,
-.diagnosis-button {
-  margin-left: 10px;
-  padding: 10px 20px;
-  background-color: #ffffff;
+.pagination button {
+  background-color: #296cc4;
+  color: white;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: #000000;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
 }
 
-.edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 100%;
-  margin-top: 20px;
+.pagination button:hover {
+  background-color: #1d25ae;
 }
 
-.file-input-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+.pagination button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 18px;
+  margin: 0 15px;
+  color: #ffffff;
 }
 
 /* Modal Styles */
 .modal {
-  position: fixed; /* 화면에 고정되도록 설정 */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* 모달이 상단에 나타나도록 z-index 설정 */
+  z-index: 1000;
 }
 
 .modal-content {
   background-color: #2a3451;
   padding: 20px;
   border-radius: 8px;
-  max-width: 500px; /* 모달의 최대 너비를 조정하여 더 넓게 설정 */
+  max-width: 500px;
   width: 100%;
   box-sizing: border-box;
   z-index: 1001;
 }
 
 .modal-input {
-  width: 100%; /* 비밀번호 입력 칸을 모달 너비에 맞게 설정 */
+  width: 100%;
   padding: 10px;
   margin-bottom: 20px;
   border-radius: 4px;
   border: 1px solid #ccc;
   box-sizing: border-box;
-  font-size: 16px; /* 입력 칸의 폰트 크기 */
+  font-size: 16px;
 }
 
 .modal-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 20px;
 }
 
 .modal-buttons button {
   padding: 10px 20px;
-  margin-left: 10px;
-  border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
+/* 확인 버튼 */
 .modal-buttons button:first-child {
   background-color: #007bff;
   color: #ffffff;
 }
 
+.modal-buttons button:first-child:hover {
+  background-color: #0056b3;
+}
+
+/* 취소 버튼 */
 .modal-buttons button:last-child {
   background-color: #6c757d;
   color: #ffffff;
+}
+
+.modal-buttons button:last-child:hover {
+  background-color: #5a6268;
 }
 
 .error-message {

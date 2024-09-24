@@ -339,15 +339,20 @@ app.get('/api/data', async (req, res) => {
   }
 });
 
+
+
+
 // 게시물 목록을 검색 및 필터링하여 가져오는 API 엔드포인트
 app.get('/api/search-text-data', async (req, res) => {
   const { query, page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
   try {
+    // 검색어가 있는 경우 필터 조건에 id와 텍스트 필드를 모두 검색
     const filter = query
       ? {
-          $or: [
+          $search: [
+            { id: query }, // 정확히 일치하는 id 검색
             { 분류: { $regex: query, $options: 'i' } },
             { 결과상세: { $regex: query, $options: 'i' } },
             { 결과: { $regex: query, $options: 'i' } },
@@ -376,6 +381,7 @@ app.get('/api/search-text-data', async (req, res) => {
     res.status(500).send('Error searching text data');
   }
 });
+
 
 // 진단 결과를 가져오는 API 엔드포인트
 app.get('/api/diagnosis-results', async (req, res) => {
@@ -424,6 +430,26 @@ app.get('/api/diagnosis-results', async (req, res) => {
   }
 });
 
+
+// 특정 ID에 대한 솔루션 반환
+app.get('/api/solutions/:id', async (req, res) => {
+  const { id } = req.params; // URL 파라미터에서 ID 가져오기
+
+  try {
+    // 해당 ID의 솔루션 찾기
+    const foundSolution = await userDb.collection('Solutions').findOne({ id });
+
+    if (!foundSolution) {
+      return res.status(404).json({ message: 'Solution not found' });
+    }
+  
+    res.json(foundSolution); // 특정 솔루션 반환
+  } catch (err) {
+    console.error('Error fetching solution:', err);
+    res.status(500).send('Error fetching solution');
+  }
+});
+
 // 해결 방안을 안내하는 페이지의 정보를 가져오는 API 엔드포인트
 app.get('/api/solutions', async (req, res) => {
   try {
@@ -434,7 +460,6 @@ app.get('/api/solutions', async (req, res) => {
     res.status(500).send('Error fetching solutions');
   }
 });
-
 
 // MongoDB CpuData(모니터링 CPU 부분) 내용 가져오는 API 엔드포인트
 app.get('/api/cpu-data', async (req, res) => {
@@ -508,6 +533,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+
+
+
 function generateRandomNumber() {
   return Math.floor(100000 + Math.random() * 900000);
 }
@@ -538,6 +566,7 @@ app.post('/verify-company-email', async (req, res) => {
     res.status(500).send('Error sending verification code');
   }
 });
+
 
 app.post('/verify-code', async (req, res) => {
   const { companyEmail, verificationCode } = req.body;
@@ -898,6 +927,8 @@ app.post('/upload/:userId', upload.none(), async (req, res) => {
     res.status(500).json({ message: '서버 오류가 발생했습니다.', error });
   }
 });
+
+
 
 // 페이지네이션과 검색을 지원하는 API
 app.get('/api/search-text-data', async (req, res) => {
