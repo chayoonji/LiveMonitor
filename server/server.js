@@ -175,26 +175,39 @@ app.post('/register', passport.authenticate('local-signup'), (req, res) => {
   res.status(201).send('User registered');
 });
 
-// 로그인 라우트 
+
+// 로그인 라우트
 app.post('/login', async (req, res) => {
-  const { userId } = req.body;
+  const { userId, password } = req.body;
 
   try {
-    // Check if the user exists
+    // 요청 본문 로그 추가
+    console.log('요청 본문:', req.body);
+
+    // 데이터베이스에서 해당 사용자를 찾음
     const user = await db.collection('Member').findOne({ userId });
 
     if (!user) {
       return res.status(401).send('Invalid credentials');
     }
 
-    // Determine if the user is an admin
+    // 비밀번호 비교 (bcrypt.compare 사용)
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).send('Invalid credentials');
+    }
+
+    // 사용자 타입에 따라 관리자 여부 확인
     const isAdmin = user.type === 'admin';
+
+    // 로그인 성공 응답
     res.status(200).json({ success: true, isAdmin });
   } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).send('Server error');
+    console.error('로그인 중 오류 발생:', error);
+    res.status(500).send('서버 오류');
   }
 });
+
 
 
 // SSH 연결 및 명령어 실행
