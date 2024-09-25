@@ -1,3 +1,7 @@
+.body-content {
+  padding-top: 100px; /* 고정된 헤더 아래로 여백 추가 */
+}
+
 body {
   margin: 0;
   padding: 0;

@@ -1,0 +1,137 @@
+/* 슬라이더 컨테이너 */
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+/* 배경 이미지를 흐릿하게 표시 */
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(15px) brightness(0.4); /* 흐릿하고 어두운 배경 */
+}
+
+/* 슬라이더 */
+.slider {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: 60%;
+}
+
+.slide {
+  position: absolute;
+  width: 60%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.7s ease, opacity 0.7s ease;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 현재 슬라이드 */
+.slide.current {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  filter: brightness(1); /* 선명한 카드 */
+  z-index: 3;
+}
+
+/* 이전 슬라이드 */
+.slide.previous {
+  transform: translateX(-150%) rotateY(30deg);
+  opacity: 0.6;
+  filter: brightness(0.5); /* 어두운 상태 */
+  z-index: 2;
+}
+
+/* 다음 슬라이드 */
+.slide.next {
+  transform: translateX(150%) rotateY(-30deg);
+  opacity: 0.6;
+  filter: brightness(0.5); /* 어두운 상태 */
+  z-index: 2;
+}
+
+/* 좌우 네비게이션 버튼 */
+.prev,
+.next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.3);
+  border: none;
+  color: white;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
+
+.prev:hover,
+.next:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+/* 슬라이드 하단 인디케이터 */
+.dots {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dot {
+  height: 15px;
+  width: 15px;
+  margin: 0 5px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.dot.active {
+  background-color: rgba(255, 255, 255, 1);
+}

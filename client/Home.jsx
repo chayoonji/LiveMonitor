@@ -1,121 +1,65 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  BsFillArchiveFill,
-  BsFillGrid3X3GapFill,
-  BsPeopleFill,
-  BsFillBellFill,
-} from "react-icons/bs";
+import React, { useState, useEffect } from 'react';
+import './Home.css'; // CSS 파일
 
-function JuTongGiBanChuiYakJum() {
-  const [data1, setData1] = useState([]);
+const Home = () => {
+  const images = [
+    '/images/0105030100_01.jpg',
+    '/images/importance-of-404-error-page-6.png',
+    '/images/2020043001700_1.jpg',
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
+  };
 
   useEffect(() => {
-    // 데이터를 가져오고 업데이트하는 함수
-    const fetchDataAndUpdate = async () => {
-      try {
-        const response = await axios.get("http://localhost:3002/api/data");
-        const chartData = response.data;
-
-        if (chartData.length >= 1) {
-          const formattedData1 = chartData[0].data.map((item) => ({
-            name: item.name,
-            "주통기반 취약점": item.value,
-          }));
-
-          setData1(formattedData1);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchDataAndUpdate();
-  }, []);
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [currentIndex]);
 
   return (
-    <div
-      className="chart"
-      style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
-    >
-      <div>
-        <div style={{ textAlign: "center" }}>
-          <h4>주통기반 취약점</h4>
-          <ResponsiveContainer width={800} height={300}>
-            <BarChart
-              data={data1}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="주통기반 취약점" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+    <div className="slider-container">
+      <div className="background">
+        <img
+          src={images[currentIndex]}
+          alt={`Background ${currentIndex}`}
+          className="background-image"
+        />
+      </div>
+      <div className="slider">
+        {images.map((image, index) => (
+          <div
+            key={index}
+            className={`slide ${
+              index === currentIndex
+                ? 'current'
+                : index === (currentIndex + 1) % images.length
+                ? 'next'
+                : 'previous'
+            }`}
+          >
+            <img src={image} alt={`Slide ${index}`} className="slide-image" />
+          </div>
+        ))}
+        <button className="prev" onClick={prevSlide}>
+          &#10094;
+        </button>
+        <button className="next" onClick={nextSlide}>
+          &#10095;
+        </button>
       </div>
     </div>
   );
-}
-
-function Home() {
-  return (
-    <main className="main-container">
-      <div className="main-title">
-        <h3>서버 모니터링</h3>
-      </div>
-
-      <div className="main-cards">
-        <div className="card">
-          <div className="card-inner">
-            <h3>가이드</h3>
-            <BsFillArchiveFill className="card_icon" />
-          </div>
-        </div>
-        <div className="card">
-          <div className="card-inner">
-            <h3>모니터링중인 서버</h3>
-            <BsFillGrid3X3GapFill className="card_icon" />
-          </div>
-          <h1>2</h1>
-        </div>
-        <div className="card">
-          <div className="card-inner">
-            <h3>이용자 수</h3>
-            <BsPeopleFill className="card_icon" />
-          </div>
-          <h1>33</h1>
-        </div>
-        <div className="card">
-          <div className="card-inner">
-            <h3>취약점 알림</h3>
-            <BsFillBellFill className="card_icon" />
-          </div>
-          <h1>42</h1>
-        </div>
-      </div>
-
-      {/* 주통기반 취약점 차트 추가 */}
-      <JuTongGiBanChuiYakJum />
-    </main>
-  );
-}
+};
 
 export default Home;
