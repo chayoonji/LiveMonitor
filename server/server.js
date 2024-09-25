@@ -175,14 +175,15 @@ app.post('/register', passport.authenticate('local-signup'), (req, res) => {
   res.status(201).send('User registered');
 });
 
-// 로그인 라우트 
-const bcrypt = require('bcrypt');
 
 // 로그인 라우트
 app.post('/login', async (req, res) => {
   const { userId, password } = req.body;
 
   try {
+    // 요청 본문 로그 추가
+    console.log('요청 본문:', req.body);
+
     // 데이터베이스에서 해당 사용자를 찾음
     const user = await db.collection('Member').findOne({ userId });
 
@@ -202,10 +203,12 @@ app.post('/login', async (req, res) => {
     // 로그인 성공 응답
     res.status(200).json({ success: true, isAdmin });
   } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).send('Server error');
+    console.error('로그인 중 오류 발생:', error);
+    res.status(500).send('서버 오류');
   }
 });
+
+
 
 // SSH 연결 및 명령어 실행
 app.get('/ssh-test', (req, res) => {
