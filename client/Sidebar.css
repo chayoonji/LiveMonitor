@@ -82,3 +82,52 @@
 .sidebar-list-item:hover .icon {
   color: white;
 }
+
+#sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #1a1a1d;
+  padding-top: 10px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 사이드바를 위와 아래로 배치 */
+  transition: all 0.3s;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-grow: 1; /* 위쪽 목록이 사이드바의 공간을 채우도록 설정 */
+}
+
+.sidebar-bottom {
+  padding: 20px;
+  text-align: center;
+}
+
+.main-home-btn {
+  background: none;
+  border: none;
+  color: #9e9ea4;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-home-btn:hover {
+  color: #ffffff;
+}
+
+.main-home-btn .icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}

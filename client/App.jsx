@@ -41,7 +41,7 @@ function App() {
             element={
               <>
                 <Header OpenSidebar={OpenSidebar} />
-                <Home />
+                <Home /> {/* 첫 번째 화면 */}
               </>
             }
           />

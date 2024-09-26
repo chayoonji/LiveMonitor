@@ -13,6 +13,7 @@ import {
   BsMenuButtonWideFill,
   BsFillGearFill,
   BsBoxArrowRight,
+  BsHouseFill, // Add this icon for 'Main Home'
 } from 'react-icons/bs';
 import './Sidebar.css'; // Add this to import the new CSS
 
@@ -41,6 +42,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     navigate('/login');
   };
 
+  const handleMainHomeClick = () => {
+    navigate('/Home');
+  };
+
   return (
     <aside
       id="sidebar"
@@ -62,11 +67,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </Link>
         </li>
 
-        <li className="sidebar-list-item">
-          <Link to="/routine">
-            <BsFillArchiveFill className="icon" /> 프로그램
-          </Link>
-        </li>
         <li className="sidebar-list-item">
           <Link to="/team">
             <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
@@ -91,6 +91,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {isAuthenticated && (
           <>
             <li className="sidebar-list-item">
+              <Link to="/routine">
+                <BsFillArchiveFill className="icon" /> 프로그램
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
               <Link to="/reports1">
                 <BsMenuButtonWideFill className="icon" /> CPU Reports
               </Link>
@@ -114,6 +119,13 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </>
         )}
       </ul>
+
+      {/* Main Home button */}
+      <div className="sidebar-bottom">
+        <button onClick={handleMainHomeClick} className="main-home-btn">
+          <BsHouseFill className="icon" /> 메인홈
+        </button>
+      </div>
     </aside>
   );
 }
