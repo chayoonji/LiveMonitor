@@ -1,0 +1,133 @@
+/* General Sidebar Styles */
+#sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #1a1a1d;
+  padding-top: 10px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: all 0.3s;
+}
+
+.sidebar-responsive {
+  left: -250px;
+}
+
+.sidebar-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background-color: #202226;
+  color: #f8f9fa;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.sidebar-list-item {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  color: #9e9ea4;
+  transition: all 0.3s;
+}
+
+.sidebar-list-item:hover {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.sidebar-list-item a,
+.sidebar-list-item button {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer; /* 버튼을 링크처럼 보이게 함 */
+}
+
+.sidebar-list-item .icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+.sidebar-list-item a:hover,
+.sidebar-list-item button:hover {
+  color: white;
+}
+
+/* Style the icons with a specific color */
+.sidebar-list-item .icon {
+  color: #9e9ea4;
+}
+
+.sidebar-list-item:hover .icon {
+  color: white;
+}
+
+#sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #1a1a1d;
+  padding-top: 10px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 사이드바를 위와 아래로 배치 */
+  transition: all 0.3s;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-grow: 1; /* 위쪽 목록이 사이드바의 공간을 채우도록 설정 */
+}
+
+.sidebar-bottom {
+  padding: 20px;
+  text-align: center;
+}
+
+.main-home-btn {
+  background: none;
+  border: none;
+  color: #9e9ea4;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-home-btn:hover {
+  color: #ffffff;
+}
+
+.main-home-btn .icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
