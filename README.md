@@ -110,7 +110,7 @@ KISA 한국인터넷진흥원에서 매년 올려주는 주요정보통신기반
 # 예시 .env 파일
 PORT=3002
 SESSION_SECRET=your_session_secret
-DB_URL=mongodb+srv://<username>:<password>@cluster0.mongodb.net/Login?retryWrites=true&w=majority&appName=Cluster0
+DB_URL=mongodb+srv://<username>:<password>@cluster0.mongodb.net/접속하려는 DB이름?retryWrites=true&w=majority&appName=Cluster0
 NODE_MAILER_ID=your_email@example.com
 NODE_MAILER_PASSWORD=your_email_password
 VM_HOST=your_vm_host_ip
