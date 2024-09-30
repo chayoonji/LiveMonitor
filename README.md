@@ -1,8 +1,105 @@
-# React + Vite
+![KKHC Logo](path/to/kkhc-logo.png)  <!-- KKHC의 로고 이미지 경로 -->
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<br>
 
-Currently, two official plugins are available:
+# 🛠️ 서버 취약점 진단 웹사이트 (KKHC)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+서버 취약점 진단을 요청하고 결과값을 그래프, 표로 볼 수 있고 PDF 파일을 다운로드 받을 수 있는 웹 사이트를 **React + Vite / Express + Node.js + MongoDB**로 구현하였습니다.
+
+<br>
+
+## 📜 프로젝트 소개
+
+KISA 한국인터넷진흥원에서 매년 올려주는 주요정보통신기반시설 기술적 취약점 분석 평가 상세 가이드를 기준으로 고객 서버의 관리자 ID, PW, IP주소 등을 입력 받아 원격 접속하여 취약점을 진단하는 프로그램입니다. 결과값은 웹에서 표와 그래프, PDF 파일로 제공됩니다.
+
+<br>
+
+## 📅 개발 기간
+
+- **2024.03.04 (월) ~ 2024.10.18 (금)**: 주제 선정, 자료 조사, 프로그램 개발, 발표
+
+<br>
+
+## 👩‍💻 개발자 소개
+
+- **김솔**: 팀장, Linux 취약점 진단 스크립트 개발
+- **홍예진**: Linux 메모리 사용률 진단 스크립트 개발
+- **강채린**: 프론트 & 백엔드 개발자
+- **차윤지**: 프론트 & 백엔드 개발자
+
+<br>
+
+# 💻 개발환경 
+
+<br>
+
+### 🖥️ 가상화 소프트웨어
+
+- **VMware Workstation** (버전 17.x)  
+- **VM 설정**: 동일한 하드웨어 및 소프트웨어 환경  
+
+<br>
+
+### 🛠️ 운영체제
+
+- **Fedora Linux 38 (x86_64)**  
+  - **네트워크 설정**: NAT  
+
+<br>
+
+### 💻 터미널 (Windows에서 원격 접속)
+
+- **SSH 클라이언트**: Xshell  
+
+<br>
+
+# ⚙️ 기술 스택
+
+- **Frontend**: React, Vite  
+- **Backend**: Node.js, Express.js  
+- **Database**: MongoDB (Shell 및 Atlas)  
+
+<br>
+
+# 🧪 테스트 환경
+
+관리자와 고객 모두 동일한 VM 환경을 사용합니다.
+
+### VM 설정
+- 동일한 하드웨어, 소프트웨어 및 진단 도구 설치  
+- **MongoDB Shell 설치**: 
+    > ```bash
+    > sudo dnf install mongodb-shell
+    > ```
+
+<br>
+
+### 웹 실행 방법
+1. **프론트엔드**:
+    - `npm install`
+    - `npm run dev`
+  
+<br>
+
+2. **백엔드**:
+    - `cd server`
+    - `npm install`
+    - `.env` 파일 추가 후 `npm start`
+
+<br>
+
+### 🛠️ 환경 변수 (.env 파일)
+
+다음은 백엔드 서버의 `.env` 파일에 포함되어야 할 주요 환경 변수입니다:
+
+- **MONGODB_URI**: MongoDB 데이터베이스 연결 URI  
+- **PORT**: 서버가 사용할 포트 (예: 5000)
+- **ADMIN_USER_ID**: 관리자 사용자 ID (예: kkhctest)
+- **SECRET_KEY**: JWT와 같은 보안 토큰 생성을 위한 비밀 키
+
+```plaintext
+# 예시 .env 파일
+MONGODB_URI=mongodb://localhost:27017/yourdbname
+PORT=5000
+ADMIN_USER_ID=kkhctest
+SECRET_KEY=your_secret_key
