@@ -5,6 +5,7 @@ import { FaArrowLeft } from 'react-icons/fa';
 import './PostDetail.css';
 import { useAuth } from './Context/AuthContext';
 
+// 비밀번호 모달 컴포넌트
 const PasswordModal = ({ onClose, onConfirm }) => {
   const [password, setPassword] = useState('');
 
@@ -39,13 +40,48 @@ const PasswordModal = ({ onClose, onConfirm }) => {
   );
 };
 
+// 이메일 모달 컴포넌트
+const EmailModal = ({ onClose, onSend }) => {
+  const [email, setEmail] = useState('');
+
+  const handleSend = () => {
+    onSend(email);
+    setEmail(''); // 이메일 초기화
+  };
+
+  return (
+    <div className="main-container">
+      <div className="modal-background">
+        <div className="modal-content">
+          <h2 className="modal-title">이메일 입력</h2>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="modal-input"
+            placeholder="이메일을 입력하세요"
+          />
+          <div className="modal-buttons">
+            <button className="modal-button" onClick={onClose}>
+              취소
+            </button>
+            <button className="modal-button" onClick={handleSend}>
+              전송
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PostDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
+  const { isAdmin } = useAuth();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
@@ -53,6 +89,7 @@ const PostDetail = () => {
   const [files, setFiles] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false); // 이메일 모달 상태 추가
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -168,6 +205,21 @@ const PostDetail = () => {
     }
   };
 
+  const handleSendEmail = async (email) => {
+    try {
+      await axios.post('http://localhost:3002/send-email', {
+        email,
+        postId: id,
+      });
+      alert('이메일이 성공적으로 전송되었습니다.');
+    } catch (error) {
+      console.error('Error sending email:', error.message);
+      alert('이메일 전송 중 오류가 발생했습니다: ' + error.message);
+    } finally {
+      setShowEmailModal(false); // 이메일 전송 후 모달 닫기
+    }
+  };
+
   const handleDiagnosisClick = () => {
     navigate(`/diagnosis`);
   };
@@ -237,6 +289,15 @@ const PostDetail = () => {
                     >
                       진단 결과 보기
                     </button>
+                    {/* isAdmin이 true일 때만 이메일 전송 버튼 표시 */}
+                    {isAdmin && (
+                      <button
+                        className="send-email-button"
+                        onClick={() => setShowEmailModal(true)}
+                      >
+                        이메일 전송
+                      </button>
+                    )}
                   </>
                 )}
               </div>
@@ -245,75 +306,77 @@ const PostDetail = () => {
 
           {showEditForm && (
             <div className="edit-form">
+              <h2>게시물 수정</h2>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="edit-title"
                 placeholder="제목"
-              />
-              <input
-                type="text"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-                className="edit-author"
-                placeholder="작성자"
+                className="edit-title-input"
               />
               <textarea
                 ref={textareaRef}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="edit-content"
                 placeholder="내용"
-                onInput={(e) => {
-                  e.target.style.height = 'auto';
-                  e.target.style.height = `${e.target.scrollHeight}px`;
-                }}
-              />
-              {files.map((_, index) => (
-                <div key={index} className="file-input-container">
-                  <input
-                    type="file"
-                    onChange={(e) => handleFileChange(e, index)}
-                    className="file-input"
-                  />
+                className="edit-content-textarea"
+              ></textarea>
+             {/* 파일 업로드 섹션을 isAdmin이 true일 때만 보여줌 */}
+             {isAdmin && (
+                <div className="file-upload-section">
+                  <h3>파일 업로드</h3>
+                  {files.map((file, index) => (
+                    <div key={index} className="file-input-container">
+                      <input
+                        type="file"
+                        onChange={(e) => handleFileChange(e, index)}
+                      />
+                      <button
+                        className="remove-file-button"
+                        onClick={() => handleRemoveFile(index)}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  ))}
                   <button
-                    type="button"
-                    className="remove-file-button"
-                    onClick={() => handleRemoveFile(index)}
+                    className="add-file-button"
+                    onClick={handleAddFile}
                   >
-                    파일 제거
+                    파일 추가
                   </button>
                 </div>
-              ))}
-              {isAdmin && (
-                <button
-                  type="button"
-                  className="add-file-button"
-                  onClick={handleAddFile}
-                >
-                  파일 추가
-                </button>
               )}
-              <button className="save-button" onClick={handleUpdatePost}>
-                저장
-              </button>
-              <button
-                className="cancel-button"
-                onClick={() => setShowEditForm(false)}
-              >
-                취소
-              </button>
+              <div className="edit-form-buttons">
+                <button className="save-button" onClick={handleUpdatePost}>
+                  저장
+                </button>
+                <button
+                  className="cancel-button"
+                  onClick={() => setShowEditForm(false)}
+                >
+                  취소
+                </button>
+              </div>
             </div>
           )}
-        </div>
 
-        {showPasswordModal && (
-          <PasswordModal
-            onClose={() => setShowPasswordModal(false)}
-            onConfirm={handleDeletePost}
-          />
-        )}
+          {/* 비밀번호 모달 */}
+          {showPasswordModal && (
+            <PasswordModal
+              onClose={() => setShowPasswordModal(false)}
+              onConfirm={handleDeletePost}
+            />
+          )}
+
+          {/* 이메일 모달 */}
+          {showEmailModal && (
+            <EmailModal
+              onClose={() => setShowEmailModal(false)}
+              onSend={handleSendEmail}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

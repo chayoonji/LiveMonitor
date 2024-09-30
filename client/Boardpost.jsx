@@ -179,7 +179,7 @@ const Board = () => {
             />
             <textarea
               placeholder={
-                '서버 IP : \n\n관리자 ID : \n\n관리자 PW : \n\n루트 비밀번호 : '
+                '서버 IP : \n\n관리자 ID : \n\n관리자 PW : \n\n루트 비밀번호 : \n\n진단 완료 알림 받을 이메일 :'
               }
               value={content}
               onChange={(e) => setContent(e.target.value)}
