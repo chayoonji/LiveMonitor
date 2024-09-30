@@ -92,14 +92,30 @@ KISA 한국인터넷진흥원에서 매년 올려주는 주요정보통신기반
 
 다음은 백엔드 서버의 `.env` 파일에 포함되어야 할 주요 환경 변수입니다:
 
-- **MONGODB_URI**: MongoDB 데이터베이스 연결 URI  
-- **PORT**: 서버가 사용할 포트 (예: 5000)
-- **ADMIN_USER_ID**: 관리자 사용자 ID (예: kkhctest)
-- **SECRET_KEY**: JWT와 같은 보안 토큰 생성을 위한 비밀 키
+- **PORT**: 서버가 실행되는 포트 번호 (기본: 3002)
+- **SESSION_SECRET**: 세션 관리를 위한 비밀 
+- **DB_URL**: MongoDB 데이터베이스 연결 URI
+- **NODE_MAILER_ID**: 이메일 발송을 위한 메일 계정 
+- **NODE_MAILER_PASSWORD**: 구글 계정에서 생성한 앱 비밀번호 
+- **VM_HOST**: 원격 접속을 위한 VM 호스트 IP 주소
+- **VM_USERNAME**: VM 사용자명
+- **VM_PRIVATE_KEY_PATH**: SSH 접속을 위한 개인 키 경로
+- **LINUX_PASSWORD**: Linux 원격 접속용 비밀번호
+- **JWT_SECRET**: JWT 토큰 생성을 위한 비밀 키
+- **ADMIN_USER_ID**: 관리자로 설정할 ID (예: test123)
+
+
 
 ```plaintext
 # 예시 .env 파일
-MONGODB_URI=mongodb://localhost:27017/yourdbname
-PORT=5000
-ADMIN_USER_ID=kkhctest
-SECRET_KEY=your_secret_key
+PORT=3002
+SESSION_SECRET=your_session_secret
+DB_URL=mongodb+srv://<username>:<password>@cluster0.mongodb.net/Login?retryWrites=true&w=majority&appName=Cluster0
+NODE_MAILER_ID=your_email@example.com
+NODE_MAILER_PASSWORD=your_email_password
+VM_HOST=your_vm_host_ip
+VM_USERNAME=your_vm_username
+VM_PRIVATE_KEY_PATH=/path/to/your/private_key
+LINUX_PASSWORD=your_linux_password
+JWT_SECRET=your_jwt_secret
+ADMIN_USER_ID=your_admin_user_id
