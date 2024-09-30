@@ -8,7 +8,7 @@
   box-sizing: border-box;
 }
 
-.homeBody {
+.homeBody-content {
   font-family: 'Bitter', serif;
   margin: 0;
   padding: 0;
@@ -29,130 +29,159 @@ a {
   background: #e9c46a;
 }
 
-/* Fixed background image */
-.info-section {
+/* Background image for the info section */
+.info-section-content {
   position: relative;
   height: 100vh;
-  background: url('/images/Lovepik_com-500463181-network-security-technology.jpg')
-    no-repeat center center/cover;
-  background-attachment: fixed; /* Keep the background fixed */
+  background: url(/images/Lovepik_com-500463181-network-security-technology.jpg)
+    no-repeat center center / cover;
+  background-attachment: fixed;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start; /* Align items to the left */
-  text-align: left;
+  align-items: flex-start; /* 여전히 왼쪽 정렬을 유지하되 */
+  text-align: left; /* 텍스트는 왼쪽 정렬 */
   padding: 40px;
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 0;
+  /* 필요시 추가 */
+  width: 100%; /* 요소가 부모 요소의 전체 너비를 차지하게 만듦 */
 }
 
-/* Slide-in animation for content */
-@keyframes slideIn {
+/* Slide-down animation for project name */
+@keyframes slideDown {
   0% {
-    transform: translateX(-100%);
+    transform: translateY(-100%);
     opacity: 0;
   }
   100% {
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
-/* Typing animation for project name */
-.slogan {
+/* Slide-up animation for content */
+@keyframes slideUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Adjust the slogan font size and position */
+/* 프로젝트 이름 슬로건 스타일 */
+.slogan-content {
   position: relative;
   display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 0;
-  height: 1.25em;
-  margin: 1em 0;
-  font-size: 2em;
+  font-size: 5em; /* 글씨 크기 조정 */
+  font-weight: bold;
+  left: 140px;
   color: white;
-  border-right: 0.12em solid black;
-  box-sizing: content-box;
-  animation: typing 1s steps(13, end) forwards, blink 2s step-end infinite;
-  animation-delay: 1s;
-  margin-bottom: 20px;
-  z-index: 1; /* Make sure this stays above the background */
-}
-
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 12ch; /* Adjust based on the number of characters */
-  }
-}
-
-@keyframes blink {
-  from,
-  to {
-    border-color: transparent;
-  }
-  50% {
-    border-color: black;
-  }
-}
-
-/* Animate the main content box (sliding in from the left) */
-.info-content {
-  display: flex;
-  flex-direction: column; /* Stack items vertically */
-  justify-content: space-between; /* Space out the title and button */
-  align-items: center; /* Center items horizontally */
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 20px 40px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
-  height: 350px;
   opacity: 0;
-  transform: translateX(-100%);
-  animation: slideIn 1.5s ease-out forwards;
+  transform: translate(100px, 0); /* 오른쪽으로 이동 */
+  animation: slideDown 1.5s ease-out forwards;
   animation-delay: 0.5s;
-  z-index: 1; /* Make sure this stays above the background */
+  animation-fill-mode: forwards;
+  z-index: 1;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.slogan-content2 {
+  position: relative;
+  display: inline-block;
+  font-size: 4em; /* 글씨 크기 조정 */
+  font-weight: bold;
+  left: 140px;
+  color: white;
+  opacity: 0;
+  transform: translate(100px, 0); /* 오른쪽으로 이동 */
+  animation: slideDown 1.5s ease-out forwards;
+  animation-delay: 0.9s;
+  animation-fill-mode: forwards;
+  z-index: 1;
+  margin: 0;
   margin-bottom: 20px;
 }
 
-.info-section p {
-  font-size: 1.2em;
+/* 아래에서 위로 올라오는 애니메이션 */
+@keyframes slideUp {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 무언가 넣어져야 할 문장 스타일 */
+.sub-slogan-content {
+  position: relative;
+  display: inline-block;
+  font-size: 3em; /* 크기 조정 */
+  font-weight: normal;
+  left: 150px; /* 오른쪽으로 이동 */
+  color: #f0f0f0; /* 연한 회색 대신 흰색에 가까운 색상 */
+  opacity: 0;
+  transform: translateY(100px); /* 초기 위치: 아래 */
+  animation: slideUp 1.5s ease-out forwards; /* 애니메이션 적용 */
+  animation-delay: 1.5s; /* "프로젝트 이름" 애니메이션 이후에 시작 */
+  animation-fill-mode: forwards;
+  z-index: 1;
+  margin: 0;
+  margin-top: 20px;
+}
+
+/* 기본 h2 스타일 덮어쓰기 */
+h2 {
+  margin: 0;
+  padding: 0;
+  font-size: inherit; /* 부모 요소의 font-size를 상속받도록 설정 */
+}
+
+.info-section-content p {
+  font-size: 1.5em;
   margin-bottom: 20px;
   color: #666;
 }
 
-.info-section ul {
-  font-size: 1.2em;
+.info-section-content ul {
+  font-size: 1.5em;
   margin-top: 20px;
   list-style: none;
   padding: 0;
 }
 
-.info-section ul li {
+.info-section-content ul li {
   margin-bottom: 10px;
 }
 
-.info-section ul li::before {
+.info-section-content ul li::before {
   content: '• ';
   color: #333;
 }
 
 /* Styled Move button */
-.move-button {
+.move-button-content {
   background-color: #007bff;
   color: white;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 1em;
+  font-size: 1.2em;
   margin-top: 20px;
-  animation: slide-in 1.5s ease-in-out; /* Same slide-in animation for the button */
-  margin-top: 20px;
+  animation: slideUp 1.5s ease-out forwards;
+  animation-delay: 1.5s;
 }
 
-.move-button:hover {
+.move-button-content:hover {
   background-color: #0056b3;
 }
 

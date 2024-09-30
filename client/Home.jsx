@@ -37,30 +37,12 @@ const Home = () => {
         homeSectionRef={homeSectionRef}
       />
 
-      {/* 정보 섹션 */}
-      <section ref={infoSectionRef} className="info-section">
-        <h2 className="slogan">프로젝트 이름</h2>
-        <div className="info-content">
-          <p>
-            서버 보안 취약점 분석 사이트로서,<br></br>정보 보호를 위한 다양한
-            도구와 리소스를 제공합니다.
-          </p>
-          <p>주요 기능들은 다음에 해당됩니다 :</p>
-          <ul>
-            <li>서버 보안 취약점 스캔</li>
-            <li>취약점 보고서 생성</li>
-            <li>보안 권장 사항 제공</li>
-          </ul>
-          <br></br>
-          {/* 이동하기 버튼 추가 */}
-          <button
-            className="move-button"
-            onClick={() => (window.location.href = '/')}
-          >
-            이동하기
-          </button>
-        </div>
+      <section ref={infoSectionRef} className="info-section-content">
+        <h2 className="slogan-content">프로젝트 이름</h2>
+        <h2 className="slogan-content2">취약점 진단</h2>
+        <p className="sub-slogan-content">무언가 넣어져야 할 문장</p>
       </section>
+
       {/* Guide Section */}
       <section ref={guideSectionRef} className="guide-section">
         <h2>사이트 이용하기</h2>
@@ -101,7 +83,7 @@ const Home = () => {
             className="guide-card"
             onClick={() => openModal('/images/4image.png')}
           >
-            <img src="/images/4image.png" alt="Step 3" />
+            <img src="/images/4image.png" alt="Step 4" />
             <div className="guide-caption">4.결과물 기다리기</div>
           </div>
 
@@ -110,7 +92,7 @@ const Home = () => {
             className="guide-card"
             onClick={() => openModal('/images/6image.png')}
           >
-            <img src="/images/6image.png" alt="Step 3" />
+            <img src="/images/6image.png" alt="Step 5" />
             <div className="guide-caption">5.DB설정하기</div>
           </div>
 
@@ -119,7 +101,7 @@ const Home = () => {
             className="guide-card"
             onClick={() => openModal('/images/7image.png')}
           >
-            <img src="/images/7image.png" alt="Step 3" />
+            <img src="/images/7image.png" alt="Step 6" />
             <div className="guide-caption">6.취약점 확인하기</div>
           </div>
         </div>
@@ -224,6 +206,7 @@ const Home = () => {
           </figure>
         </article>
       </div>
+
       <Footer />
     </div>
   );
