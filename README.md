@@ -109,8 +109,6 @@ KISA 한국인터넷진흥원에서 매년 올려주는 주요정보통신기반
 ```plaintext
 # 예시 .env 파일
 
-<br>
-
 PORT=3002
 SESSION_SECRET=your_session_secret
 DB_URL=mongodb+srv://<username>:<password>@cluster0.mongodb.net/접속하려는 DB이름?retryWrites=true&w=majority&appName=Cluster0
