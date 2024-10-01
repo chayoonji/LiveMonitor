@@ -1,4 +1,4 @@
-![KKHC Logo](/imges/logo.ico)  <!-- KKHC의 로고 이미지 경로 -->
+![KKHC Logo](/images/logo.ico)  <!-- KKHC의 로고 이미지 경로 -->
 
 <br>
 
