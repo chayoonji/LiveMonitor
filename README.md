@@ -104,7 +104,7 @@ KISA 한국인터넷진흥원에서 매년 올려주는 주요정보통신기반
 - **JWT_SECRET**: JWT 토큰 생성을 위한 비밀 키
 - **ADMIN_USER_ID**: 관리자로 설정할 ID (예: test123)
 
-
+<br>
 
 ```plaintext
 # 예시 .env 파일
