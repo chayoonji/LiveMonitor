@@ -70,7 +70,10 @@ KISA 한국인터넷진흥원에서 매년 올려주는 주요정보통신기반
 
 <br>
   
-- **MongoDB Shell 설치**: 
+- **MongoDB Shell 설치**:
+
+<br>
+  
     > ```bash
     > sudo dnf install mongodb-shell
     > ```
