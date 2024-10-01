@@ -53,7 +53,7 @@ KISA 한국인터넷진흥원에서 매년 올려주는 주요정보통신기반
 ### 💻 터미널 (Windows에서 원격 접속)
 
 - **SSH 클라이언트**: Xshell
-- [Xshell 다운로드](https://www.netsarang.com/ko/xshell-download/)
+- [Xshell 다운로드](https://www.netsarang.com/ko/xshell/)
 
 <br>
 
