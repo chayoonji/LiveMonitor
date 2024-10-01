@@ -1,10 +1,10 @@
-![KKHC Logo](/images/logo.ico)  <!-- KKHC의 로고 이미지 경로 -->
+<h1>
+    <img src="path/to/your/logo.png" alt="KKHC Logo" width="30" style="vertical-align: middle;" /> 
+    서버 취약점 진단 웹사이트 (KKHC)
+</h1>
 
-<br>
+서버 취약점 진단을 요청하고 결과값을 그래프, 표로 볼 수 있고 PDF 파일을 다운로드 받을 수 있는 웹 사이트를 React + Vite / Express + Node.js + MongoDB로 구현하였습니다.
 
-# 🛠️ 서버 취약점 진단 웹사이트 (KKHC)
-
-서버 취약점 진단을 요청하고 결과값을 그래프, 표로 볼 수 있고 PDF 파일을 다운로드 받을 수 있는 웹 사이트를 **React + Vite / Express + Node.js + MongoDB**로 구현하였습니다.
 
 <br>
 
