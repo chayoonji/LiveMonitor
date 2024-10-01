@@ -1,5 +1,5 @@
 <h1>
-    <img src="images/logo.ico" alt="KKHC Logo" width="100" style="vertical-align: baseline; margin-top: 10px;" /> 
+    <img src="images/logo.ico" alt="KKHC Logo" width="70" style="vertical-align: baseline; margin-top: 10px;" /> 
     서버 취약점 진단 웹사이트 (KKHC)
 </h1>
 
