@@ -1,9 +1,10 @@
 <h1>
-    <img src="images/logo.ico" alt="KKHC Logo" width="100" style="vertical-align: baseline;" /> 
+    <img src="images/logo.ico" alt="KKHC Logo" width="100" style="vertical-align: baseline; margin-top: 10px;" /> 
     서버 취약점 진단 웹사이트 (KKHC)
 </h1>
 
 서버 취약점 진단을 요청하고 결과값을 그래프, 표로 볼 수 있고 PDF 파일을 다운로드 받을 수 있는 웹 사이트를 React + Vite / Express + Node.js + MongoDB로 구현하였습니다.
+
 
 
 <br>
