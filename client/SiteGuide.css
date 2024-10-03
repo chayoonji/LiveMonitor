@@ -1,0 +1,139 @@
+.site-guide-container {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+}
+
+/* Centered content container */
+.site-guide-content {
+  flex: 1; /* Take up available space */
+  margin-top: 140px; /* Increase margin between header and content */
+  max-width: 1400px; /* Increase the width of the content container */
+  margin-left: auto;
+  margin-right: auto;
+  color: #333;
+}
+
+/* Guide Section Title */
+.site-guide-section-title {
+  font-size: 28px; /* Increase the font size for section titles */
+  color: #222;
+  margin-bottom: 30px; /* Increase the space below the title */
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Gray box to enclose each section (full width) */
+.site-guide-box-wrapper {
+  background-color: #f5f7fa; /* Light gray background */
+  width: 100vw; /* Make the box stretch across the entire screen width */
+  margin-left: calc(
+    -50vw + 50%
+  ); /* Center the gray box while making it full width */
+  margin-bottom: 50px; /* Add space below each section */
+}
+
+.site-guide-box {
+  padding: 40px; /* Increase padding inside the gray box */
+  max-width: 1400px; /* Limit content width inside the box */
+  margin: 0 auto; /* Center content inside the box */
+  border-radius: 12px; /* Slightly rounder corners for content inside the box */
+}
+
+/* Increase spacing between sections */
+.site-guide-content .section-spacing {
+  margin-top: 80px; /* Add vertical space between the two sections */
+}
+
+/* Grid for the images and text (text will be outside the image) */
+.site-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three larger images per row */
+  gap: 30px; /* Increase space between images */
+  margin-bottom: 50px; /* Increase space below the grid */
+}
+
+/* Image styles with rounded corners and black border */
+.site-guide-image {
+  width: 100%; /* Full width for the images */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 20px; /* More rounded corners */
+  border: 3px solid black; /* Thicker black border */
+  display: block;
+  margin-bottom: 20px; /* Space between the image and the text */
+}
+
+/* Style for the text below the image */
+.site-guide-text {
+  font-size: 18px; /* Increase font size */
+  color: #333;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.site-guide-text h3 {
+  font-size: 22px; /* Larger titles */
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.site-guide-text p {
+  font-size: 16px; /* Larger description text */
+  color: #666;
+  line-height: 1.8; /* Increase line height for better readability */
+}
+
+/* Boxed content around the IP and password details */
+.boxed-content {
+  border: 2px solid #333; /* Black border */
+  padding: 20px; /* Padding inside the box */
+  border-radius: 12px; /* Rounded corners */
+  background-color: #f9f9f9; /* Light background for contrast */
+  max-width: 500px; /* Limit the width of the box */
+  margin-top: 30px;
+  margin-left: -5px;
+  margin-bottom: 10px; /* Space below the box */
+  font-size: 18px; /* Increase the text size */
+}
+
+/* Style for the instruction section */
+.instruction-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 50px 0;
+  margin-bottom: 50px; /* Space below the section */
+}
+
+/* Style for the instruction text on the left */
+.instruction-content {
+  flex: 1;
+  max-width: 600px;
+  padding-right: 40px; /* Space between text and image */
+}
+
+.instruction-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.instruction-content p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* Style for the image on the right */
+.instruction-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.instruction-image img {
+  max-width: 100%;
+  border-radius: 10px; /* Rounded corners for the image */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}

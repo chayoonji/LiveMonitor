@@ -61,7 +61,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       </div>
 
       <ul className="sidebar-list">
-        <li className="sidebar-list-item">
+        {/* <li className="sidebar-list-item">
           <Link to="/guide">
             <BsGrid1X2Fill className="icon" /> 가이드
           </Link>
@@ -71,7 +71,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           <Link to="/team">
             <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
           </Link>
-        </li>
+        </li> */}
 
         {!isAuthenticated && (
           <>
