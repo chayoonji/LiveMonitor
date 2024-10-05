@@ -37,13 +37,14 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/team" element={<Team />} />
           <Route
             path="/home"
             element={
               <>
                 <Header OpenSidebar={OpenSidebar} />
-                <Home /> {/* 첫 번째 화면 */}
+                <Home />
               </>
             }
           />
