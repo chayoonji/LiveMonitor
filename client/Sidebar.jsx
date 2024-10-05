@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -14,13 +13,19 @@ import {
   BsMenuButtonWideFill,
   BsFillGearFill,
   BsBoxArrowRight,
+  BsHouseFill, // Add this icon for 'Main Home'
 } from 'react-icons/bs';
+import './Sidebar.css'; // Add this to import the new CSS
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
   const authContext = useAuth();
-  const isAuthenticated = (authContext && authContext.isAuthenticated) ? authContext.isAuthenticated : false;
-  const logout = (authContext && authContext.logout) ? authContext.logout : () => {};
+  const isAuthenticated =
+    authContext && authContext.isAuthenticated
+      ? authContext.isAuthenticated
+      : false;
+  const logout =
+    authContext && authContext.logout ? authContext.logout : () => {};
 
   const handleReportsClick = (e) => {
     e.preventDefault();
@@ -37,6 +42,10 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     navigate('/login');
   };
 
+  const handleMainHomeClick = () => {
+    navigate('/Home');
+  };
+
   return (
     <aside
       id="sidebar"
@@ -45,28 +54,24 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
       <div className="sidebar-title">
         <div className="sidebar-brand">
           <Link to="/" style={{ textDecoration: 'none', color: '#9e9ea4' }}>
-            <BsCart3 className="icon_header" /> 강김홍차
+            {' '}
+            강김홍차
           </Link>
         </div>
       </div>
 
       <ul className="sidebar-list">
-        <li className="sidebar-list-item">
+        {/* <li className="sidebar-list-item">
           <Link to="/guide">
             <BsGrid1X2Fill className="icon" /> 가이드
           </Link>
         </li>
 
         <li className="sidebar-list-item">
-          <Link to="/routine">
-            <BsFillArchiveFill className="icon" /> 프로그램
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
           <Link to="/team">
             <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
           </Link>
-        </li>
+        </li> */}
 
         {!isAuthenticated && (
           <>
@@ -86,6 +91,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         {isAuthenticated && (
           <>
             <li className="sidebar-list-item">
+              <Link to="/routine">
+                <BsFillArchiveFill className="icon" /> 프로그램
+              </Link>
+            </li>
+            <li className="sidebar-list-item">
               <Link to="/reports1">
                 <BsMenuButtonWideFill className="icon" /> CPU Reports
               </Link>
@@ -102,21 +112,20 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               </Link>
             </li>
             <li className="sidebar-list-item">
-              <button
-                onClick={handleLogoutClick}
-                style={{
-                  border: 'none',
-                  background: 'none',
-                  padding: 0,
-                  margin: 0,
-                }}
-              >
+              <button onClick={handleLogoutClick} className="icon">
                 <BsBoxArrowRight className="icon" /> 로그아웃
               </button>
             </li>
           </>
         )}
       </ul>
+
+      {/* Main Home button */}
+      <div className="sidebar-bottom">
+        <button onClick={handleMainHomeClick} className="main-home-btn">
+          <BsHouseFill className="icon" /> 메인홈
+        </button>
+      </div>
     </aside>
   );
 }

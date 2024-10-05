@@ -67,7 +67,9 @@ function Reports2() {
             name: item.hour.toString(),
             '총 스왑 메모리': parseNumber(item['총 스왑 메모리']),
             '사용 중인 스왑 메모리': parseNumber(item['사용 중인 스왑 메모리']),
-            '사용 가능한 스왑 메모리': parseNumber(item['사용 가능한 스왑 메모리']),
+            '사용 가능한 스왑 메모리': parseNumber(
+              item['사용 가능한 스왑 메모리']
+            ),
           }));
 
           setSMemory(formattedData);
@@ -88,139 +90,143 @@ function Reports2() {
   }, []);
 
   return (
-    <div
-      className="charts"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        height: '90vh',
-        paddingTop: '20px',
-      }}
-    >
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', width: '70%' }}>
-          <h4 style={{ marginBottom: '10px' }}>가상 메모리 사용 정보</h4>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart
-              data={
-                Vmemory.length > 0
-                  ? Vmemory
-                  : [
-                      {
-                        name: '',
-                        '총 메모리': 0,
-                        '사용 중인 메모리': 0,
-                        '사용 가능한 메모리': 0,
-                        '메모리 사용률': 0,
-                      },
-                    ]
-              }
-              margin={{
-                top: 10,
-                right: 30,
-                left: 0,
-                bottom: 10,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="총 메모리"
-                stroke="#ff7300"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="사용 중인 메모리"
-                stroke="#82ca9d"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="사용 가능한 메모리"
-                stroke="#8884d8"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="메모리 사용률"
-                stroke="#0088FE"
-                dot={false}
-                connectNulls={true}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
+    <div className="main-container">
       <div
+        className="charts"
         style={{
-          width: '100%',
           display: 'flex',
-          justifyContent: 'center',
-          marginTop: '10px',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          height: '90vh',
+          paddingTop: '20px',
         }}
       >
-        <div style={{ textAlign: 'center', width: '70%' }}>
-          <h4 style={{ marginBottom: '10px' }}>스왑 메모리 사용 정보</h4>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart
-              data={
-                Smemory.length > 0
-                  ? Smemory
-                  : [
-                      {
-                        name: '',
-                        '총 스왑 메모리': 0,
-                        '사용 중인 스왑 메모리': 0,
-                        '사용 가능한 스왑 메모리': 0,
-                      },
-                    ]
-              }
-              margin={{
-                top: 10,
-                right: 30,
-                left: 0,
-                bottom: 10,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="총 스왑 메모리"
-                stroke="#8884d8"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="사용 중인 스왑 메모리"
-                stroke="#82ca9d"
-                dot={false}
-                connectNulls={true}
-              />
-              <Line
-                type="monotone"
-                dataKey="사용 가능한 스왑 메모리"
-                stroke="#ff7300"
-                dot={false}
-                connectNulls={true}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <div
+          style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+        >
+          <div style={{ textAlign: 'center', width: '70%' }}>
+            <h4 style={{ marginBottom: '10px' }}>가상 메모리 사용 정보</h4>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart
+                data={
+                  Vmemory.length > 0
+                    ? Vmemory
+                    : [
+                        {
+                          name: '',
+                          '총 메모리': 0,
+                          '사용 중인 메모리': 0,
+                          '사용 가능한 메모리': 0,
+                          '메모리 사용률': 0,
+                        },
+                      ]
+                }
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 0,
+                  bottom: 10,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="총 메모리"
+                  stroke="#ff7300"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="사용 중인 메모리"
+                  stroke="#82ca9d"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="사용 가능한 메모리"
+                  stroke="#8884d8"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="메모리 사용률"
+                  stroke="#0088FE"
+                  dot={false}
+                  connectNulls={true}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '10px',
+          }}
+        >
+          <div style={{ textAlign: 'center', width: '70%' }}>
+            <h4 style={{ marginBottom: '10px' }}>스왑 메모리 사용 정보</h4>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart
+                data={
+                  Smemory.length > 0
+                    ? Smemory
+                    : [
+                        {
+                          name: '',
+                          '총 스왑 메모리': 0,
+                          '사용 중인 스왑 메모리': 0,
+                          '사용 가능한 스왑 메모리': 0,
+                        },
+                      ]
+                }
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 0,
+                  bottom: 10,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="총 스왑 메모리"
+                  stroke="#8884d8"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="사용 중인 스왑 메모리"
+                  stroke="#82ca9d"
+                  dot={false}
+                  connectNulls={true}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="사용 가능한 스왑 메모리"
+                  stroke="#ff7300"
+                  dot={false}
+                  connectNulls={true}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>

@@ -44,13 +44,11 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const login = async (newUserId, newPassword) => { // 비밀번호를 매개변수로 추가
+  const login = async (newUserId) => {
     try {
       const response = await axios.post('http://localhost:3002/login', {
         userId: newUserId,
-        password: newPassword // 비밀번호 포함
       });
-
       if (response.data.success) {
         setIsAuthenticated(true);
         Cookies.set('isAuthenticated', 'true', { expires: 1 });
@@ -97,7 +95,17 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isAdmin, loading, login, logout, userId, setUserId, setPassword }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isAdmin,
+        loading,
+        login,
+        logout,
+        userId,
+        setUserId,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

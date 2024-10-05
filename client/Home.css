@@ -1,0 +1,641 @@
+:root {
+  --height: 80vh;
+  --half-height: calc(var(--height) / 2);
+  --transition: all 1s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.homeBody {
+  background-color: #fff;
+}
+
+.homeBody-content {
+  font-family: 'Bitter', serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
+}
+
+body {
+  overflow-x: hidden; /* Prevents horizontal overflow */
+}
+
+a {
+  color: inherit;
+}
+
+.notification {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  font-size: 0.85em;
+  background: #e9c46a;
+}
+
+/* Background image for the info section */
+.info-section-content {
+  position: relative;
+  height: 100vh;
+  background: url(/images/Lovepik_com-500463181-network-security-technology.jpg)
+    no-repeat center center / cover;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; /* 여전히 왼쪽 정렬을 유지하되 */
+  text-align: left; /* 텍스트는 왼쪽 정렬 */
+  padding: 40px;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 0;
+  /* 필요시 추가 */
+  width: 100%; /* 요소가 부모 요소의 전체 너비를 차지하게 만듦 */
+}
+
+/* Slide-down animation for project name */
+@keyframes slideDown {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Slide-up animation for content */
+@keyframes slideUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Adjust the slogan font size and position */
+/* 프로젝트 이름 슬로건 스타일 */
+.slogan-content {
+  position: relative;
+  display: inline-block;
+  font-size: 5em; /* 글씨 크기 조정 */
+  font-weight: bold;
+  left: 140px;
+  color: white;
+  opacity: 0;
+  transform: translate(100px, 0); /* 오른쪽으로 이동 */
+  animation: slideDown 1.5s ease-out forwards;
+  animation-delay: 0.5s;
+  animation-fill-mode: forwards;
+  z-index: 1;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.slogan-content2 {
+  position: relative;
+  display: inline-block;
+  font-size: 4em; /* 글씨 크기 조정 */
+  font-weight: bold;
+  left: 140px;
+  color: white;
+  opacity: 0;
+  transform: translate(100px, 0); /* 오른쪽으로 이동 */
+  animation: slideDown 1.5s ease-out forwards;
+  animation-delay: 0.9s;
+  animation-fill-mode: forwards;
+  z-index: 1;
+  margin: 0;
+  margin-bottom: 20px;
+}
+
+/* 두 번째 애니메이션의 이름을 slideUpAlt로 변경 */
+@keyframes slideUpAlt {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 두 번째 애니메이션이 적용되는 곳에도 변경 */
+.sub-slogan-content {
+  position: relative;
+  display: inline-block;
+  font-size: 3em;
+  font-weight: normal;
+  left: 150px;
+  color: #f0f0f0;
+  opacity: 0;
+  transform: translateY(100px);
+  animation: slideUpAlt 1.5s ease-out forwards; /* 여기에서 이름 변경 */
+  animation-delay: 1.5s;
+  animation-fill-mode: forwards;
+  z-index: 1;
+  margin: 0;
+  margin-top: 20px;
+}
+
+/* 기본 h2 스타일 덮어쓰기 */
+h2 {
+  margin: 0;
+  padding: 0;
+  font-size: inherit; /* 부모 요소의 font-size를 상속받도록 설정 */
+}
+
+.info-section-content p {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.info-section-content ul {
+  font-size: 1.5em;
+  margin-top: 20px;
+  list-style: none;
+  padding: 0;
+}
+
+.info-section-content ul li {
+  margin-bottom: 10px;
+}
+
+.info-section-content ul li::before {
+  content: '• ';
+  color: #333;
+}
+
+/* Styled Move button */
+.move-button-content {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  margin-top: 20px;
+  animation: slideUp 1.5s ease-out forwards;
+  animation-delay: 1.5s;
+}
+
+.move-button-content:hover {
+  background-color: #0056b3;
+}
+
+/* Keyframes for left-to-right animation */
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ---------------Guide section styling-------------------- */
+
+.home-swiper .swiper-progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #e0e0e0;
+}
+
+.home-swiper .swiper-progress-fill {
+  background-color: #007bff;
+  width: 0%;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.swiper-progress-bar {
+  height: 4px;
+  background-color: #e0e0e0;
+  position: relative;
+  width: 80%;
+  margin-top: 10px;
+  left: 10%;
+}
+
+.swiper-progress-fill {
+  background-color: #007bff;
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.guide-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  background-color: #f0f4f7;
+}
+
+/* Adjust spacing between the elements */
+.guide-section h2 {
+  font-size: 44px;
+  color: #333;
+  margin-bottom: -8px;
+}
+
+.guide-section p {
+  font-size: 36px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Progress Bar 스타일 */
+.swiper-navigation-progress {
+  display: flex;
+  /* justify-content: center; Centers the progress bar */
+  /* align-items: center; */
+  margin-top: 30px;
+  margin-bottom: 10px;
+  width: 100%; /* Ensure the wrapper spans the full width of its container */
+}
+
+/* Progress bar styling */
+.swiper-progress-bar {
+  left: 15px;
+  height: 4px;
+  background-color: #e0e0e0;
+  width: 80%; /* Ensure the bar is 80% of the container width */
+  max-width: 500px; /* Maximum width of the bar */
+  position: relative;
+  display: block; /* Ensure the bar is displayed */
+  margin: 0 auto; /* Center the bar within the wrapper */
+}
+/* The active fill of the progress bar */
+.swiper-progress-fill {
+  background-color: #007bff;
+  height: 100%;
+  width: 0%; /* Dynamically updated width */
+  transition: width 0.3s ease;
+}
+
+/* Navigation buttons */
+.swiper-button-prev,
+.swiper-button-next {
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  cursor: pointer;
+}
+
+/* Guide 카드 스타일 */
+.swiper-slide {
+  width: auto; /* 슬라이드의 크기를 자동으로 설정하여 유연성을 확보 */
+  max-width: 400px; /* 카드가 너무 커지지 않도록 최대 너비를 제한 */
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.guide-grid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.guide-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  cursor: pointer;
+  padding: 15px;
+  width: 100%; /* 카드가 슬라이드의 너비에 맞추도록 설정 */
+  height: 100%; /* 카드가 슬라이드의 높이에 맞추도록 설정 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.guide-card img {
+  width: 100%;
+  height: auto;
+  object-fit: contain; /* 이미지를 비율에 맞춰 슬라이드 안에 표시 */
+  margin-bottom: 15px;
+}
+
+.guide-card .guide-caption {
+  font-size: 16px;
+  color: #333;
+  margin-top: 10px;
+  flex-grow: 1; /* 텍스트가 충분한 공간을 차지하도록 설정 */
+}
+
+.guide-card p {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+/* 카드 호버 효과 */
+.guide-card:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* 반응형 조정 */
+@media (max-width: 900px) {
+  .guide-card {
+    height: 250px; /* 작은 화면에서 카드 높이 축소 */
+  }
+
+  .guide-card img {
+    height: 120px; /* 작은 화면에서 이미지 크기 축소 */
+  }
+}
+
+/* "더 알아보기" 버튼 스타일 */
+.learn-more-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.learn-more-btn:hover {
+  background-color: #0056b3; /* 버튼 호버 시 배경색 변경 */
+}
+
+/* Cards grid */
+.home-grid,
+.home-sub-grid,
+.home-grid .home-card {
+  transition: var(--transition);
+}
+
+.home-grid {
+  max-width: 1200px;
+  margin: auto;
+  margin-bottom: 100px;
+  padding-top: 100px;
+  box-shadow: none;
+}
+
+.home-card {
+  cursor: pointer;
+  figure,
+  img {
+    width: 100%;
+    height: 100%;
+    box-shadow: none;
+    border: none;
+    margin: 10;
+  }
+
+  figure {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  img {
+    object-fit: cover;
+    background: #333;
+    border-radius: 0;
+  }
+
+  figcaption {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    font-size: 1.5em;
+    line-height: 1.3;
+    text-align: center;
+    padding: 10px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+
+    span {
+      display: block;
+      font-size: 0.75em;
+    }
+  }
+}
+
+@media (max-width: 899px) {
+  .home-card {
+    height: var(--half-height);
+  }
+}
+
+@media (min-width: 900px) {
+  .home-grid,
+  .home-sub-grid {
+    display: grid;
+  }
+
+  .home-grid {
+    grid-template-columns: 1fr 1fr auto;
+  }
+
+  .home-sub-grid {
+    grid-template-rows: var(--half-height) var(--half-height);
+  }
+
+  .home-sub-grid-1 {
+    grid-template-columns: 1fr 1fr auto;
+  }
+
+  .home-sub-grid-1 .home-card:last-child {
+    grid-column: 1/-1;
+  }
+
+  .home-grid > .home-card {
+    height: var(--height);
+  }
+}
+
+@media (hover: hover) and (min-width: 900px) {
+  .notification {
+    display: block;
+  }
+
+  .home-grid:has(.home-sub-grid-1 .home-card:first-of-type:hover)
+    .home-sub-grid-1 {
+    grid-template-columns: 1fr 0fr auto;
+  }
+
+  .home-grid:has(.home-sub-grid-1 .home-card:nth-of-type(2):hover)
+    .home-sub-grid-1 {
+    grid-template-columns: 0fr 1fr auto;
+  }
+
+  .home-grid:has(.home-sub-grid-1 .home-card:last-of-type:hover)
+    .home-sub-grid-1 {
+    grid-template-rows: 0 var(--height);
+  }
+
+  .home-grid:has(> .home-card:hover) {
+    grid-template-columns: 0fr 1fr 0fr;
+  }
+
+  .home-grid:has(.home-sub-grid-2 .home-card:first-of-type:hover)
+    .home-sub-grid-2 {
+    grid-template-rows: var(--height) 0;
+  }
+
+  .home-grid:has(.home-sub-grid-2 .home-card:last-of-type:hover)
+    .home-sub-grid-2 {
+    grid-template-rows: 0 var (--height);
+  }
+
+  .home-card {
+    filter: grayscale(1);
+
+    figcaption {
+      opacity: 0;
+    }
+
+    &:hover {
+      filter: grayscale(0);
+
+      figcaption {
+        opacity: 1;
+        transition: opacity 0.5s 0.5s;
+      }
+    }
+  }
+}
+
+/* Renamed modal classes to avoid conflicts */
+.home-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.home-modal-content {
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-modal-content img {
+  width: 100%;
+  height: auto;
+  max-width: 800px;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+.home-close-modal {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  color: white;
+  font-size: 70px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.home-close-modal:hover,
+.home-close-modal:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* "프로그램 사이트" 카드 전용 hover 스타일 */
+.program-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.program-card img {
+  transition: transform 0.5s ease, filter 0.5s ease;
+}
+
+.program-card:hover img {
+  transform: scale(1.1); /* 확대 효과 */
+  filter: brightness(0.5); /* 어두워짐 */
+}
+
+.program-card figcaption {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.program-card:hover figcaption {
+  opacity: 1; /* 글씨가 나타남 */
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.logos {
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 40px;
+}
+
+.logos-slide {
+  display: inline-block;
+  animation: 20s slide infinite linear;
+}
+
+.logos-slide img {
+  height: 100px;
+  margin: 0 40px;
+}

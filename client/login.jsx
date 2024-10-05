@@ -29,27 +29,29 @@ const Login = () => {
   };
 
   return (
-    <div className="login-wrapper">
-      <h2>로그인</h2>
-      <form onSubmit={handleSubmit} id="login-form">
-        <input
-          type="text"
-          name="userId"
-          placeholder="아이디"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <div className="button-container">
-          <input type="submit" value="로그인" />
-        </div>
-      </form>
+    <div className="main-container">
+      <div className="login-wrapper">
+        <h2>로그인</h2>
+        <form onSubmit={handleSubmit} id="login-form">
+          <input
+            type="text"
+            name="userId"
+            placeholder="아이디"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <div className="button-container">
+            <input type="submit" value="로그인" />
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
