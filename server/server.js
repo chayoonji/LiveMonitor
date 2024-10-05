@@ -593,6 +593,35 @@ app.post('/verify-code', async (req, res) => {
     res.status(500).send('Error verifying code');
   }
 });
+
+// 이메일 전송 라우트
+app.post('/send-email', async (req, res) => {
+  const { email, postId } = req.body;
+
+  try {
+    const post = await db
+      .collection('Posts')
+      .findOne({ _id: new ObjectId(postId) });
+
+    if (!post) {
+      return res.status(404).send('Post not found');
+    }
+
+    const mailOptions = {
+      from: process.env.NODE_MAILER_ID,
+      to: email,
+      subject: '진단 완료 알림',
+      text: `게시물 제목: ${post.title} \n\n홈페이지 링크: "http://localhost:5173/guide" \n\n내용 : 진단이 완료되었습니다. 결과를 웹사이트에서 확인해주세요.  `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).send('이메일 전송 성공');
+  } catch (err) {
+    console.error('Error sending email:', err);
+    res.status(500).send('이메일 전송 오류');
+  }
+});
+
 // 정적 파일 제공 설정
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
