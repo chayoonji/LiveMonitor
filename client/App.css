@@ -226,8 +226,6 @@ body {
 
 /* 게시판 */
 .board-container {
-  position: relative;
-  top: 50px;
   padding: 20px;
   width: 100%;
   max-width: 1000px;
@@ -268,7 +266,6 @@ body {
 
 .board-form {
   width: 100%;
-  min-height: 700px; /* 폼의 최소 높이를 늘려서 세로 길이를 넉넉하게 설정 */
   max-width: 1000px;
   margin: 0 auto;
   background-color: #1d2634;
@@ -278,23 +275,22 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 15px; /* 요소 간의 간격을 더 넓게 조정 */
+  gap: 10px; /* 요소들 간의 간격을 일정하게 */
 }
 
 .board-form input,
 .board-form textarea {
   width: 100%;
-  padding: 15px; /* 패딩을 늘려서 더 넉넉한 입력 필드 */
+  padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
   border: 1px solid #9e9ea4;
   background-color: #263043;
   color: #ffffff;
-  font-size: 16px; /* 입력 필드의 글자 크기를 키워 가독성 향상 */
 }
 
 .board-form textarea {
-  height: 400px;
+  height: 150px;
   resize: none;
 }
 
@@ -703,79 +699,4 @@ body {
 
 .button-container > input[type='submit'][value='SignUp'] {
   background-color: #828282;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.pagination button {
-  padding: 10px 20px;
-  margin: 0 10px;
-  background-color: #007bff;
-  border: none;
-  border-radius: 50px;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.pagination button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-.pagination button:not(:disabled):hover {
-  background-color: #0056b3;
-  transform: translateY(-3px);
-}
-
-.pagination span {
-  color: #ffffff;
-  font-size: 18px;
-  margin: 0 10px;
-  font-weight: bold;
-}
-
-.form-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.form-buttons button {
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.form-buttons button[type='submit'] {
-  background-color: #5058b5;
-  color: #fff;
-}
-
-.form-buttons button[type='submit']:hover {
-  background-color: #213176;
-  transform: translateY(-2px);
-}
-
-.form-buttons button[type='button'] {
-  background-color: #5a5959;
-  color: #fff;
-}
-
-.form-buttons button[type='button']:hover {
-  background-color: #5b4144;
-  transform: translateY(-2px);
 }
