@@ -90,7 +90,7 @@ function App() {
                     element={<PrivateRoute element={<Diagnosis />} />}
                   />
                   <Route
-                    path="/solutions"
+                    path="/solutions/:id"
                     element={<PrivateRoute element={<Solutions />} />}
                   />
                 </Routes>
