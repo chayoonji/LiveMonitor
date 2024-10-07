@@ -635,21 +635,67 @@ app.get('/posts', async (req, res) => {
   }
 });
 
-// 게시물 생성 엔드포인트
+/// 게시물 생성
 app.post('/posts', async (req, res) => {
   try {
-    const { title, content, password, author, status } = req.body; // status 추가
+    const { title, content, password, author, status } = req.body;
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
-    await db.collection('Posts').insertOne({
+
+    // 'Login' 데이터베이스의 'Posts' 컬렉션에 게시물 저장
+    const postsCollection = db.collection('Posts');
+    await postsCollection.insertOne({
       title,
       content,
       password: hashedPassword,
       author,
-      status, // status 저장
+      status,
       createdAt: new Date(),
     });
-    res.status(201).send('Post created');
+
+    // 기존 데이터베이스와 동일한 이름으로 데이터베이스 생성
+    const existingDb = client.db(author); // author 이름으로 기존 데이터베이스 참조
+    const userDb = client.db(`${author}Previous`); // author 이름에 'Previous'를 붙임
+    const collections = [
+      'ChartData',
+      'CpuData',
+      'CpuTime',
+      'VMemory',
+      'SMemory',
+      'TextData',
+      'Solutions'
+    ];
+
+    // 각 컬렉션의 데이터를 복사하여 'Previous' 데이터베이스로 이동
+    for (const collectionName of collections) {
+      const sourceCollection = existingDb.collection(collectionName); // 기존 컬렉션에서 데이터 가져오기
+      const previousData = await sourceCollection.find({}).toArray(); // 현재 데이터 가져오기
+
+      // 'Previous' 데이터베이스에 해당 컬렉션 생성
+      const newCollection = userDb.collection(collectionName);
+      
+      // 기존 데이터가 있으면 새로운 컬렉션에 데이터 삽입
+      if (previousData.length > 0) {
+        const dataWithoutId = previousData.map(({ _id, ...rest }) => rest);
+        const insertResult = await newCollection.insertMany(dataWithoutId);
+        console.log(`Inserted ${insertResult.insertedCount} documents into ${collectionName}.`);
+      }
+    }
+
+    // 기존 데이터베이스 초기화
+    for (const collectionName of collections) {
+      const collection = existingDb.collection(collectionName);
+      
+      // 삭제 전 데이터 개수 확인
+      const existingData = await collection.find({}).toArray();
+      console.log(`Before clearing: ${collectionName}, Document count: ${existingData.length}`);
+      
+      const deleteResult = await collection.deleteMany({});
+      console.log(`Cleared collection: ${collectionName}, Deleted count: ${deleteResult.deletedCount}`);
+    }
+
+    res.status(201).send('Post created and data migrated successfully');
   } catch (err) {
+    console.error('Error creating post:', err);
     res.status(500).send('Error creating post');
   }
 });
