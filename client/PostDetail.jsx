@@ -321,8 +321,8 @@ const PostDetail = () => {
                 placeholder="내용"
                 className="edit-content-textarea"
               ></textarea>
-             {/* 파일 업로드 섹션을 isAdmin이 true일 때만 보여줌 */}
-             {isAdmin && (
+              {/* 파일 업로드 섹션을 isAdmin이 true일 때만 보여줌 */}
+              {isAdmin && (
                 <div className="file-upload-section">
                   <h3>파일 업로드</h3>
                   {files.map((file, index) => (
@@ -339,10 +339,7 @@ const PostDetail = () => {
                       </button>
                     </div>
                   ))}
-                  <button
-                    className="add-file-button"
-                    onClick={handleAddFile}
-                  >
+                  <button className="add-file-button" onClick={handleAddFile}>
                     파일 추가
                   </button>
                 </div>

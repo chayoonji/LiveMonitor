@@ -1,0 +1,93 @@
+.how-about-section {
+  padding: 160px 20px;
+  background-color: #ffffff;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+
+.how-about-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap; /* 요소들이 자동으로 줄바꿈 되도록 설정 */
+  align-items: flex-start;
+}
+
+/* 왼쪽 텍스트 상자 */
+.text-box {
+  margin-left: -30px;
+  max-width: 450px;
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+.text-box h3 {
+  font-size: 3.5rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.text-box p {
+  font-size: 1.7rem;
+  color: #666;
+}
+
+/* 이미지 컨테이너 */
+.image-container {
+  top: -20px;
+  background-color: #f8fbff;
+  position: relative;
+  max-width: 500px;
+  margin-bottom: 30px; /* 아래에 여백을 추가하여 겹치지 않도록 함 */
+}
+
+.feature-image {
+  width: 500px;
+  height: auto;
+  display: block;
+}
+
+/* 이미지 위 텍스트 박스 */
+.image-caption {
+  max-width: 250px;
+  position: relative;
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: -60px; /* 이미지 위로 겹쳐지도록 조정 */
+}
+
+.image-caption h4 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.image-caption p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* 왼쪽 하단 이미지 추가 스타일링 */
+.image-container.left-bottom {
+  top: -220px;
+  background-color: #ffffff;
+  margin-left: 0; /* 왼쪽 하단에 배치 */
+  margin-bottom: 50px; /* 추가적인 여백을 줘서 다른 섹션과 겹치지 않도록 함 */
+}
+
+.image-container.left-bottom .feature-image {
+  width: 500px;
+}
+
+/* 오른쪽 하단 이미지 추가 스타일링 */
+.image-container.right-bottom {
+  top: 140px;
+  background-color: #fff9fd;
+  margin-left: 0; /* 왼쪽 하단에 배치 */
+  margin-bottom: 50px; /* 추가적인 여백을 줘서 다른 섹션과 겹치지 않도록 함 */
+}
+
+.image-container.right-bottom .feature-image {
+  width: 500px;
+}

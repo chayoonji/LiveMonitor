@@ -15,11 +15,13 @@
 }
 
 .header-left {
+  margin-left: 200px;
   display: flex;
   align-items: center;
 }
 
 .header-center {
+  margin-left: -800px;
   display: flex;
   justify-content: center;
   gap: 30px; /* 버튼들 간의 간격 */

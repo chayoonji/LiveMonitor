@@ -6,12 +6,12 @@ import {
   Navigate,
 } from 'react-router-dom';
 import './App.css';
+import Team from './team';
 import Header from './Header';
 import Home from './Home';
 import Sidebar from './Sidebar';
 import { AuthProvider } from './Context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
-import Team from './team';
 import Guide from './guide';
 import LoginComponent from './LoginComponent';
 import Register from './Register';
@@ -24,6 +24,7 @@ import Routine from './routine';
 import Solutions from './SolutionPage';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import SiteGuide from './SiteGuide';
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = React.useState(false);
@@ -36,15 +37,20 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/team" element={<Team />} />
           <Route
             path="/home"
             element={
               <>
                 <Header OpenSidebar={OpenSidebar} />
-                <Home /> {/* 첫 번째 화면 */}
+                <Home />
               </>
             }
           />
+
+          {/* Add the SiteGuide route */}
+          <Route path="/SiteGuide" element={<SiteGuide />} />
 
           {/* 나머지 경로는 사이드바만 보이고 헤더는 없음 */}
           <Route
@@ -56,10 +62,11 @@ function App() {
                   OpenSidebar={OpenSidebar}
                 />
                 <Routes>
+                  {/* Other routes */}
                   <Route path="/guide" element={<Guide />} />
                   <Route path="/routine" element={<Routine />} />
                   <Route path="/login" element={<LoginComponent />} />
-                  <Route path="/team" element={<Team />} />
+
                   <Route path="/" element={<Navigate to="/guide" />} />
                   <Route path="/register" element={<Register />} />
                   <Route
@@ -83,7 +90,7 @@ function App() {
                     element={<PrivateRoute element={<Diagnosis />} />}
                   />
                   <Route
-                      path="/solutions/:id"
+                    path="/solutions"
                     element={<PrivateRoute element={<Solutions />} />}
                   />
                 </Routes>
