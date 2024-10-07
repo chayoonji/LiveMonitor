@@ -1,4 +1,3 @@
-// AuthContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -14,6 +13,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     let isMounted = true;
+    let logoutTimer; // 로그아웃 타이머
 
     const initializeAuth = async () => {
       const authCookie = Cookies.get('isAuthenticated');
@@ -26,6 +26,13 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated(true);
             setIsAdmin(response.data.isAdmin);
             setUserId(userIdCookie);
+            // 자동 로그아웃 타이머 설정 (1분 = 60000ms)
+            logoutTimer = setTimeout(() => {
+              // 관리자가 아닐 때만 로그아웃
+              if (!response.data.isAdmin) {
+                logout();
+              }
+            }, 300000); // 5분
           }
         } catch (error) {
           console.error('관리자인지 확인하는데 실패했습니다:', error);
@@ -41,6 +48,7 @@ export const AuthProvider = ({ children }) => {
 
     return () => {
       isMounted = false;
+      clearTimeout(logoutTimer); // 컴포넌트 언마운트 시 타이머 정리
     };
   }, []);
 
@@ -58,6 +66,13 @@ export const AuthProvider = ({ children }) => {
         Cookies.set('userId', newUserId, { expires: 1 });
         setUserId(newUserId);
         setIsAdmin(response.data.isAdmin);
+        // 자동 로그아웃 타이머 설정 (1분 = 60000ms)
+        setTimeout(() => {
+          // 관리자가 아닐 때만 로그아웃
+          if (!response.data.isAdmin) {
+            logout();
+          }
+        }, 60000); // 1분
       } else {
         setIsAuthenticated(false);
         setIsAdmin(false);
@@ -77,25 +92,10 @@ export const AuthProvider = ({ children }) => {
       Cookies.remove('isAuthenticated');
       Cookies.remove('userId');
       setUserId('');
-      navigate('/login');
     } catch (error) {
       console.error('로그아웃중에 오류가 발생했습니다:', error);
     }
   };
-
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      const isAuthenticatedFromCookie = Cookies.get('isAuthenticated');
-      if (!isAuthenticatedFromCookie) {
-        await axios.post('http://localhost:3002/reset-database-values');
-        logout();
-      } else {
-        setUserId('');
-      }
-    };
-
-    checkAuthStatus();
-  }, []);
 
   return (
     <AuthContext.Provider
