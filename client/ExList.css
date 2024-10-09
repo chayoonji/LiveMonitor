@@ -1,0 +1,220 @@
+/* 전체 페이지 배경 및 레이아웃 설정 */
+.exlist-wrapper {
+  background-color: #ffffff; /* 배경색이 흰색으로 설정되어 이미지와 겹치지 않는지 확인 필요 */
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  height: auto; /* 100vh 대신 auto로 변경 */
+  min-height: 100vh; /* 화면 최소 높이는 100vh로 설정 */
+  position: relative; /* 자식 요소들이 절대 위치를 사용할 수 있도록 relative 설정 */
+}
+
+/* 헤더를 상단에 고정 */
+.exlist-header {
+  position: absolute;
+  top: 120px;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background-color: white;
+  text-align: left;
+  z-index: 10;
+}
+
+.exlist-header .title-separator {
+  border: none;
+  border-top: 1px solid #333;
+  width: 70%; /* 구분선의 가로 길이를 50%로 줄임 */
+  margin: 0 auto; /* 가운데 정렬 */
+  margin-top: 10px; /* 구분선과 텍스트 간의 간격 */
+  margin-bottom: 3px;
+}
+
+.exlist-container {
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: flex-start; /* 목록과 이미지의 상단 정렬 */
+  width: 90%;
+  max-width: 1200px; /* 최대 가로 길이 제한 */
+  margin: 0 auto; /* 가로 중앙 정렬을 위한 auto margin */
+  padding: 20px;
+  position: relative;
+  z-index: 1; /* 기본 콘텐츠 위에 배치 */
+}
+
+/* 왼쪽 목록 부분 스타일 */
+.exlist-left {
+  width: 25%; /* 목록의 가로 길이를 줄임 */
+  height: 100%; /* 전체 높이에 맞춤 */
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 세로로 공간을 나누어 줌 */
+}
+
+.exlist-left h2 {
+  font-size: 30px;
+  margin-bottom: 10px;
+  text-align: center; /* 제목 중앙 정렬 */
+}
+
+.subtitle {
+  font-size: 28px; /* 더 큰 폰트 크기 */
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.title-separator {
+  border: none;
+  border-top: 1px solid #333; /* 검은색 줄 */
+  margin-bottom: 3px;
+}
+
+.exlist-left {
+  margin-top: 85px;
+}
+
+.exlist-left ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center; /* 목록 중앙 정렬 */
+}
+
+.exlist-left ul li {
+  cursor: pointer;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 19px;
+  color: #333;
+}
+
+.exlist-left ul li.active {
+  font-weight: bold;
+  color: #007aff;
+}
+
+.exlist-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.exlist-navigation button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.exlist-navigation span {
+  font-size: 16px;
+}
+
+/* 오른쪽 이미지 및 설명 박스 */
+.exlist-right {
+  display: flex;
+  flex-direction: row; /* 가로로 나란히 배치 */
+  align-items: center; /* 세로축 가운데 정렬 */
+  justify-content: flex-start; /* 가로축에서 왼쪽 정렬 */
+  width: 65%; /* 오른쪽 부분 가로폭 */
+  height: 100%; /* 전체 높이에 맞춤 */
+  gap: 20px; /* 이미지와 본문 간격 */
+}
+
+/* 이미지 스타일 */
+.exlist-right img {
+  margin-top: 50px;
+  margin-left: 50px;
+  align-items: center; /* 세로축 가운데 정렬 */
+  width: 100%; /* 이미지 크기 고정 */
+  height: 100%;
+  height: auto;
+  object-fit: contain; /* 이미지를 컨테이너에 맞추되 왜곡하지 않음 */
+}
+
+/* 설명 박스 스타일 */
+.exlist-description-box {
+  background-color: transparent;
+  padding: 0;
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* 본문 내용을 묶는 클래스 */
+.exlist-mainfont {
+  margin-top: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 세로 가운데 정렬 */
+  align-items: flex-start; /* 본문 요소를 왼쪽 정렬 */
+  width: 50%; /* 가로 길이를 50%로 제한 */
+  max-width: 400px; /* 최대 가로 길이를 400px로 제한 */
+  margin-left: -100px; /* 이미지와 텍스트 사이에 여백 추가 */
+  right: 35px;
+}
+
+.exlist-mainfont h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.exlist-mainfont p {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.exlist-mainfont a {
+  color: #007aff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+/* 미디어 쿼리로 작은 화면에 맞춤 */
+@media (max-width: 768px) {
+  .exlist-right {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .exlist-description-box {
+    width: 100%;
+    padding: 10px;
+  }
+}
+/* 회색 박스 스타일 */
+.gray-image {
+  position: absolute; /* 본문 뒤에 위치하도록 절대 배치 */
+  top: 35px; /* 본문과 겹치는 위치에 배치 */
+  left: 52%; /* 왼쪽에서 30% 떨어진 곳에 배치 */
+  width: 600px; /* 이미지의 너비 */
+  height: auto; /* 이미지 비율을 유지하면서 크기 조정 */
+  opacity: 0.5; /* 반투명 처리 */
+  z-index: 0; /* 본문 내용보다 뒤에 위치 */
+}
+
+/* 텍스트와 이미지를 회색 이미지보다 앞에 오도록 설정 */
+.exlist-mainfont,
+.exlist-right img {
+  position: relative;
+  z-index: 1; /* 회색 이미지보다 앞에 배치 */
+}
+
+/* exlist-container 스타일 */
+.exlist-container {
+  position: relative; /* 절대 위치된 이미지가 부모를 기준으로 배치되도록 설정 */
+  z-index: 1;
+}

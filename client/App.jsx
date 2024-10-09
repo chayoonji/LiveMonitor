@@ -25,6 +25,8 @@ import Solutions from './SolutionPage';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import SiteGuide from './SiteGuide';
+import ExList from './ExList';
+import Information from './Information';
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = React.useState(false);
@@ -39,6 +41,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/ExList" element={<ExList />} />
+          <Route path="/Information" element={<Information />} />
           <Route
             path="/home"
             element={

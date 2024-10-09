@@ -37,9 +37,26 @@ const Team = () => {
   return (
     <div className="team-page">
       <Header />
-      <div className="image-overlay">
-        <img src="/images/꼼수.png" alt="Overlay" className="overlay-image" />
+      <div className="information-hero">
+        <img
+          src="/images/Header1.png"
+          alt="Hero Background"
+          className="information-hero-img"
+        />
+        <h1
+          className="information-title"
+          style={{
+            position: 'absolute',
+            top: '64%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: 'white',
+          }}
+        >
+          Team
+        </h1>
       </div>
+
       <div className="team-content">
         <h1 className="team-title">팀원 소개</h1>
         <div className="team-buttons">

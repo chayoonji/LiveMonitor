@@ -1,8 +1,7 @@
-/* Header.css - 헤더 스타일 정의 */
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-start; /* 가로 정렬은 유지 */
+  align-items: center; /* 세로 정렬 중앙으로 */
   padding: 15px 30px;
   background-color: rgba(255, 255, 255, 0.85); /* 반투명한 배경 */
   position: fixed;
@@ -15,60 +14,52 @@
 }
 
 .header-left {
-  margin-left: 200px;
+  margin-left: 100px;
   display: flex;
   align-items: center;
+  margin-right: 0; /* 로고와 버튼들 사이의 여백 제거 */
 }
 
 .header-center {
-  margin-left: -800px;
   display: flex;
-  justify-content: center;
-  gap: 30px; /* 버튼들 간의 간격 */
+  align-items: center; /* 세로 방향 중앙에 맞춤 */
+  gap: 40px; /* 버튼들 간의 간격 */
+  margin-left: 70px; /* 로고와 버튼들 사이의 작은 여백 */
 }
 
 .header-right {
   display: flex;
-  align-items: center;
+  align-items: center; /* 세로 방향 중앙에 맞춤 */
   gap: 20px; /* 아이콘 간의 간격 */
-}
-
-.menu-icon {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.icon {
-  font-size: 24px;
-  color: #333; /* 아이콘 색상 */
-  cursor: pointer;
+  margin-left: auto; /* 헤더 오른쪽 아이콘을 오른쪽 끝으로 정렬 */
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 30px; /* 로고 글씨 크기 증가 */
   font-weight: bold;
   color: #333; /* 로고 텍스트 색상 */
-  margin-left: 20px;
+  margin-right: 10px; /* 로고와 메뉴 사이의 간격을 줄임 */
 }
 
+.home-button,
 .guide-button,
 .works-button,
-.community-button,
-.info-button {
+.community-button {
   background: none;
   border: none;
   color: #333;
-  font-size: 18px;
+  font-size: 20px; /* 폰트 크기 증가 */
   cursor: pointer;
   font-weight: bold;
+  padding: 0; /* 불필요한 패딩 제거 */
+  line-height: normal; /* 라인 높이를 일반 텍스트와 동일하게 설정 */
 }
 
+.home-button:hover,
 .guide-button:hover,
 .works-button:hover,
-.community-button:hover,
-.info-button:hover {
-  color: #007bff; /* 버튼에 호버 효과 */
+.community-button:hover {
+  color: #007bff; /* 호버 시 색상 변경 */
 }
 
 .header-right .icon:hover {
@@ -113,7 +104,6 @@
 
 .home-button,
 .guide-button,
-.info-button,
 .works-button,
 .community-button {
   background: none;
@@ -122,12 +112,19 @@
   font-size: 18px;
   cursor: pointer;
   font-weight: bold;
+  padding: 0; /* 불필요한 패딩 제거 */
+  line-height: normal; /* 라인 높이를 일반 텍스트와 동일하게 설정 */
 }
 
 .home-button:hover,
 .guide-button:hover,
-.info-button:hover,
 .works-button:hover,
 .community-button:hover {
-  color: #007bff;
+  color: #007bff; /* 호버 시 색상 변경 */
+}
+
+.do-hyeon-regular {
+  font-family: 'Do Hyeon', sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }

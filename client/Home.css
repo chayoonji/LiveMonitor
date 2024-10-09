@@ -639,3 +639,30 @@ h2 {
   height: 100px;
   margin: 0 40px;
 }
+
+/* "바로가기" 버튼 스타일 */
+.check-vulnerability-btn.styled-button {
+  background-color: rgba(99, 99, 134, 0.8); /* 배경 투명도 추가 */
+  color: white;
+  padding: 10px 20px; /* 버튼 크기 축소 */
+  font-size: 1.2em;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  margin-top: 20px;
+  margin-left: 140px;
+  opacity: 0;
+  animation: slideInLeft 1.5s ease-out forwards; /* 왼쪽에서 오른쪽으로 나타나는 애니메이션 */
+  animation-delay: 2s; /* 애니메이션 딜레이 추가 */
+}
+.check-vulnerability-btn.styled-button:hover {
+  background-color: #1f2337;
+  transform: translateY(-3px);
+}
+
+.check-vulnerability-btn.styled-button:active {
+  background-color: #2e3357;
+  transform: translateY(0);
+}

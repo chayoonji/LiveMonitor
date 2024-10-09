@@ -33,11 +33,12 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   };
 
   const handleRegisterClick = (e) => {
-    e.preventDefault();
-    navigate('/register');
+    e.preventDefault(); // 기본 링크 동작 방지
+    navigate('/register'); // 페이지 이동
   };
 
-  const handleLogoutClick = () => {
+  const handleLogoutClick = (e) => {
+    e.preventDefault();
     logout();
     navigate('/login');
   };
@@ -75,44 +76,57 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
 
         {!isAuthenticated && (
           <>
-            <li className="sidebar-list-item">
-              <Link to="/login" onClick={handleReportsClick}>
+            <li className="sidebar-list-item" onClick={handleReportsClick}>
+              <div className="sidebar-link">
                 <BsFillGearFill className="icon" /> 로그인
-              </Link>
+              </div>
             </li>
-            <li className="sidebar-list-item">
-              <Link to="/register" onClick={handleRegisterClick}>
+            <li className="sidebar-list-item" onClick={handleRegisterClick}>
+              <div className="sidebar-link">
                 <BsFillGearFill className="icon" /> 회원가입
-              </Link>
+              </div>
             </li>
           </>
         )}
 
         {isAuthenticated && (
           <>
-            <li className="sidebar-list-item">
-              <Link to="/routine">
+            <li
+              className="sidebar-list-item"
+              onClick={() => navigate('/routine')}
+            >
+              <div className="sidebar-link">
                 <BsFillArchiveFill className="icon" /> 프로그램
-              </Link>
-            </li>
-            <li className="sidebar-list-item">
-              <Link to="/reports1">
-                <BsMenuButtonWideFill className="icon" /> CPU Reports
-              </Link>
+              </div>
             </li>
 
-            <li className="sidebar-list-item">
-              <Link to="/reports2">
+            <li
+              className="sidebar-list-item"
+              onClick={() => navigate('/reports1')}
+            >
+              <div className="sidebar-link">
+                <BsMenuButtonWideFill className="icon" /> CPU Reports
+              </div>
+            </li>
+
+            <li
+              className="sidebar-list-item"
+              onClick={() => navigate('/reports2')}
+            >
+              <div className="sidebar-link">
                 <BsMenuButtonWideFill className="icon" /> Memory Reports
-              </Link>
+              </div>
             </li>
-            <li className="sidebar-list-item">
-              <Link to="/Board">
+            <li
+              className="sidebar-list-item"
+              onClick={() => navigate('/Board')}
+            >
+              <div className="sidebar-link">
                 <BsPeopleFill className="icon" /> 게시판
-              </Link>
+              </div>
             </li>
-            <li className="sidebar-list-item">
-              <button onClick={handleLogoutClick} className="icon">
+            <li className="sidebar-list-item" onClick={handleLogoutClick}>
+              <button className="icon">
                 <BsBoxArrowRight className="icon" /> 로그아웃
               </button>
             </li>

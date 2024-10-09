@@ -6,6 +6,41 @@
   flex-direction: column;
 }
 
+.information-hero {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.information-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.information-hero h1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.information-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
 .image-overlay {
   position: absolute;
   top: 0;
@@ -24,7 +59,7 @@
 .team-content {
   position: relative;
   z-index: 3; /* 이미지보다 위에 표시되도록 설정 */
-  padding: 150px 200px 70px;
+  padding: 50px 200px 70px;
   flex: 1;
 }
 

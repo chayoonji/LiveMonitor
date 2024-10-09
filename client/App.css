@@ -94,7 +94,7 @@ body {
 }
 
 /* Header */
-.header {
+/* .header {
   grid-area: header;
   height: 60px;
   display: flex;
@@ -102,7 +102,7 @@ body {
   justify-content: space-between;
   padding: 0 30px;
   box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
-}
+} */
 
 /* Sidebar */
 #sidebar {
@@ -623,11 +623,11 @@ body {
 }
 
 /* Extra Small <= 576px */
-@media screen and (max-width: 576px) {
+/* @media screen and (max-width: 576px) {
   .header-left {
     display: none;
   }
-}
+} */
 
 /* 로그인 */
 .login-wrapper {
