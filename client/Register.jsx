@@ -10,17 +10,16 @@ const Register = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [idCheckResult, setIdCheckResult] = useState('');
-  const [passwordError, setPasswordError] = useState(''); // 패스워드 에러 메시지 상태 추가
+  const [passwordError, setPasswordError] = useState('');
+  const [idCheckResultStyle, setIdCheckResultStyle] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 패스워드 유효성 검사: 최소 8자, 숫자, 영문, 특수문자 포함
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     if (!passwordRegex.test(password)) {
-      // 에러 메시지 설정
       if (!/(?=.*[a-zA-Z])/.test(password)) {
         setPasswordError('영문자를 포함해야 합니다');
       } else if (!/(?=.*\d)/.test(password)) {
@@ -33,7 +32,7 @@ const Register = () => {
       return;
     }
 
-    setPasswordError(''); // 에러가 없으면 초기화
+    setPasswordError('');
 
     if (!isVerified) {
       alert('회사 이메일 인증부터 먼저 해주세요.');
@@ -103,29 +102,43 @@ const Register = () => {
     }
   };
 
-  const [idCheckResultStyle, setIdCheckResultStyle] = useState({});
+  const inputStyle = {
+    width: '100%', // 100% 너비
+    maxWidth: '400px', // 최대 너비를 400px로 설정
+    marginBottom: '15px',
+    height: '50px', // 높이를 키움
+    padding: '12px', // 패딩을 키움
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+    fontSize: '18px', // 글씨 크기를 키움
+  };
 
-  const inputStyle = { width: '100%', marginBottom: '20px', height: '40px' };
   const buttonStyle = {
     marginLeft: '10px',
-    height: '40px',
-    marginTop: '-10px',
+    height: '50px', // 버튼 높이를 통일
+    padding: '0 20px',
+    borderRadius: '5px',
+    border: 'none',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    cursor: 'pointer',
+    fontSize: '16px', // 버튼 글씨 크기를 키움
+    transition: 'background-color 0.3s ease',
   };
-  const reducedMarginStyle = {
-    width: '100%',
-    marginBottom: '10px',
-    height: '40px',
+
+  const hoverButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: '#0056b3',
   };
-  const borderRadiusStyle = { borderRadius: '5px' };
 
   if (registrationSuccess) {
     window.location.reload();
   }
 
   return (
-    <div className="main-container">
-      <div className="login-wrapper">
-        <h2>회원가입</h2>
+    <div className="main-container" style={{ padding: '20px' }}>
+      <div className="login-wrapper" style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <h2 style={{ textAlign: 'center', fontSize: '24px' }}>회원가입</h2>
         <form onSubmit={handleSubmit} id="login-form">
           <input
             type="text"
@@ -135,64 +148,63 @@ const Register = () => {
             onChange={(e) => setName(e.target.value)}
             style={inputStyle}
           />
-          <input
-            type="text"
-            name="userId"
-            placeholder="아이디"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            style={inputStyle}
-          />
-          <button
-            type="button"
-            onClick={handleCheckDuplicate}
-            style={{ ...buttonStyle, ...borderRadiusStyle }}
-          >
-            아이디 중복 체크
-          </button>
+          {/* 아이디 입력란과 버튼을 동일한 행에 배치 */}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+            <input
+              type="text"
+              name="userId"
+              placeholder="아이디"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              style={inputStyle} // 동일한 입력 스타일 적용
+            />
+            <button
+              type="button"
+              onClick={handleCheckDuplicate}
+              style={buttonStyle}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+            >
+              아이디 중복 체크
+            </button>
+          </div>
           <span style={idCheckResultStyle}>{idCheckResult}</span>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: '10px',
-            }}
-          >
+          {/* 회사 이메일 입력란과 버튼을 동일한 행에 배치 */}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
             <input
               type="text"
               name="companyEmail"
               placeholder="회사 이메일 주소"
               value={companyEmail}
               onChange={(e) => setCompanyEmail(e.target.value)}
-              style={{ ...reducedMarginStyle, ...borderRadiusStyle }}
+              style={inputStyle} // 동일한 입력 스타일 적용
             />
             <button
               type="button"
               onClick={handleSendVerificationCode}
-              style={{ ...buttonStyle, ...borderRadiusStyle }}
+              style={buttonStyle}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
             >
               인증 코드 메일 전송
             </button>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: '10px',
-            }}
-          >
+          {/* 인증 코드 입력란과 버튼을 동일한 행에 배치 */}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
             <input
               type="text"
               name="verificationCode"
               placeholder="인증 코드 입력"
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
-              style={{ ...reducedMarginStyle, ...borderRadiusStyle }}
+              style={inputStyle} // 동일한 입력 스타일 적용
             />
             <button
               type="button"
               onClick={handleVerifyCode}
-              style={{ ...buttonStyle, ...borderRadiusStyle }}
+              style={buttonStyle}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
             >
               입력한 인증 코드 확인
             </button>
@@ -203,12 +215,27 @@ const Register = () => {
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={reducedMarginStyle}
+            style={inputStyle}
           />
-          {/* 패스워드 에러 메시지 표시 */}
-          {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
-          <div className="button-container">
-            <input type="submit" value="회원가입" style={{ height: '40px' }} />
+          {passwordError && <p style={{ color: 'red', fontSize: '16px' }}>{passwordError}</p>}
+          <div className="button-container" style={{ textAlign: 'center' }}>
+            <input
+              type="submit"
+              value="회원가입"
+              style={{
+                height: '50px',
+                borderRadius: '5px',
+                border: 'none',
+                backgroundColor: '#007bff',
+                color: '#fff',
+                cursor: 'pointer',
+                fontSize: '18px', // 글씨 크기를 키움
+                transition: 'background-color 0.3s ease',
+                width: '100%', // 버튼 너비를 100%로 조정
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+            />
           </div>
         </form>
       </div>

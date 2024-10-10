@@ -1106,3 +1106,55 @@ async function clearUserCollections(userId) {
     console.error(`Error clearing collections for user ${userId}:`, err);
   }
 }
+
+app.post('/find-user-id', async (req, res) => {
+  const { name, companyEmail } = req.body; // name 추가
+  const dbA = client.db('Login');
+  
+  try {
+    // name과 companyEmail이 모두 일치하는 사용자를 찾습니다.
+    const user = await dbA.collection('Member').findOne({ name, companyEmail });
+    
+    if (!user) {
+      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+    }
+
+    // 사용자 ID를 반환합니다.
+    res.status(200).json({ success: true, userId: user.userId });
+  } catch (error) {
+    console.error('아이디 찾기 중 오류 발생:', error);
+    res.status(500).send('서버 오류');
+  }
+});
+
+
+
+
+// 비밀번호 재설정 라우트
+app.post('/reset-password', async (req, res) => {
+  const { userId, newPassword } = req.body;
+  const dbA = client.db('Login');
+
+  try {
+    const user = await dbA.collection('Member').findOne({ userId });
+    if (!user) {
+      return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+    }
+
+    // 비밀번호 해시화
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // 비밀번호 업데이트
+    await dbA.collection('Member').updateOne(
+      { userId },
+      { $set: { password: hashedPassword } }
+    );
+
+    // 성공 응답
+    res.status(200).json({ success: true, message: '비밀번호가 성공적으로 재설정되었습니다.' });
+  } catch (error) {
+    console.error('비밀번호 재설정 중 오류 발생:', error);
+    res.status(500).json({ success: false, message: '서버 오류가 발생했습니다.' });
+  }
+});
+
