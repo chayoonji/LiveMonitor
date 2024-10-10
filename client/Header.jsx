@@ -16,6 +16,10 @@ function Header({ infoSectionRef, guideSectionRef, homeSectionRef }) {
     navigate('/SiteGuide'); // This navigates to the SiteGuide page
   };
 
+  const handleKKHCClick = () => {
+    navigate('/Information'); // This navigates to the SiteGuide page
+  };
+
   const handleLoginClick = () => {
     navigate('/guide'); // Navigates to the login page when the icon is clicked
   };
@@ -29,21 +33,35 @@ function Header({ infoSectionRef, guideSectionRef, homeSectionRef }) {
       <div className="header-left">
         <img src="/images/unnamed.png" alt="Logo" className="header-logo" />{' '}
         {/* 로고 이미지를 추가 */}
-        <span className="logo">KKHC</span> {/* 로고 텍스트 */}
+        <span className="logo do-hyeon-regular">KKHC</span> {/* 로고 텍스트 */}
       </div>
       <div className="header-center">
         {/* Home 버튼을 클릭하면 /home 페이지로 이동 */}
-        <button className="home-button" onClick={handleHomeClick}>
+        <button
+          className="home-button do-hyeon-regular"
+          onClick={handleHomeClick}
+        >
           Home
         </button>
+        <button
+          className="guide-button do-hyeon-regular"
+          onClick={handleKKHCClick}
+        >
+          Information
+        </button>
         {/* Guide 버튼을 클릭하면 /SiteGuide로 이동 */}
-        <button className="guide-button" onClick={handleGuideClick}>
+        <button
+          className="guide-button do-hyeon-regular"
+          onClick={handleGuideClick}
+        >
           Guide
         </button>
-        <button className="guide-button" onClick={handleTeamClick}>
+        <button
+          className="guide-button do-hyeon-regular"
+          onClick={handleTeamClick}
+        >
           Team
         </button>
-        {/* Information 버튼은 원하는대로 동작하도록 추가된 코드가 필요할 수 있습니다 */}
       </div>
       <div className="header-right">
         <BsPersonCircle className="icon" onClick={handleLoginClick} />

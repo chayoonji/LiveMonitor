@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './RegisterComponent.css';
 
 const Register = () => {
   const [userId, setUserId] = useState('');
@@ -11,7 +12,6 @@ const Register = () => {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [idCheckResult, setIdCheckResult] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [idCheckResultStyle, setIdCheckResultStyle] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,43 +92,12 @@ const Register = () => {
       );
       if (response.data.exists) {
         setIdCheckResult('이미 사용중인 아이디입니다');
-        setIdCheckResultStyle({ color: 'red' });
       } else {
         setIdCheckResult('사용 가능한 아이디입니다');
-        setIdCheckResultStyle({ color: 'green' });
       }
     } catch (error) {
       alert('아이디 중복 체크에 문제가 있습니다.');
     }
-  };
-
-  const inputStyle = {
-    width: '100%', // 100% 너비
-    maxWidth: '400px', // 최대 너비를 400px로 설정
-    marginBottom: '15px',
-    height: '50px', // 높이를 키움
-    padding: '12px', // 패딩을 키움
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    fontSize: '18px', // 글씨 크기를 키움
-  };
-
-  const buttonStyle = {
-    marginLeft: '10px',
-    height: '50px', // 버튼 높이를 통일
-    padding: '0 20px',
-    borderRadius: '5px',
-    border: 'none',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    cursor: 'pointer',
-    fontSize: '16px', // 버튼 글씨 크기를 키움
-    transition: 'background-color 0.3s ease',
-  };
-
-  const hoverButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#0056b3',
   };
 
   if (registrationSuccess) {
@@ -136,75 +105,66 @@ const Register = () => {
   }
 
   return (
-    <div className="main-container" style={{ padding: '20px' }}>
-      <div className="login-wrapper" style={{ maxWidth: '600px', margin: '0 auto' }}>
-        <h2 style={{ textAlign: 'center', fontSize: '24px' }}>회원가입</h2>
-        <form onSubmit={handleSubmit} id="login-form">
+    <div className="main-container">
+      <div className="register-container">
+        <h2 className="register-title">회원가입</h2>
+        <form onSubmit={handleSubmit} className="register-form">
           <input
             type="text"
             name="name"
             placeholder="이름"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={inputStyle}
+            className="register-input"
           />
-          {/* 아이디 입력란과 버튼을 동일한 행에 배치 */}
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+          <div className="input-group">
             <input
               type="text"
               name="userId"
               placeholder="아이디"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
-              style={inputStyle} // 동일한 입력 스타일 적용
+              className="register-input"
             />
             <button
               type="button"
               onClick={handleCheckDuplicate}
-              style={buttonStyle}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+              className="register-button"
             >
               아이디 중복 체크
             </button>
           </div>
-          <span style={idCheckResultStyle}>{idCheckResult}</span>
-          {/* 회사 이메일 입력란과 버튼을 동일한 행에 배치 */}
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+          <span className="id-check-result">{idCheckResult}</span>
+          <div className="input-group">
             <input
               type="text"
               name="companyEmail"
               placeholder="회사 이메일 주소"
               value={companyEmail}
               onChange={(e) => setCompanyEmail(e.target.value)}
-              style={inputStyle} // 동일한 입력 스타일 적용
+              className="register-input"
             />
             <button
               type="button"
               onClick={handleSendVerificationCode}
-              style={buttonStyle}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+              className="register-button"
             >
               인증 코드 메일 전송
             </button>
           </div>
-          {/* 인증 코드 입력란과 버튼을 동일한 행에 배치 */}
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+          <div className="input-group">
             <input
               type="text"
               name="verificationCode"
               placeholder="인증 코드 입력"
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value)}
-              style={inputStyle} // 동일한 입력 스타일 적용
+              className="register-input"
             />
             <button
               type="button"
               onClick={handleVerifyCode}
-              style={buttonStyle}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+              className="register-button"
             >
               입력한 인증 코드 확인
             </button>
@@ -215,28 +175,12 @@ const Register = () => {
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
+            className="register-input"
           />
-          {passwordError && <p style={{ color: 'red', fontSize: '16px' }}>{passwordError}</p>}
-          <div className="button-container" style={{ textAlign: 'center' }}>
-            <input
-              type="submit"
-              value="회원가입"
-              style={{
-                height: '50px',
-                borderRadius: '5px',
-                border: 'none',
-                backgroundColor: '#007bff',
-                color: '#fff',
-                cursor: 'pointer',
-                fontSize: '18px', // 글씨 크기를 키움
-                transition: 'background-color 0.3s ease',
-                width: '100%', // 버튼 너비를 100%로 조정
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
-            />
-          </div>
+          {passwordError && <p className="password-error">{passwordError}</p>}
+          <button type="submit" className="register-submit-button">
+            회원가입
+          </button>
         </form>
       </div>
     </div>

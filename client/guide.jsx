@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from './Context/AuthContext'; // AuthContext에서 로그인 상태 가져오기
-import './Guide.css'; // 새로운 Guide.css 파일을 사용
+import './Guide.css';
 
 function Guide() {
   const { isAuthenticated } = useAuth(); // 로그인 상태 가져오기

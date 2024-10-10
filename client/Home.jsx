@@ -25,6 +25,10 @@ const Home = () => {
     navigate('/SiteGuide'); // Redirect to the SiteGuide page
   };
 
+  const handleCheckVulnerabilityClick = () => {
+    navigate('/guide'); // Redirect to the vulnerability check page (경로는 필요에 맞게 변경하세요)
+  };
+
   const openModal = (imageSrc) => {
     setModalImage(imageSrc);
   };
@@ -70,6 +74,12 @@ const Home = () => {
         <h2 className="slogan-content">K K H C</h2>
         <h2 className="slogan-content2">취약점 진단</h2>
         <p className="sub-slogan-content">Check Your Vulnerability</p>
+        <button
+          className="check-vulnerability-btn styled-button"
+          onClick={handleCheckVulnerabilityClick}
+        >
+          바로가기
+        </button>
       </section>
 
       <section

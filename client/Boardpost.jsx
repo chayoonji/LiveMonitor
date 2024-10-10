@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
+import './Guide.css';
 import { useAuth } from './Context/AuthContext';
 
 const Board = () => {

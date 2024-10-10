@@ -7,43 +7,97 @@
 
 /* Centered content container */
 .site-guide-content {
-  flex: 1; /* Take up available space */
-  margin-top: 140px; /* Increase margin between header and content */
-  max-width: 1400px; /* Increase the width of the content container */
+  flex: 1;
+  margin-top: 40px;
+  max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
   color: #333;
 }
 
+.information-hero {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.information-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.information-title {
+  position: absolute;
+  top: 64%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  gap: 15px;
+}
+
+.button-group button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #8f8f8f;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button-group button:hover {
+  background-color: #575757;
+}
+
+.button-group button.active {
+  background-color: #6b90b7;
+}
+
 /* Guide Section Title */
 .site-guide-section-title {
-  font-size: 28px; /* Increase the font size for section titles */
+  font-size: 28px;
   color: #222;
-  margin-bottom: 30px; /* Increase the space below the title */
+  margin-bottom: 30px;
   text-align: center;
   font-weight: bold;
 }
 
-/* Gray box to enclose each section (full width) */
+/* Individual gray box for each emphasized element */
 .site-guide-box-wrapper {
-  background-color: #f5f7fa; /* Light gray background */
-  width: 100vw; /* Make the box stretch across the entire screen width */
-  margin-left: calc(
-    -50vw + 50%
-  ); /* Center the gray box while making it full width */
-  margin-bottom: 50px; /* Add space below each section */
+  margin-bottom: 50px;
 }
 
 .site-guide-box {
-  padding: 40px; /* Increase padding inside the gray box */
-  max-width: 1400px; /* Limit content width inside the box */
-  margin: 0 auto; /* Center content inside the box */
-  border-radius: 12px; /* Slightly rounder corners for content inside the box */
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  border-radius: 12px;
 }
 
 /* Increase spacing between sections */
 .site-guide-content .section-spacing {
-  margin-top: 80px; /* Add vertical space between the two sections */
+  margin-top: 80px;
+}
+
+/* Individual gray box for each emphasized element */
+.site-guide-grid-emphasized .left-right-layout,
+.site-guide-grid-emphasized .right-left-layout {
+  border: 3px solid #333;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 20px;
 }
 
 /* Grid for the images and text (text will be outside the image) */
@@ -136,4 +190,100 @@
   max-width: 100%;
   border-radius: 10px; /* Rounded corners for the image */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}
+
+/* Style adjustments for the hero section */
+.information-hero {
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+
+.information-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.information-title {
+  position: absolute;
+  top: 64%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Emphasized layout for '로그인 후' elements */
+.site-guide-grid-emphasized {
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr; /* One item per row */
+  gap: 50px; /* Increase space between items */
+  margin-bottom: 50px; /* Increase space below the grid */
+}
+
+/* Layout for left-right and right-left positioning */
+.left-right-layout,
+.right-left-layout {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+  border: 3px solid #333; /* Add a thick gray border for each element */
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.left-right-layout .site-guide-text-emphasized,
+.right-left-layout .site-guide-text-emphasized {
+  margin-left: 20px; /* Add appropriate spacing between the image and the text */
+  margin-right: 20px; /* Ensure the spacing is consistent for both layouts */
+}
+
+.left-right-layout .site-guide-text-emphasized,
+.right-left-layout .site-guide-text-emphasized {
+  flex: 1;
+  font-size: 20px;
+  color: #222;
+  font-weight: bold;
+}
+
+.right-left-layout {
+  flex-direction: row-reverse;
+}
+
+.site-guide-image-emphasized-small {
+  width: 40%; /* Reduce the image size for emphasized sections */
+  height: auto;
+  border-radius: 20px;
+  border: 5px solid #004e1a;
+  display: block;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.site-guide-text-emphasized {
+  font-size: 20px;
+  color: #222;
+  text-align: left;
+  margin-top: 0;
+  font-weight: bold;
+}
+
+.site-guide-text-emphasized p {
+  margin-left: 110px;
+  font-size: 18px;
+  color: #333;
+  line-height: 1.8;
+}
+
+.site-guide-text-emphasized h3 {
+  margin-left: 110px;
+  font-size: 25px;
+  color: #333;
+  line-height: 1.8;
+  font: bold;
 }
