@@ -5,6 +5,9 @@ import { FaArrowLeft } from "react-icons/fa";
 import "./PostDetail.css";
 import { useAuth } from "./Context/AuthContext";
 
+// 백엔드 API URL을 환경 변수에서 가져옴
+const API_URL = import.meta.env.VITE_API_URL;
+
 // 비밀번호 모달 컴포넌트
 const PasswordModal = ({ onClose, onConfirm }) => {
   const [password, setPassword] = useState("");
@@ -95,7 +98,7 @@ const PostDetail = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://localhost:3002/posts/${id}`);
+        const response = await axios.get(`${API_URL}/posts/${id}`);
         setPost(response.data);
         setTitle(response.data.title);
         setContent(response.data.content);
@@ -104,7 +107,7 @@ const PostDetail = () => {
 
         // 파일이 없으면 상태를 "진단 전"으로 설정
         if (!response.data.files || response.data.files.length === 0) {
-          await axios.put(`http://localhost:3002/posts/${id}/status`, {
+          await axios.put(`${API_URL}/posts/${id}/status`, {
             status: "진단 전",
           });
         }
@@ -136,7 +139,7 @@ const PostDetail = () => {
     try {
       // 게시물 수정 요청
       const response = await axios.put(
-        `http://localhost:3002/posts/${id}`,
+        `${API_URL}/posts/${id}`,
         formData,
         {
           headers: {
@@ -147,7 +150,7 @@ const PostDetail = () => {
 
       // 파일이 추가되었는지 확인하고 상태 업데이트
       const newStatus = files.length > 0 ? "진단 완료" : "진단 전";
-      await axios.put(`http://localhost:3002/posts/${id}/status`, {
+      await axios.put(`${API_URL}/posts/${id}/status`, {
         status: newStatus,
       });
 
@@ -182,7 +185,7 @@ const PostDetail = () => {
   const handleDeletePost = async (password) => {
     try {
       const response = await axios.post(
-        "http://localhost:3002/posts/check-password",
+        "${API_URL}/posts/check-password",
         {
           postId: id,
           password: password,
@@ -190,7 +193,7 @@ const PostDetail = () => {
       );
 
       if (response.data.valid) {
-        await axios.delete(`http://localhost:3002/posts/${id}`, {
+        await axios.delete(`${API_URL}/posts/${id}`, {
           data: { password: password },
         });
 
@@ -207,7 +210,7 @@ const PostDetail = () => {
 
   const handleSendEmail = async (email) => {
     try {
-      await axios.post("http://localhost:3002/send-email", {
+      await axios.post("${API_URL}/send-email", {
         email,
         postId: id,
       });
