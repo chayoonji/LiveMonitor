@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated(true);
             setIsAdmin(response.data.isAdmin);
             setUserId(userIdCookie);
-            // 자동 로그아웃 타이머 설정 (1분 = 60000ms)
+            // 자동 로그아웃 타이머 설정 (5분 = 300,000ms)
             logoutTimer = setTimeout(() => {
               // 관리자가 아닐 때만 로그아웃
               if (!response.data.isAdmin) {
@@ -66,13 +66,13 @@ export const AuthProvider = ({ children }) => {
         Cookies.set('userId', newUserId, { expires: 1 });
         setUserId(newUserId);
         setIsAdmin(response.data.isAdmin);
-        // 자동 로그아웃 타이머 설정 (1분 = 60000ms)
+        // 자동 로그아웃 타이머 설정 (5분 = 300,000ms)
         setTimeout(() => {
           // 관리자가 아닐 때만 로그아웃
           if (!response.data.isAdmin) {
             logout();
           }
-        }, 60000); // 1분
+        }, 300000); // 5분
       } else {
         setIsAuthenticated(false);
         setIsAdmin(false);
